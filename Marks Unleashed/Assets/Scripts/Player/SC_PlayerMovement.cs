@@ -7,6 +7,7 @@ public class SC_PlayerMovement : MonoBehaviour
     public SC_GeneralPhysics physics;
     public Vector2 input;
     public float speed = 10;
+    public float jump_force = 100;
 
     void Start()
     {
@@ -17,8 +18,14 @@ public class SC_PlayerMovement : MonoBehaviour
     {
         if (physics != null)
         {
-            physics.velocity += new Vector3(input.x * speed, 0, input.y * speed);
+            Vector3 d = (transform.forward * input.y + transform.right * input.x) * speed;
+            physics.AddForce(d);
         }
+    }
+
+    public void Jump()
+    {
+        physics.AddForce(transform.up * jump_force);
     }
 
     public void PlayerMove(InputAction.CallbackContext con)
@@ -30,6 +37,13 @@ public class SC_PlayerMovement : MonoBehaviour
         else if (con.canceled)
         {
             input = Vector2.zero;
+        }
+    }
+    public void PlayerJump(InputAction.CallbackContext con)
+    {
+        if (con.performed)
+        {
+            Jump();
         }
     }
 }
