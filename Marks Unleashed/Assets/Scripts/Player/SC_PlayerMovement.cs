@@ -19,7 +19,7 @@ public class SC_PlayerMovement : MonoBehaviour
         if (physics != null)
         {
             Vector3 d = (transform.forward * input.y + transform.right * input.x) * speed;
-            physics.AddForce(d);
+            physics.target_velocity = new Vector3(d.x, physics.target_velocity.y, d.z);
         }
     }
 
