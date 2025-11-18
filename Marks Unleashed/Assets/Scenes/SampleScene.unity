@@ -293,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.47000027, z: 0.43629318}
+  m_LocalPosition: {x: 0, y: 0.47000027, z: -0.08}
   m_LocalScale: {x: 3.2804008, y: 3.2804, z: 3.2804008}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1379,39 +1379,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6454ac3bd7c921047b7155538b77ac2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  physics: {fileID: 0}
-  input: {x: 0, y: 0}
-  speed: 40
-  jump_force: 3000
---- !u!114 &1525013509
-MonoBehaviour:
+  speed: 5
+  jumpForce: 100
+  acceleration: 1.1
+  grounded: 0
+  ground_friction: 0.9
+  ground_offset: 0.2
+  air_control: 0.15
+--- !u!54 &1525013509
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525013502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00167ac18482a1345b9df27f98a895aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
-  target_velocity: {x: 0, y: 0, z: 0}
-  mass: 10
-  controlled: 1
-  bounciness: 1
-  grounded: 0
-  ground_offset: 0.25
-  ground_friction: 0.939
-  gravity_scale: 2.5
-  gravity_acceleration: 1
-  physics_layer:
+  serializedVersion: 4
+  m_Mass: 20
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 8
-  collision_layer:
+    m_Bits: 0
+  m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 9
-  width: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &2142061854
 GameObject:
   m_ObjectHideFlags: 0
