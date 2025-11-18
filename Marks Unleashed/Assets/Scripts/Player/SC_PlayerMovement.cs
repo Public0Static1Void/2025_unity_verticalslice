@@ -18,7 +18,7 @@ public class SC_PlayerMovement : MonoBehaviour
 
     [Header("Air")]
     // Jump
-    private bool jumping = false;
+    public bool jumping = false;
     [Range(0, 1)]
     public float air_control = 0.5f;
 
