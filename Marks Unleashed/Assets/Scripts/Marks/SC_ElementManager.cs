@@ -19,7 +19,7 @@ public class SC_ElementManager : MonoBehaviour
         else
         {
             Debug.Log("Destroying duplicate instance of Element Manager");
-            Destroy(this);
+            Destroy(gameObject);
         }
 
         elements = new Element[(int)ElementTypes.NONE_LAST];
