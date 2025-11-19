@@ -5,11 +5,23 @@ using System.Collections.Generic;
 
 public class SC_ElementManager : MonoBehaviour
 {
-    public List<UnityEngine.UI.Image> im_marks = new List<UnityEngine.UI.Image>();
+    public static SC_ElementManager instance {  get; private set; }
+
+    public List<Sprite> im_marks = new List<Sprite>();
     public Element[] elements;
 
     void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.Log("Destroying duplicate instance of Element Manager");
+            Destroy(this);
+        }
+
         elements = new Element[(int)ElementTypes.NONE_LAST];
         /*
          * STRUCTURE: ELEMENT(name, type, reactions, weak, image=null)

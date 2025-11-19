@@ -1,4 +1,5 @@
 using Microsoft.Unity.VisualStudio.Editor;
+using UnityEngine;
 using UnityEngine.UI;
 
 public enum ElementTypes
@@ -7,27 +8,27 @@ public enum ElementTypes
 }
 public class Element
 {
-    ElementTypes el_type;
-    int strength = 0;
-    string name;
+    public ElementTypes el_type;
+    public int strength = 0;
+    public string name;
 
-    ElementTypes[] el_reactions;
-    ElementTypes[] el_wak;
+    public ElementTypes[] el_reactions;
+    public ElementTypes[] el_wak;
 
-    UnityEngine.UI.Image im_mark;
+    public Sprite im_mark_sprite;
 
-    public Element(string name, int strength, ElementTypes el_type, ElementTypes[] el_reactions, ElementTypes[] el_wak, UnityEngine.UI.Image im_mark = null)
+    public Element(string name, int strength, ElementTypes el_type, ElementTypes[] el_reactions, ElementTypes[] el_wak, Sprite im_mark = null)
     {
         this.el_type = el_type;
         this.strength = strength;
         this.name = name;
         this.el_reactions = el_reactions;
         this.el_wak = el_wak;
-        this.im_mark = im_mark;
+        this.im_mark_sprite = im_mark;
     }
 
-    public void SetImage(UnityEngine.UI.Image image)
+    public void SetImage(Sprite sprite)
     {
-        im_mark = image;
+        im_mark_sprite = sprite;
     }
 }
