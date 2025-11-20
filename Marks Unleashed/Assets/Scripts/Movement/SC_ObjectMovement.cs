@@ -6,7 +6,7 @@ public class SC_ObjectMovement : MonoBehaviour
     [Header("Stats")]
     public float speed;
 
-    public bool can_move = false;
+    public bool can_move = true;
     
 
     public virtual void StopMovement(float seconds)

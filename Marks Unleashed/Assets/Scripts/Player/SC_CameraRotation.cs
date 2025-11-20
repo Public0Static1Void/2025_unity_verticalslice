@@ -10,15 +10,18 @@ public class SC_CameraRotation : MonoBehaviour
 
     private float x = 0, y = 0;
 
+    private Rigidbody rb;
+
     void Start()
     {
         camera_handle = parent.GetChild(0);
         UnityEngine.Cursor.visible = false;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+
+        rb = GetComponentInParent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (parent == null || camera_handle == null) return;
 
@@ -28,7 +31,7 @@ public class SC_CameraRotation : MonoBehaviour
         y = Mathf.Clamp(y, -40, 60);
 
         // Parent and camera rotation
-        parent.rotation = Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed);
+        rb.MoveRotation(Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed));
         transform.rotation = Quaternion.Euler(-y, x, 0);
     }
 

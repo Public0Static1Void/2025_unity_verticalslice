@@ -27,6 +27,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        can_move = true;
     }
 
     private void Update()
@@ -39,6 +40,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
         vel = rb.linearVelocity;
 
         Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
+        Debug.Log(can_move);
+        if (!can_move) moveDir = Vector3.zero;
 
         // Get the desired speed for the frame
         Vector3 desiredVel = moveDir * speed;
@@ -104,9 +107,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
     }
     float GetSpeedByInput()
     {
-        float total_speed = 1;
-        if (input.y < 0)
+        float total_speed = 1; 
+        if (input.y < 0) // Moving backwards
             total_speed = 0.65f;
+        else if (input.y > 0 && input.y < 0.1f && input.x != 0) // Moving horizontally
+            total_speed = 0.75f;
         return total_speed;
     }
     #endregion
