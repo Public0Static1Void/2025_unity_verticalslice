@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Assertions.Must;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
     [Header("References")]
     public GameObject mark_placeholder;
+    public Image mark_placeholder_image;
     public Transform player;
     public LayerMask layer_placeable;
 
     // Marks selection
     public GameObject marks_canvas;
-    private List<Image> marks_list = new List<Image>();
+    private List<GameObject> marks_list = new List<GameObject>();
+    private List<SC_Mark> marks = new List<SC_Mark>();
+    private List<Image> marks_list_images = new List<Image>();
+
+    private bool open_menu = false;
 
     [Header("Stats")]
     public float range_placing = 2;
@@ -23,11 +29,20 @@ public class SC_MarksPlacer : MonoBehaviour
 
     public List<GameObject> placed_marks;
 
+    private int current_mark = 0;
+
     private bool placing_mark = false;
 
     private void Start()
     {
         StartCoroutine(InitMarksUI());
+
+        mark_placeholder = Instantiate(mark_placeholder, player.transform.position, Quaternion.identity);
+        marks_canvas.SetActive(false);
+        mark_placeholder.SetActive(false);
+        mark_placeholder.GetComponentInChildren<Canvas>().sortingOrder = -2;
+
+        mark_placeholder_image = mark_placeholder.GetComponentInChildren<Image>();
     }
 
     private IEnumerator InitMarksUI()
@@ -41,8 +56,12 @@ public class SC_MarksPlacer : MonoBehaviour
             GameObject ob = new GameObject($"Marks place {i + 1}");
             ob.transform.SetParent(marks_canvas.transform, false);
 
+            SC_Mark mark = ob.AddComponent<SC_Mark>();
+            mark = SC_ElementManager.instance.marks[i];
+            Debug.Log($"Im: {mark.element.im_mark_sprite}");
+
             Image im = ob.AddComponent<Image>();
-            im.sprite = SC_ElementManager.instance.elements[i].im_mark_sprite;
+            im.sprite = mark.element.im_mark_sprite;
 
             // Place it around the parent
             float angle = i * Mathf.PI * 2 / marks_count; /// Get the angle where the mark will be
@@ -53,90 +72,160 @@ public class SC_MarksPlacer : MonoBehaviour
             rect.sizeDelta = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = new Vector2(x, y);
 
-            marks_list.Add(im);
+            marks_list.Add(ob);
+            marks.Add(mark);
+            marks_list_images.Add(im);
         }
+
+        equipped_mark = marks[current_mark].element;
     }
 
     private void Update()
     {
         if (placing_mark)
         {
-            
+            if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing))
+            {
+                mark_placeholder.transform.position = hit.point;
+                mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
+            }
+            else
+            {
+                mark_placeholder.transform.position = player.position + Camera.main.transform.forward * range_placing;
+                mark_placeholder.transform.LookAt(Camera.main.transform);
+            }
         }
     }
+
+    /// <summary>
+    /// Activates the effects of all the placed marks
+    /// </summary>
     private void ActivateMarks()
     {
         for (int i = 0; i < placed_marks.Count; i++)
         {
             placed_marks[i].GetComponent<SC_Mark>().Activate();
+            placed_marks.RemoveAt(i);
         }
     }
 
+    /// <summary>
+    /// Instantiates a mark on the looking surface and adds it to the placed marks list
+    /// </summary>
     private void PlaceMarkOnSurface()
     {
-        if (equipped_mark == null) return;
+        if (!open_menu || !placing_mark || marks_list.Count <= 0) return;
 
-        if (Physics.Raycast(player.position, player.forward, out RaycastHit hit, range_placing, layer_placeable))
+        if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable))
         {
-            GameObject inst = Instantiate(mark_placeholder, hit.point, Quaternion.LookRotation(player.position, Vector3.up));
-            inst.GetComponent<SC_Mark>().image.sprite = equipped_mark.im_mark_sprite;
+            OpenMarkSelectionMenu();
+
+            SC_Mark mark_info = SC_ElementManager.instance.marks[current_mark];
+
+            // Create canvas parent
+            GameObject mark_canvas = new GameObject($"Mark {mark_info.element.name} canvas");
+            mark_canvas.transform.position = hit.point;
+            mark_canvas.transform.rotation = Quaternion.LookRotation(hit.normal);
+
+            mark_canvas.transform.position -= mark_canvas.transform.forward * 200; // Adds offset from the ground
+            Canvas canvas = mark_canvas.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+
+            // Resize the canvas
+            RectTransform rt = canvas.GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(0.5f, 0.5f);
+            rt.localScale = Vector3.one;
+
+            // Create the image
+            GameObject inst = new GameObject($"Mark {mark_info.element.name}");
+
+            inst.transform.position = hit.point;
+            inst.transform.rotation = Quaternion.LookRotation(hit.normal);
+
+            Image im = inst.AddComponent<Image>();
+            im.transform.SetParent(canvas.transform);
+
+            im.sprite = mark_info.element.im_mark_sprite;
+            im.rectTransform.anchoredPosition = Vector2.zero;
+            im.rectTransform.sizeDelta = Vector2.one * 0.5f;
+
+            inst.AddComponent(mark_info.GetType());
+
+            SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
+            mark.particles = mark_info.particles;
+            mark.element = mark_info.element;
+
 
             placed_marks.Add(inst);
+
+            placing_mark = false;
         }
     }
 
+    /// <summary>
+    /// Opens or closes the mark in-game selection menu
+    /// </summary>
     private void OpenMarkSelectionMenu()
     {
-        marks_canvas.SetActive(true);
+        open_menu = !open_menu;
+        marks_canvas.SetActive(open_menu);
+
+        equipped_mark = marks[0].element;
+        mark_placeholder_image.sprite = equipped_mark.im_mark_sprite;
+
+        mark_placeholder.SetActive(open_menu);
+
         // Aquí hay que poner que haga animación etc
+        if (open_menu)
+        {
+            placing_mark = true;
+        }
+        else
+        {
+            placing_mark = false;
+        }
     }
+
+    /// <summary>
+    /// Scrolls through all the unlocked marks on the in-game menu
+    /// </summary>
+    /// <param name="direction"></param>
     private void ScrollMarksList(int direction)
     {
         if (marks_list.Count <= 1) return;
 
-        if (direction > 0) // Scroll up
-        {
-            int last_inx = marks_list.Count - 1;
-            Image last = marks_list[last_inx];
-            marks_list.RemoveAt(last_inx);
-            marks_list.Insert(0, last);
-        }
-        else if (direction < 0) // Scroll down
-        {
-            Image first = marks_list[0];
-            marks_list.RemoveAt(0);
-            marks_list.Add(first);
-        }
+        current_mark += direction;
+        if (current_mark > marks_list.Count - 1) current_mark = 0;
+        else if (current_mark < 0) current_mark = marks_list.Count - 1;
 
         RefreshMarksList();
     }
+
+    /// <summary>
+    /// Refreshes the order for the scroll on the marks in-game menu
+    /// </summary>
     private void RefreshMarksList()
     {
-        if (marks_list.Count == 0) return;
-        for (int i = 0; i < marks_list.Count; i++)
+        int count = marks_list.Count;
+        if (count == 0) return;
+
+        for (int i = 0; i < count; i++)
         {
-            marks_list[i].transform.SetSiblingIndex(i);
-            marks_list[i].rectTransform.sizeDelta = Vector2.one * 0.5f;
+            // Place it around the parent
+            float angle = i * Mathf.PI * 2 / count; /// Get the angle where the mark will be
+            float x = Mathf.Cos(angle) * 1;
+            float y = Mathf.Sin(angle) * 1;
+
+            marks_list_images[i].rectTransform.anchoredPosition = new Vector2(x, y);
+            marks_list_images[i].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
         }
 
-
-        marks_list[0].rectTransform.sizeDelta = Vector2.one * 0.6f;
+        Element element = marks[current_mark].element;
+        equipped_mark = element;
+        mark_placeholder_image.sprite = element.im_mark_sprite;
     }
 
     #region Inputs
-    public void PlaceMark(InputAction.CallbackContext con)
-    {
-        if (con.performed)
-        {
-            if (equipped_mark != null)
-                placing_mark = true;
-        }
-        else if (con.canceled)
-        {
-            placing_mark = false;
-            PlaceMarkOnSurface();
-        }
-    }
     public void OpenMarksMenu(InputAction.CallbackContext con)
     {
         if (con.performed)
@@ -153,6 +242,13 @@ public class SC_MarksPlacer : MonoBehaviour
             else if (y_scroll > 0) y_scroll = 1;
 
             ScrollMarksList((int)y_scroll);
+        }
+    }
+    public void SelectMarkOnMenu(InputAction.CallbackContext con)
+    {
+        if (con.performed && marks_canvas.activeSelf)
+        {
+            PlaceMarkOnSurface();
         }
     }
     public void ActivateMarks(InputAction.CallbackContext con)

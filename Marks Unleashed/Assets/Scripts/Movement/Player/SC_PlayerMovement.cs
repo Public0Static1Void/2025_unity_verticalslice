@@ -2,10 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-public class SC_PlayerMovement : MonoBehaviour
+public class SC_PlayerMovement : SC_ObjectMovement
 {
     [Header("Stats")]
-    public float speed;
     public float jumpForce;
     public float acceleration = 1.1f;
     public Vector3 vel = Vector3.zero;
