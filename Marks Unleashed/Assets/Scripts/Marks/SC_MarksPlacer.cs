@@ -175,7 +175,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
         mark_placeholder.SetActive(open_menu);
 
-        // Aquí hay que poner que haga animación etc
+        // Aquï¿½ hay que poner que haga animaciï¿½n etc
         if (open_menu)
         {
             placing_mark = true;
