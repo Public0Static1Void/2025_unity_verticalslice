@@ -34,7 +34,7 @@ public class SC_LifeSystem : MonoBehaviour
         }
     }
 
-    public void ApplyElement(Element element)
+    public void ApplyElement(Element element, SC_Mark from_mark = null)
     {
         bool full = true;
         // Add an element to the list
@@ -62,8 +62,6 @@ public class SC_LifeSystem : MonoBehaviour
             applied_elements[0] = element;
         }
 
-        StartCoroutine(RemoveElementCoroutine(element, element.strength * 2.5f));
-
         // Get the elements reactions
         for (int i = 0; i < applied_elements.Length; i++)
         {
@@ -74,22 +72,22 @@ public class SC_LifeSystem : MonoBehaviour
                     if (applied_elements[j] != null)
                     {
                         Dictionary<string, float> dict = SC_ElementManager.instance.GetElementsReaction(applied_elements[i].el_type, applied_elements[j].el_type);
-                        ExecuteElementsReaction(dict, applied_elements[i].el_type, applied_elements[j].el_type);
+                        ExecuteElementsReaction(dict, applied_elements[i].el_type, applied_elements[j].el_type, from_mark);
                     }
-
                 }
             }
         }
-        
+
+        StartCoroutine(RemoveElementCoroutine(element, element.strength * 2.5f));
     }
 
-    private void ExecuteElementsReaction(Dictionary<string, float> dict, ElementTypes type1, ElementTypes type2)
+    private void ExecuteElementsReaction(Dictionary<string, float> dict, ElementTypes type1, ElementTypes type2, SC_Mark mark)
     {
         if (dict.ContainsKey("slow"))
         {
             if (controlled_object)
             {
-                objectMovement.Slow(1 - dict["slow"] * 0.1f, dict["slow"] * 1.5f);
+                objectMovement.Slow(1 - dict["slow"] * 0.5f, dict["slow"] * 1.5f);
             }
         }
         if (dict.ContainsKey("stop_time"))
@@ -103,6 +101,10 @@ public class SC_LifeSystem : MonoBehaviour
         {
             Damage((int)dict["damage"]);
         }
+        if (dict.ContainsKey("burn"))
+        {
+            StartCoroutine(BurnDamage((int)dict["burn"], mark.element.strength));
+        }
         if (dict.ContainsKey("clear_burn"))
         {
             if (dict["clear_burn"] == 1)
@@ -113,7 +115,16 @@ public class SC_LifeSystem : MonoBehaviour
                 }
                 else if (type2 == ElementTypes.AIR)
                 {
-
+                    float dist_from_air = Vector3.Distance(transform.position, mark.transform.position);
+                    if (dist_from_air < 3) // Amplify the burn
+                    {
+                        StartCoroutine(BurnDamage(mark.element.strength, mark.element.strength * 3));
+                    }
+                    else // Clear the burn
+                    {
+                        StopCoroutine("BurnDamage");
+                        RemoveElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
+                    }
                 }
             }
         }
@@ -127,6 +138,17 @@ public class SC_LifeSystem : MonoBehaviour
                 applied_elements[i] = null;
                 break;
             }
+        }
+    }
+
+    private IEnumerator BurnDamage(int damage_per_second, float seconds_applied)
+    {
+        int loop_count = 0;
+        while (loop_count < seconds_applied)
+        {
+            yield return new WaitForSeconds(1);
+            loop_count++;
+            Damage(damage_per_second);
         }
     }
 

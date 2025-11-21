@@ -130,7 +130,7 @@ public class SC_ElementManager : MonoBehaviour
                 }
                 if (element2 == ElementTypes.FIRE)
                 {
-                    dict["burn"] = GetElement(ElementTypes.FIRE).strength * GetElement(ElementTypes.FIRE).strength;
+                    dict["burn"] = (GetElement(ElementTypes.FIRE).strength * GetElement(ElementTypes.FIRE).strength) * 0.5f;
                 }
                 break;
         }
