@@ -22,21 +22,11 @@ public class Mark_Water : SC_Mark
             SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
             if (objectMovement != null)
             {
-                SC_CoroutineRunner.instance.StartCoroutine(ApplySlow(objectMovement, 1 - element.strength * 0.1f, element.strength * 1.5f));
+                objectMovement.Slow(1 - element.strength * 0.1f, element.strength * 1.5f);
             }
         }
 
         Destroy(gameObject);
-    }
-
-    private IEnumerator ApplySlow(SC_ObjectMovement objectMovement, float slow_force, float seconds)
-    {
-        float or_speed = objectMovement.speed;
-        objectMovement.speed *= 0.1f;
-        Debug.Log($"Seconds: {seconds}");
-        yield return new WaitForSeconds(seconds);
-        Debug.Log("Stop wait");
-        objectMovement.speed = or_speed;
     }
 }
 public class Mark_Electricity : SC_Mark
@@ -47,7 +37,7 @@ public class Mark_Electricity : SC_Mark
     {
         Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
 
-        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
+        Collider[] colls = Physics.OverlapSphere(transform.position + transform.up * 50, range, layer_interactable);
         foreach (Collider coll in colls)
         {
             SC_LifeSystem lifeSystem = coll.GetComponent<SC_LifeSystem>();
@@ -95,6 +85,21 @@ public class Mark_Air : SC_Mark
     public override void Activate()
     {
         Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+
+        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
+        foreach (Collider coll in colls)
+        {
+            SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
+            if (objectMovement != null)
+            {
+                objectMovement.rb.AddForce(transform.up * element.strength * 10, ForceMode.Impulse);
+            }
+            SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
+            if (life != null)
+            {
+                life.ApplyElement(element);
+            }
+        }
 
         Destroy(gameObject);
     }

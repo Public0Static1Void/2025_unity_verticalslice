@@ -31,7 +31,7 @@ public class SC_CameraRotation : MonoBehaviour
         y = Mathf.Clamp(y, -40, 60);
 
         // Parent and camera rotation
-        rb.MoveRotation(Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed));
+        parent.rotation = Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed);
         transform.rotation = Quaternion.Euler(-y, x, 0);
     }
 

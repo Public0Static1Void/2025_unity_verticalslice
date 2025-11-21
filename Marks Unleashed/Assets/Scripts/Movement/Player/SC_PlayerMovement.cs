@@ -21,12 +21,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
     [Range(0, 1)]
     public float air_control = 0.5f;
 
-    private Rigidbody rb;
     private Vector2 input;
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
         can_move = true;
     }
 
