@@ -22,7 +22,7 @@ public class Mark_Water : SC_Mark
             SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
             if (objectMovement != null)
             {
-                objectMovement.Slow(1 - element.strength * 0.1f, element.strength * 1.5f);
+                objectMovement.Slow(1 - element.strength * 0.25f, element.strength * 1.5f);
             }
         }
 
@@ -35,9 +35,9 @@ public class Mark_Electricity : SC_Mark
 
     public override void Activate()
     {
-        Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+        Destroy(Instantiate(particles, transform.position + transform.up * 2, transform.rotation), 5);
 
-        Collider[] colls = Physics.OverlapSphere(transform.position + transform.up * 50, range, layer_interactable);
+        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
             SC_LifeSystem lifeSystem = coll.GetComponent<SC_LifeSystem>();
@@ -92,7 +92,8 @@ public class Mark_Air : SC_Mark
             SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
             if (objectMovement != null)
             {
-                objectMovement.rb.AddForce(transform.up * element.strength * 10, ForceMode.Impulse);
+                Vector3 dir = (coll.transform.position - transform.position).normalized;
+                objectMovement.rb.AddForce(dir * element.strength * 250, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
             if (life != null)
@@ -106,11 +107,27 @@ public class Mark_Air : SC_Mark
 }
 public class Mark_Gravity : SC_Mark
 {
-    public float range = 3;
+    public float range = 10;
 
     public override void Activate()
     {
         Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+
+        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
+        foreach (Collider coll in colls)
+        {
+            SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
+            if (objectMovement != null)
+            {
+                Vector3 dir = (transform.position - coll.transform.position).normalized;
+                objectMovement.rb.AddForce(dir * element.strength * 400, ForceMode.Impulse);
+            }
+            SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
+            if (life != null)
+            {
+                life.ApplyElement(element);
+            }
+        }
 
         Destroy(gameObject);
     }

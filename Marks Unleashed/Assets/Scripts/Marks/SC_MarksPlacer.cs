@@ -170,7 +170,7 @@ public class SC_MarksPlacer : MonoBehaviour
         open_menu = !open_menu;
         marks_canvas.SetActive(open_menu);
 
-        equipped_mark = marks[0].element;
+        equipped_mark = marks[current_mark].element;
         mark_placeholder_image.sprite = equipped_mark.im_mark_sprite;
 
         mark_placeholder.SetActive(open_menu);

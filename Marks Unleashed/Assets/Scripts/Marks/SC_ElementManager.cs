@@ -2,7 +2,6 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Serialization;
 using Unity.VisualScripting;
 
 public class SC_ElementManager : MonoBehaviour
@@ -121,6 +120,17 @@ public class SC_ElementManager : MonoBehaviour
                 if (element2 == ElementTypes.WATER)
                 {
                     dict["stop_time"] = GetElement(ElementTypes.WATER).strength + GetElement(ElementTypes.ELECTRICITY).strength;
+                    dict["damage"] = GetElement(ElementTypes.WATER).strength * GetElement(ElementTypes.ELECTRICITY).strength * 2;
+                }
+                break;
+            case ElementTypes.FIRE:
+                if (element2 == ElementTypes.AIR)
+                {
+                    dict["clear_burn"] = 1;
+                }
+                if (element2 == ElementTypes.FIRE)
+                {
+                    dict["burn"] = GetElement(ElementTypes.FIRE).strength * GetElement(ElementTypes.FIRE).strength;
                 }
                 break;
         }

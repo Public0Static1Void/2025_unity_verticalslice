@@ -26,6 +26,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private void Start()
     {
         can_move = true;
+        rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -38,7 +39,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
         vel = rb.linearVelocity;
 
         Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
-        Debug.Log(can_move);
         if (!can_move) moveDir = Vector3.zero;
 
         // Get the desired speed for the frame

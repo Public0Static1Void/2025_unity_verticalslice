@@ -74,7 +74,7 @@ public class SC_LifeSystem : MonoBehaviour
                     if (applied_elements[j] != null)
                     {
                         Dictionary<string, float> dict = SC_ElementManager.instance.GetElementsReaction(applied_elements[i].el_type, applied_elements[j].el_type);
-                        ExecuteElementsReaction(dict);
+                        ExecuteElementsReaction(dict, applied_elements[i].el_type, applied_elements[j].el_type);
                     }
 
                 }
@@ -83,7 +83,7 @@ public class SC_LifeSystem : MonoBehaviour
         
     }
 
-    private void ExecuteElementsReaction(Dictionary<string, float> dict)
+    private void ExecuteElementsReaction(Dictionary<string, float> dict, ElementTypes type1, ElementTypes type2)
     {
         if (dict.ContainsKey("slow"))
         {
@@ -97,6 +97,24 @@ public class SC_LifeSystem : MonoBehaviour
             if (controlled_object)
             {
                 objectMovement.StopMovement(dict["stop_time"]);
+            }
+        }
+        if (dict.ContainsKey("damage"))
+        {
+            Damage((int)dict["damage"]);
+        }
+        if (dict.ContainsKey("clear_burn"))
+        {
+            if (dict["clear_burn"] == 1)
+            {
+                if (type2 == ElementTypes.WATER)
+                {
+                    RemoveElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
+                }
+                else if (type2 == ElementTypes.AIR)
+                {
+
+                }
             }
         }
     }
