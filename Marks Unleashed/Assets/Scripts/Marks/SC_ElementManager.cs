@@ -15,7 +15,7 @@ public class SC_ElementManager : MonoBehaviour
     public Element[] elements;
 
     [Header("Particles")]
-    public List<ParticleSystem> part_marks = new List<ParticleSystem>();
+    public List<GameObject> part_marks = new List<GameObject>();
 
     void Awake()
     {

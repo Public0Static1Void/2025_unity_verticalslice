@@ -4,11 +4,11 @@ using UnityEngine.UI;
 public class SC_Mark : MonoBehaviour
 {
     public Element element;
-    public ParticleSystem particles;
+    public GameObject particles;
 
     public LayerMask layer_interactable = ~0;
 
-    public void Init(Element el, ParticleSystem parts)
+    public void Init(Element el, GameObject parts)
     {
         element = el;
         particles = parts;

@@ -7,7 +7,9 @@ public class Mark_Water : SC_Mark
 
     public override void Activate()
     {
-        Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+        GameObject ob = Instantiate(particles, transform.position, transform.rotation);
+        ob.transform.GetChild(3).SetParent(null, true);
+        Destroy(ob, 5);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
