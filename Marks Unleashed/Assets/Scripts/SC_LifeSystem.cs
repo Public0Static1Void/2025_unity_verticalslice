@@ -61,24 +61,6 @@ public class SC_LifeSystem : MonoBehaviour
             }
             applied_elements[0] = element;
         }
-
-        // Get the elements reactions
-        for (int i = 0; i < applied_elements.Length; i++)
-        {
-            if (applied_elements[i] != null)
-            {
-                for (int j = 0; j < applied_elements.Length; j++)
-                {
-                    if (applied_elements[j] != null)
-                    {
-                        Dictionary<string, float> dict = SC_ElementManager.instance.GetElementsReaction(applied_elements[i].el_type, applied_elements[j].el_type);
-                        ExecuteElementsReaction(dict, applied_elements[i].el_type, applied_elements[j].el_type, from_mark);
-                    }
-                }
-            }
-        }
-
-        StartCoroutine(RemoveElementCoroutine(element, element.strength * 2.5f));
     }
 
     private void ExecuteElementsReaction(Dictionary<string, float> dict, ElementTypes type1, ElementTypes type2, SC_Mark mark)
