@@ -16,6 +16,7 @@ public class SC_MarksPlacer : MonoBehaviour
     // Marks selection
     public GameObject marks_canvas;
     private List<GameObject> marks_list = new List<GameObject>();
+    private List<ElementTypes> unlocked_marks = new List<ElementTypes>();
     private List<SC_Mark> marks = new List<SC_Mark>();
     private List<Image> marks_list_images = new List<Image>();
 
@@ -56,6 +57,8 @@ public class SC_MarksPlacer : MonoBehaviour
             GameObject ob = new GameObject($"Marks place {i + 1}");
             ob.transform.SetParent(marks_canvas.transform, false);
 
+            ob.SetActive(false);
+
             SC_Mark mark = ob.AddComponent<SC_Mark>();
             mark = SC_ElementManager.instance.marks[i];
             Debug.Log($"Im: {mark.element.im_mark_sprite}");
@@ -78,6 +81,12 @@ public class SC_MarksPlacer : MonoBehaviour
         }
 
         equipped_mark = marks[current_mark].element;
+
+        UnlockMark(marks[(int)ElementTypes.WATER].element.el_type);
+        UnlockMark(marks[(int)ElementTypes.ELECTRICITY].element.el_type);
+        UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
+
+        RefreshMarksList();
     }
 
     private void Update()
@@ -97,6 +106,12 @@ public class SC_MarksPlacer : MonoBehaviour
         }
     }
 
+    public void UnlockMark(ElementTypes type)
+    {
+        unlocked_marks.Add(marks[(int)type].element.el_type);
+        marks_list_images[(int)type].gameObject.SetActive(true);
+    }
+
     /// <summary>
     /// Activates the effects of all the placed marks
     /// </summary>
@@ -114,13 +129,14 @@ public class SC_MarksPlacer : MonoBehaviour
     /// </summary>
     private void PlaceMarkOnSurface()
     {
-        if (!open_menu || !placing_mark || marks_list.Count <= 0) return;
+        if (!open_menu || !placing_mark || unlocked_marks.Count <= 0) return;
 
         if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable))
         {
             OpenMarkSelectionMenu();
 
-            SC_Mark mark_info = SC_ElementManager.instance.marks[current_mark];
+            // Get the selected mark info
+            SC_Mark mark_info = SC_ElementManager.instance.marks[(int)unlocked_marks[current_mark]];
 
             // Create canvas parent
             GameObject mark_canvas = new GameObject($"Mark {mark_info.element.name} canvas");
@@ -170,7 +186,7 @@ public class SC_MarksPlacer : MonoBehaviour
         open_menu = !open_menu;
         marks_canvas.SetActive(open_menu);
 
-        equipped_mark = marks[current_mark].element;
+        equipped_mark = marks[(int)unlocked_marks[current_mark]].element;
         mark_placeholder_image.sprite = equipped_mark.im_mark_sprite;
 
         mark_placeholder.SetActive(open_menu);
@@ -195,8 +211,8 @@ public class SC_MarksPlacer : MonoBehaviour
         if (marks_list.Count <= 1) return;
 
         current_mark += direction;
-        if (current_mark > marks_list.Count - 1) current_mark = 0;
-        else if (current_mark < 0) current_mark = marks_list.Count - 1;
+        if (current_mark > unlocked_marks.Count - 1) current_mark = 0;
+        else if (current_mark < 0) current_mark = unlocked_marks.Count - 1;
 
         RefreshMarksList();
     }
@@ -206,7 +222,7 @@ public class SC_MarksPlacer : MonoBehaviour
     /// </summary>
     private void RefreshMarksList()
     {
-        int count = marks_list.Count;
+        int count = unlocked_marks.Count;
         if (count == 0) return;
 
         for (int i = 0; i < count; i++)
@@ -216,11 +232,11 @@ public class SC_MarksPlacer : MonoBehaviour
             float x = Mathf.Cos(angle) * 1;
             float y = Mathf.Sin(angle) * 1;
 
-            marks_list_images[i].rectTransform.anchoredPosition = new Vector2(x, y);
-            marks_list_images[i].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
+            marks_list_images[(int)unlocked_marks[i]].rectTransform.anchoredPosition = new Vector2(x, y);
+            marks_list_images[(int)unlocked_marks[i]].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
         }
 
-        Element element = marks[current_mark].element;
+        Element element = marks[(int)unlocked_marks[current_mark]].element;
         equipped_mark = element;
         mark_placeholder_image.sprite = element.im_mark_sprite;
     }

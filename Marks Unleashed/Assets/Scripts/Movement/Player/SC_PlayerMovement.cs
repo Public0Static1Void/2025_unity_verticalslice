@@ -72,7 +72,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     #region Physics functions
     public void Jump()
     {
-        if (grounded)
+        if (grounded && can_move)
         {
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             jumping = true;
