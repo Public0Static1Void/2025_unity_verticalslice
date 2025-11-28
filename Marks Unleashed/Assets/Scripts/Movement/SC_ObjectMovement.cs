@@ -7,6 +7,7 @@ public class SC_ObjectMovement : MonoBehaviour
 {
     [Header("Stats")]
     public float speed;
+    public float max_speed = 5;
 
     public bool can_move = true;
 
@@ -15,6 +16,7 @@ public class SC_ObjectMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        max_speed = speed;
     }
 
     public virtual void StopMovement(float seconds)
@@ -29,6 +31,11 @@ public class SC_ObjectMovement : MonoBehaviour
         can_move = true;
     }
 
+    public void SetSpeed(float new_speed)
+    {
+        speed = new_speed;
+    }
+
     public void Slow(float percentage, float seconds)
     {
         if (percentage < 0) percentage = 0;
@@ -36,9 +43,8 @@ public class SC_ObjectMovement : MonoBehaviour
     }
     private IEnumerator SlowCoroutine(float percentage, float seconds)
     {
-        float or_speed = speed;
         speed *= percentage;
         yield return new WaitForSeconds(seconds);
-        speed = or_speed;
+        speed = max_speed;
     }
 }

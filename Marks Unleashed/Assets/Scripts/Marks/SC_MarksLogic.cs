@@ -15,6 +15,15 @@ public class Mark_Water : SC_Mark
         // Destroy the parent in 5 seconds
         Destroy(ob, 5);
 
+        // Adds a slow zone
+        GameObject slow_zone = new GameObject("Slow zone");
+
+        SC_ZoneSlow zone = slow_zone.AddComponent<SC_ZoneSlow>();
+        zone.range = range;
+            /// Sets it's parent to the water puddle
+        slow_zone.transform.SetParent(water_puddle, true);
+        slow_zone.transform.position = transform.position;
+
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {

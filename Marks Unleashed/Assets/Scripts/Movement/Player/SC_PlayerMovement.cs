@@ -27,6 +27,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         can_move = true;
         rb = GetComponent<Rigidbody>();
+
+        max_speed = speed;
     }
 
     private void Update()
