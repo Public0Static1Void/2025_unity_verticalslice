@@ -168,7 +168,9 @@ public class Mark_Gravity : SC_Mark
 
     public override void Activate()
     {
-        Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+        GameObject black_hole = Instantiate(particles, transform.position, transform.rotation);
+        black_hole.transform.Rotate(new Vector3(20, 0, 0));
+        Destroy(black_hole, 5);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
