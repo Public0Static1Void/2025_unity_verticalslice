@@ -85,6 +85,8 @@ public class SC_MarksPlacer : MonoBehaviour
         UnlockMark(marks[(int)ElementTypes.WATER].element.el_type);
         UnlockMark(marks[(int)ElementTypes.ELECTRICITY].element.el_type);
         UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
+        UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
+        UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
 
         RefreshMarksList();
     }
@@ -205,7 +207,7 @@ public class SC_MarksPlacer : MonoBehaviour
     /// <summary>
     /// Scrolls through all the unlocked marks on the in-game menu
     /// </summary>
-    /// <param name="direction"></param>
+    /// <param name="direction">Direction of the scroll (1 or -1)</param>
     private void ScrollMarksList(int direction)
     {
         if (marks_list.Count <= 1) return;

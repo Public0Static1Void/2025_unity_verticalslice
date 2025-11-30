@@ -34,6 +34,11 @@ public class SC_LifeSystem : MonoBehaviour
         }
     }
 
+    public void BurnDamage(int damage_per_second, float seconds_applied)
+    {
+        StartCoroutine(BurnDamageCoroutine(damage_per_second, seconds_applied));
+    }
+
     public void ApplyElement(Element element, SC_Mark from_mark = null)
     {
         bool full = true;
@@ -85,7 +90,7 @@ public class SC_LifeSystem : MonoBehaviour
         }
         if (dict.ContainsKey("burn"))
         {
-            StartCoroutine(BurnDamage((int)dict["burn"], mark.element.strength));
+            StartCoroutine(BurnDamageCoroutine((int)dict["burn"], mark.element.strength));
         }
         if (dict.ContainsKey("clear_burn"))
         {
@@ -100,11 +105,11 @@ public class SC_LifeSystem : MonoBehaviour
                     float dist_from_air = Vector3.Distance(transform.position, mark.transform.position);
                     if (dist_from_air < 3) // Amplify the burn
                     {
-                        StartCoroutine(BurnDamage(mark.element.strength, mark.element.strength * 3));
+                        StartCoroutine(BurnDamageCoroutine(mark.element.strength, mark.element.strength * 3));
                     }
                     else // Clear the burn
                     {
-                        StopCoroutine("BurnDamage");
+                        StopCoroutine("BurnDamageCoroutine");
                         RemoveElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
                     }
                 }
@@ -123,7 +128,7 @@ public class SC_LifeSystem : MonoBehaviour
         }
     }
 
-    private IEnumerator BurnDamage(int damage_per_second, float seconds_applied)
+    private IEnumerator BurnDamageCoroutine(int damage_per_second, float seconds_applied)
     {
         int loop_count = 0;
         while (loop_count < seconds_applied)

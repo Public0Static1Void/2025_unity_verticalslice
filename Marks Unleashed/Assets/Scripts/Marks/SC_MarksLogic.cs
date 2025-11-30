@@ -100,8 +100,8 @@ public class Mark_Electricity : SC_Mark
         {
             GameObject electric_zone = new GameObject("Electric zone");
 
-            electric_zone.transform.SetParent(coll.transform, true);
-            electric_zone.transform.position = coll.transform.position;
+            electric_zone.transform.SetParent(coll.transform, false);
+            electric_zone.transform.position = Vector3.zero;
 
             SC_ZoneElectric zone = electric_zone.AddComponent<SC_ZoneElectric>();
 
@@ -120,6 +120,26 @@ public class Mark_Fire : SC_Mark
     public override void Activate()
     {
         Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+
+        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
+        foreach (Collider coll in colls)
+        {
+            SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
+            if (lf != null)
+            {
+                lf.BurnDamage(element.strength, element.strength * 2);
+            }
+        }
+
+        LayerMask burnable_layer = 1 << LayerMask.NameToLayer("Burnable");
+        colls = Physics.OverlapSphere(transform.position, range, burnable_layer);
+        foreach (Collider coll in colls)
+        {
+            GameObject burnZone = new GameObject("BurnZone");
+            SC_ZoneBurn zone = burnZone.AddComponent<SC_ZoneBurn>();
+            zone.StartBurn(element.strength, coll.transform.localScale.x);
+            Destroy(burnZone, 5);
+        }
 
         Destroy(gameObject);
     }
