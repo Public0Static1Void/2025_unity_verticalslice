@@ -13,6 +13,8 @@ public class SC_MarksPlacer : MonoBehaviour
     public Transform player;
     public LayerMask layer_placeable;
 
+    private List<GameObject> element_hands = new List<GameObject>();
+
     // Marks selection
     public GameObject marks_canvas;
     private List<GameObject> marks_list = new List<GameObject>();
@@ -89,6 +91,12 @@ public class SC_MarksPlacer : MonoBehaviour
         UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
 
         RefreshMarksList();
+
+        // Load the element hands
+        for (int i = 0; i < marks_list.Count; i++)
+        {
+            element_hands.Add(transform.GetChild(2).GetChild(i).gameObject);
+        }
     }
 
     private void Update()
@@ -188,20 +196,36 @@ public class SC_MarksPlacer : MonoBehaviour
         open_menu = !open_menu;
         marks_canvas.SetActive(open_menu);
 
-        equipped_mark = marks[(int)unlocked_marks[current_mark]].element;
+        int index = (int)unlocked_marks[current_mark];
+        equipped_mark = marks[index].element;
         mark_placeholder_image.sprite = equipped_mark.im_mark_sprite;
+        EnableElementHand(index);
 
         mark_placeholder.SetActive(open_menu);
 
-        // Aqu� hay que poner que haga animaci�n etc
+        // Aquí hay que poner que haga animación etc
         if (open_menu)
         {
             placing_mark = true;
         }
         else
         {
+            EnableElementHand(-1);
             placing_mark = false;
         }
+    }
+
+    /// <summary>
+    /// Puts on screen the selected element hand
+    /// </summary>
+    private void EnableElementHand(int index)
+    {
+        for (int i = 0; i < element_hands.Count; i++)
+        {
+            element_hands[i].SetActive(false);
+        }
+        if (index >= 0 && index < element_hands.Count)
+            element_hands[index].SetActive(true);
     }
 
     /// <summary>
@@ -238,9 +262,13 @@ public class SC_MarksPlacer : MonoBehaviour
             marks_list_images[(int)unlocked_marks[i]].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
         }
 
-        Element element = marks[(int)unlocked_marks[current_mark]].element;
+        int index = (int)unlocked_marks[current_mark];
+
+        Element element = marks[index].element;
         equipped_mark = element;
         mark_placeholder_image.sprite = element.im_mark_sprite;
+
+        EnableElementHand(index);
     }
 
     #region Inputs
