@@ -24,6 +24,13 @@ public class Mark_Water : SC_Mark
         slow_zone.transform.SetParent(water_puddle, true);
         slow_zone.transform.position = transform.position;
 
+
+        LayerMask water_layer = 1 << LayerMask.NameToLayer("Water");
+
+        ParticleSystem puddle_parts = water_puddle.GetComponent<ParticleSystem>();
+        ParticleSystem.MainModule puddle_main = puddle_parts.main;
+
+
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
@@ -38,32 +45,25 @@ public class Mark_Water : SC_Mark
             {
                 objectMovement.Slow(1 - element.strength * 0.25f, element.strength * 1.5f);
             }
-        }
 
-        ParticleSystem puddle_parts = water_puddle.GetComponent<ParticleSystem>();
-        ParticleSystem.MainModule puddle_main = puddle_parts.main;
-        
-        LayerMask water_layer = 1 << LayerMask.NameToLayer("Water");
-        colls = Physics.OverlapSphere(transform.position, range, water_layer);
-        foreach (Collider coll in colls)
-        {
-            // Get the other water puddle particles
-            ParticleSystem other_parts = coll.GetComponent<ParticleSystem>();
+            // Nearby water detection
+            if (SC_GameManager.ObjectContainsLayer(coll.gameObject, water_layer))
+            {
+                // Get the other water puddle particles
+                ParticleSystem other_parts = coll.GetComponent<ParticleSystem>();
 
-            ParticleSystem.MainModule other_main = other_parts.main;
-            float lifetime = other_main.startLifetime.constant;
+                ParticleSystem.MainModule other_main = other_parts.main;
+                float lifetime = other_main.startLifetime.constant;
 
-            puddle_parts.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            other_parts.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                puddle_parts.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                other_parts.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
-            other_main.startLifetime = lifetime + 4f;
-            puddle_main.startLifetime = lifetime + 4;
+                other_main.startLifetime = lifetime + 4f;
+                puddle_main.startLifetime = lifetime + 4;
 
-            other_main.duration = lifetime + 4f;
-            puddle_main.duration = lifetime + 4;
-
-            puddle_parts.Play(true);
-            other_parts.Play(true);
+                puddle_parts.Play(true);
+                other_parts.Play(true);
+            }
         }
 
         Destroy(gameObject);
@@ -76,6 +76,8 @@ public class Mark_Electricity : SC_Mark
     public override void Activate()
     {
         Destroy(Instantiate(particles, transform.position + transform.up * 2, transform.rotation), 5);
+
+        LayerMask water_layer = 1 << LayerMask.NameToLayer("Water");
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
@@ -91,25 +93,24 @@ public class Mark_Electricity : SC_Mark
             {
                 movementScript.StopMovement(2);
             }
+
+            // Electrify nearby water
+            if (SC_GameManager.ObjectContainsLayer(coll.gameObject, water_layer))
+            {
+                GameObject electric_zone = new GameObject("Electric zone");
+
+                electric_zone.transform.SetParent(coll.transform, true);
+                electric_zone.transform.localPosition = Vector3.zero;
+
+                SC_ZoneElectric zone = electric_zone.AddComponent<SC_ZoneElectric>();
+
+                zone.puddle_system = coll.GetComponent<ParticleSystem>();
+                zone.electric_shock = particles.GetComponent<ParticleSystem>();
+
+                zone.Init();
+            }
         }
 
-        // Electrify nearby water
-        LayerMask water_layer = 1 << LayerMask.NameToLayer("Water");
-        colls = Physics.OverlapSphere(transform.position, range, water_layer);
-        foreach (Collider coll in colls)
-        {
-            GameObject electric_zone = new GameObject("Electric zone");
-
-            electric_zone.transform.SetParent(coll.transform, false);
-            electric_zone.transform.position = Vector3.zero;
-
-            SC_ZoneElectric zone = electric_zone.AddComponent<SC_ZoneElectric>();
-
-            zone.puddle_system = coll.GetComponent<ParticleSystem>();
-            zone.electric_shock = particles.GetComponent<ParticleSystem>();
-
-            zone.Init();
-        }
         Destroy(gameObject);
     }
 }

@@ -25,7 +25,7 @@ public class SC_LifeSystem : MonoBehaviour
         if (update_life_on_start)
             life = max_life;
     }
-    public void Damage(int damage)
+    public virtual void Damage(int damage)
     {
         life -= damage;
         if (life <= 0)
@@ -37,6 +37,11 @@ public class SC_LifeSystem : MonoBehaviour
     public void BurnDamage(int damage_per_second, float seconds_applied)
     {
         StartCoroutine(BurnDamageCoroutine(damage_per_second, seconds_applied));
+    }
+
+    public virtual void UpdateAppliedElementsUI()
+    {
+
     }
 
     public void ApplyElement(Element element, SC_Mark from_mark = null)
@@ -66,6 +71,23 @@ public class SC_LifeSystem : MonoBehaviour
             }
             applied_elements[0] = element;
         }
+
+        StartCoroutine(RemoveElementCoroutine(element, 3));
+        UpdateAppliedElementsUI();
+    }
+
+    public void RemoveElement(Element element)
+    {
+        for (int i = 0; i < applied_elements.Length; i++)
+        {
+            if (applied_elements[i].name == element.name)
+            {
+                applied_elements[i] = null;
+                break;
+            }
+        }
+
+        UpdateAppliedElementsUI();
     }
 
     private void ExecuteElementsReaction(Dictionary<string, float> dict, ElementTypes type1, ElementTypes type2, SC_Mark mark)
@@ -116,18 +138,7 @@ public class SC_LifeSystem : MonoBehaviour
             }
         }
     }
-    public void RemoveElement(Element element)
-    {
-        for (int i = 0; i < applied_elements.Length; i++)
-        {
-            if (applied_elements[i].name == element.name)
-            {
-                applied_elements[i] = null;
-                break;
-            }
-        }
-    }
-
+    
     private IEnumerator BurnDamageCoroutine(int damage_per_second, float seconds_applied)
     {
         int loop_count = 0;

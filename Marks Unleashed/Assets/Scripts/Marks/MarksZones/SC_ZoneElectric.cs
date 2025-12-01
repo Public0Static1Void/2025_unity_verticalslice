@@ -24,10 +24,11 @@ public class SC_ZoneElectric : MonoBehaviour
 
         ParticleSystem parts = Instantiate(electric_shock, transform.position, transform.rotation);
 
-        parts.transform.SetParent(transform, false);
+        parts.transform.SetParent(transform, true);
 
         ParticleSystem.MainModule parts_main = parts.main;
         parts_main.loop = true;
+        parts_main.startLifetime = 0.05f;
 
         GetComponent<BoxCollider>().isTrigger = true;
 

@@ -12,6 +12,7 @@ public class SC_CameraRotation : MonoBehaviour
 
     private Rigidbody rb;
 
+
     void Start()
     {
         camera_handle = parent.GetChild(0);
@@ -28,7 +29,7 @@ public class SC_CameraRotation : MonoBehaviour
         x += input.x * turn_speed * Time.deltaTime;
         y += input.y * turn_speed * Time.deltaTime;
 
-        y = Mathf.Clamp(y, -40, 60);
+        y = Mathf.Clamp(y, -80, 80);
 
         // Parent and camera rotation
         parent.rotation = Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed);
