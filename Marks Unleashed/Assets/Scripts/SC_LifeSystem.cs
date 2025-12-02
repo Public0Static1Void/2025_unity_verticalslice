@@ -80,10 +80,9 @@ public class SC_LifeSystem : MonoBehaviour
     {
         for (int i = 0; i < applied_elements.Length; i++)
         {
-            if (applied_elements[i].name == element.name)
+            if (applied_elements[i] != null && applied_elements[i].name == element.name)
             {
                 applied_elements[i] = null;
-                break;
             }
         }
 

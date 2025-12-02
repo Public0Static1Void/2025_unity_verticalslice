@@ -15,7 +15,6 @@ public class SC_PlayerLife : SC_LifeSystem
 
     private void Start()
     {
-
         List<Sprite> marks_sprites = SC_ElementManager.instance.im_marks; // Gets a copy of the sprites list
         for (int i = 0; i < applied_elements.Length; i++)
         {

@@ -12,6 +12,10 @@ public class SC_MarksPlacer : MonoBehaviour
     public Image mark_placeholder_image;
     public Transform player;
     public LayerMask layer_placeable;
+    
+    // Marks activation order UI
+    public Transform ui_order_parent;
+    private Image[] im_activation_order;
 
     private List<GameObject> element_hands = new List<GameObject>();
 
@@ -30,7 +34,7 @@ public class SC_MarksPlacer : MonoBehaviour
     [Header("Marks")]
     public Element equipped_mark;
 
-    public List<GameObject> placed_marks;
+    public List<SC_Mark> placed_marks;
 
     private int current_mark = 0;
 
@@ -46,6 +50,9 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_placeholder.GetComponentInChildren<Canvas>().sortingOrder = -2;
 
         mark_placeholder_image = mark_placeholder.GetComponentInChildren<Image>();
+
+        // Marks activation order UI
+        im_activation_order = SC_GameManager.GetChildsComponents<Image>(ui_order_parent);
     }
 
     private IEnumerator InitMarksUI()
@@ -122,16 +129,36 @@ public class SC_MarksPlacer : MonoBehaviour
         marks_list_images[(int)type].gameObject.SetActive(true);
     }
 
+    private void UpdateActivateMarksUI()
+    {
+        for (int i = 0; i < im_activation_order.Length; i++)
+        {
+            Sprite spr = null;
+            if (i < placed_marks.Count && placed_marks[i] != null)
+            {
+                spr = placed_marks[i].element.im_mark_sprite;
+                im_activation_order[i].gameObject.SetActive (true);
+            }
+            else
+            {
+                im_activation_order[i].gameObject.SetActive(false);
+            }
+
+            im_activation_order[i].sprite = spr;
+        }
+    }
+
     /// <summary>
     /// Activates the effects of all the placed marks
     /// </summary>
-    private void ActivateMarks()
+    private void ActivateMark()
     {
-        for (int i = 0; i < placed_marks.Count; i++)
-        {
-            placed_marks[i].GetComponent<SC_Mark>().Activate();
-            placed_marks.RemoveAt(i);
-        }
+        if (placed_marks.Count <= 0) return;
+
+        placed_marks[0].GetComponent<SC_Mark>().Activate();
+        placed_marks.RemoveAt(0);
+
+        UpdateActivateMarksUI();
     }
 
     /// <summary>
@@ -174,7 +201,7 @@ public class SC_MarksPlacer : MonoBehaviour
             im.sprite = mark_info.element.im_mark_sprite;
             im.rectTransform.anchoredPosition = Vector2.zero;
             im.rectTransform.sizeDelta = Vector2.one * 0.5f;
-
+                /// Adds the mark element component
             inst.AddComponent(mark_info.GetType());
 
             SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
@@ -182,7 +209,9 @@ public class SC_MarksPlacer : MonoBehaviour
             mark.element = mark_info.element;
 
 
-            placed_marks.Add(inst);
+            placed_marks.Add(mark);
+
+            UpdateActivateMarksUI();
 
             placing_mark = false;
         }
@@ -297,11 +326,11 @@ public class SC_MarksPlacer : MonoBehaviour
             PlaceMarkOnSurface();
         }
     }
-    public void ActivateMarks(InputAction.CallbackContext con)
+    public void ActivateMark(InputAction.CallbackContext con)
     {
         if (con.performed)
         {
-            ActivateMarks();
+            ActivateMark();
         }
     }
     #endregion
