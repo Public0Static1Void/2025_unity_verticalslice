@@ -162,16 +162,15 @@ public class Mark_Air : SC_Mark
 
     public override void Activate()
     {
-        Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+        Destroy(Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward)), 5);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
-            SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
-            if (objectMovement != null)
+            Rigidbody rb = coll.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                Vector3 dir = (coll.transform.position - transform.position).normalized;
-                objectMovement.rb.AddForce(dir * element.strength * 250, ForceMode.Impulse);
+                rb.AddForce(transform.forward * element.strength * 100, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
             if (life != null)
@@ -196,11 +195,12 @@ public class Mark_Gravity : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
-            SC_ObjectMovement objectMovement = coll.GetComponent<SC_ObjectMovement>();
-            if (objectMovement != null)
+            // Pulls all nearby objects
+            Rigidbody rb = coll.GetComponent<Rigidbody>();
+            if (rb != null)
             {
                 Vector3 dir = (transform.position - coll.transform.position).normalized;
-                objectMovement.rb.AddForce(dir * element.strength * 400, ForceMode.Impulse);
+                rb.AddForce(dir * element.strength * 400, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
             if (life != null)

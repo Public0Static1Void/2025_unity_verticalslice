@@ -12,7 +12,9 @@ public class SC_MarksPlacer : MonoBehaviour
     public Image mark_placeholder_image;
     public Transform player;
     public LayerMask layer_placeable;
-    
+
+    private Rigidbody mark_placeholder_rb;
+
     // Marks activation order UI
     public Transform ui_order_parent;
     private Image[] im_activation_order;
@@ -29,7 +31,8 @@ public class SC_MarksPlacer : MonoBehaviour
     private bool open_menu = false;
 
     [Header("Stats")]
-    public float range_placing = 2;
+    public float range_placing = 10;
+    public int max_marks = 3;
 
     [Header("Marks")]
     public Element equipped_mark;
@@ -39,6 +42,8 @@ public class SC_MarksPlacer : MonoBehaviour
     private int current_mark = 0;
 
     private bool placing_mark = false;
+    private bool placing_input = false;
+    private float placing_input_timer = 0;
 
     private void Start()
     {
@@ -48,6 +53,8 @@ public class SC_MarksPlacer : MonoBehaviour
         marks_canvas.SetActive(false);
         mark_placeholder.SetActive(false);
         mark_placeholder.GetComponentInChildren<Canvas>().sortingOrder = -2;
+        mark_placeholder_rb =  mark_placeholder.AddComponent<Rigidbody>();
+        mark_placeholder_rb.isKinematic = true;
 
         mark_placeholder_image = mark_placeholder.GetComponentInChildren<Image>();
 
@@ -112,12 +119,12 @@ public class SC_MarksPlacer : MonoBehaviour
         {
             if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing))
             {
-                mark_placeholder.transform.position = hit.point;
+                mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, hit.point, Time.deltaTime * 30);
                 mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
             }
             else
             {
-                mark_placeholder.transform.position = player.position + Camera.main.transform.forward * range_placing;
+                mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, player.position + Camera.main.transform.forward * range_placing, Time.deltaTime * 30);
                 mark_placeholder.transform.LookAt(Camera.main.transform);
             }
         }
@@ -161,6 +168,53 @@ public class SC_MarksPlacer : MonoBehaviour
         UpdateActivateMarksUI();
     }
 
+    private void PlaceMark(int index, Transform hit_transform, Vector3 position, Quaternion rotation)
+    {
+        // Get the selected mark info
+        SC_Mark mark_info = SC_ElementManager.instance.marks[index];
+
+        // Create canvas parent
+        GameObject mark_canvas = new GameObject($"Mark {mark_info.element.name} canvas");
+        mark_canvas.transform.position = position;
+        mark_canvas.transform.rotation = rotation;
+
+        mark_canvas.transform.SetParent(hit_transform, true);
+
+        mark_canvas.transform.position -= mark_canvas.transform.forward * 200; // Adds offset from the ground
+        Canvas canvas = mark_canvas.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+
+        // Resize the canvas
+        RectTransform rt = canvas.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(0.5f, 0.5f);
+        rt.localScale = Vector3.one;
+
+        // Create the image
+        GameObject inst = new GameObject($"Mark {mark_info.element.name}");
+
+        inst.transform.position = position;
+        inst.transform.rotation = rotation;
+
+        Image im = inst.AddComponent<Image>();
+        im.transform.SetParent(canvas.transform);
+
+        im.sprite = mark_info.element.im_mark_sprite;
+        im.rectTransform.anchoredPosition = Vector2.zero;
+        im.rectTransform.sizeDelta = Vector2.one * 0.5f;
+        /// Adds the mark element component
+        inst.AddComponent(mark_info.GetType());
+
+        SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
+        mark.particles = mark_info.particles;
+        mark.element = mark_info.element;
+
+
+        placed_marks.Add(mark);
+
+        UpdateActivateMarksUI();
+
+        placing_mark = false;
+    }
     /// <summary>
     /// Instantiates a mark on the looking surface and adds it to the placed marks list
     /// </summary>
@@ -171,52 +225,11 @@ public class SC_MarksPlacer : MonoBehaviour
         if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable))
         {
             OpenMarkSelectionMenu();
-
-            // Get the selected mark info
-            SC_Mark mark_info = SC_ElementManager.instance.marks[(int)unlocked_marks[current_mark]];
-
-            // Create canvas parent
-            GameObject mark_canvas = new GameObject($"Mark {mark_info.element.name} canvas");
-            mark_canvas.transform.position = hit.point;
-            mark_canvas.transform.rotation = Quaternion.LookRotation(hit.normal);
-
-            mark_canvas.transform.position -= mark_canvas.transform.forward * 200; // Adds offset from the ground
-            Canvas canvas = mark_canvas.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
-
-            // Resize the canvas
-            RectTransform rt = canvas.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(0.5f, 0.5f);
-            rt.localScale = Vector3.one;
-
-            // Create the image
-            GameObject inst = new GameObject($"Mark {mark_info.element.name}");
-
-            inst.transform.position = hit.point;
-            inst.transform.rotation = Quaternion.LookRotation(hit.normal);
-
-            Image im = inst.AddComponent<Image>();
-            im.transform.SetParent(canvas.transform);
-
-            im.sprite = mark_info.element.im_mark_sprite;
-            im.rectTransform.anchoredPosition = Vector2.zero;
-            im.rectTransform.sizeDelta = Vector2.one * 0.5f;
-                /// Adds the mark element component
-            inst.AddComponent(mark_info.GetType());
-
-            SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
-            mark.particles = mark_info.particles;
-            mark.element = mark_info.element;
-
-
-            placed_marks.Add(mark);
-
-            UpdateActivateMarksUI();
-
-            placing_mark = false;
+            PlaceMark((int)unlocked_marks[current_mark], hit.transform, hit.point + (hit.normal * 0.1f), Quaternion.LookRotation(hit.normal));
         }
     }
 
+    #region SelectionMenu
     /// <summary>
     /// Opens or closes the mark in-game selection menu
     /// </summary>
@@ -300,6 +313,8 @@ public class SC_MarksPlacer : MonoBehaviour
         EnableElementHand(index);
     }
 
+    #endregion
+
     #region Inputs
     public void OpenMarksMenu(InputAction.CallbackContext con)
     {
@@ -321,7 +336,8 @@ public class SC_MarksPlacer : MonoBehaviour
     }
     public void SelectMarkOnMenu(InputAction.CallbackContext con)
     {
-        if (con.performed && marks_canvas.activeSelf)
+        if (con.performed && marks_canvas.activeSelf
+            && placed_marks.Count <= max_marks)
         {
             PlaceMarkOnSurface();
         }
