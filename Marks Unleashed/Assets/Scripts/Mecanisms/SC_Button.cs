@@ -13,14 +13,20 @@ public class SC_Button : MonoBehaviour
 
     public void ActivateMecanisms()
     {
-        Debug.Log("Activated");
         for (int i = 0; i < attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Activate();
         }
     }
+    public void DeactiavteMecanisms()
+    {
+        for (int i = 0; i < attached_mecanisms.Count; i++)
+        {
+            attached_mecanisms[i].Deactivate();
+        }
+    }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (activated || activation_for != null) return; /// Don't activate again if it's pressed
 
@@ -34,10 +40,9 @@ public class SC_Button : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         /// Check if the object is the one that pressed the button
-        if (other.gameObject == activation_for
-            && Vector3.Distance(transform.position, other.transform.position) > transform.localScale.x * 0.75f)
+        if (other.gameObject == activation_for)
         {
-            Debug.Log("Exit");
+            DeactiavteMecanisms();
             activation_for = null;
             activated = false;
         }
