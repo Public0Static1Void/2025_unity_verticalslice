@@ -62,6 +62,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
         vel.x = horizontalVel.x;
         vel.z = horizontalVel.z;
 
+        vel.x = Mathf.Clamp(vel.x, -15, 15);
+        vel.z = Mathf.Clamp(vel.z, -15, 15);
+        vel.y = Mathf.Clamp(vel.y, -30, 12);
+
         vel = ApplyGroundFriction(vel);
         vel = ConstrainVelocity(vel);
 

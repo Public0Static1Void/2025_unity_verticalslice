@@ -199,6 +199,7 @@ public class Mark_Gravity : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                // Adds force in the impulse direction
                 Vector3 dir = (transform.position - coll.transform.position).normalized;
                 rb.AddForce(dir * element.strength * 400, ForceMode.Impulse);
             }

@@ -29,7 +29,7 @@ public class SC_CameraRotation : MonoBehaviour
         x += input.x * turn_speed * Time.deltaTime;
         y += input.y * turn_speed * Time.deltaTime;
 
-        y = Mathf.Clamp(y, -80, 80);
+        y = Mathf.Clamp(y, -80, 90);
 
         // Parent and camera rotation
         parent.rotation = Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed);

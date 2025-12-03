@@ -42,8 +42,7 @@ public class SC_MarksPlacer : MonoBehaviour
     private int current_mark = 0;
 
     private bool placing_mark = false;
-    private bool placing_input = false;
-    private float placing_input_timer = 0;
+
 
     private void Start()
     {
@@ -98,11 +97,9 @@ public class SC_MarksPlacer : MonoBehaviour
 
         equipped_mark = marks[current_mark].element;
 
-        UnlockMark(marks[(int)ElementTypes.WATER].element.el_type);
-        UnlockMark(marks[(int)ElementTypes.ELECTRICITY].element.el_type);
+
         UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
         UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
-        UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
 
         RefreshMarksList();
 
@@ -115,15 +112,25 @@ public class SC_MarksPlacer : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            UnlockMark(marks[(int)ElementTypes.WATER].element.el_type);
+            UnlockMark(marks[(int)ElementTypes.ELECTRICITY].element.el_type);
+            UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
+            UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
+            UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
+        }
         if (placing_mark)
         {
             if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing))
             {
                 mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, hit.point, Time.deltaTime * 30);
                 mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
+                mark_placeholder_image.color = Color.white;
             }
             else
             {
+                mark_placeholder_image.color = Color.black;
                 mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, player.position + Camera.main.transform.forward * range_placing, Time.deltaTime * 30);
                 mark_placeholder.transform.LookAt(Camera.main.transform);
             }
@@ -337,7 +344,7 @@ public class SC_MarksPlacer : MonoBehaviour
     public void SelectMarkOnMenu(InputAction.CallbackContext con)
     {
         if (con.performed && marks_canvas.activeSelf
-            && placed_marks.Count <= max_marks)
+            && placed_marks.Count < max_marks)
         {
             PlaceMarkOnSurface();
         }
