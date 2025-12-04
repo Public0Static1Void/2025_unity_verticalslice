@@ -158,7 +158,7 @@ public class Mark_Stone : SC_Mark
 }
 public class Mark_Air : SC_Mark
 {
-    public float range = 3;
+    public float range = 4;
 
     public override void Activate()
     {
@@ -170,6 +170,7 @@ public class Mark_Air : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                rb.linearVelocity = Vector3.zero;
                 rb.AddForce(transform.forward * element.strength * 100, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();

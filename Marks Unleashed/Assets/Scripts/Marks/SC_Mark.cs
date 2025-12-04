@@ -19,7 +19,7 @@ public class SC_Mark : MonoBehaviour
     {
         SphereCollider coll = gameObject.AddComponent<SphereCollider>();
         coll.isTrigger = true;
-        coll.radius = 1;
+        coll.radius = 0.5f;
 
         enable_collision_activation = true;
     }
@@ -29,6 +29,7 @@ public class SC_Mark : MonoBehaviour
         if (transform.parent != null)
         {
             Destroy(transform.parent.gameObject);
+            SC_MarksPlacer.Instance.RemoveMarkFromPlaced(gameObject.name);
         }
     }
 
@@ -41,10 +42,12 @@ public class SC_Mark : MonoBehaviour
     {
         if (!enable_collision_activation) return;
 
-        Rigidbody rb = other.GetComponent<Rigidbody>();
-        if (rb != null && rb.linearVelocity.magnitude > 5)
+        Rigidbody rb_other = other.GetComponent<Rigidbody>();
+        if (rb_other != null)
         {
-            Activate();
+            Debug.Log(rb_other.linearVelocity.magnitude);
+            if (rb_other.linearVelocity.magnitude >= 3)
+                Activate();
         }
     }
 

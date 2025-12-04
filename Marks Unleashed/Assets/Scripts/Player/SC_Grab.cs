@@ -37,11 +37,14 @@ public class SC_Grab : MonoBehaviour
             if (hit.distance <= grab_distance)
             {
                 rb_grabbed = hit.rigidbody;
+                rb_grabbed.linearVelocity = Vector3.zero;
+
                 rb_joint = rb_grabbed.gameObject.AddComponent<FixedJoint>();
 
+                rb_grabbed.position = grab_point.position;
                 rb_joint.connectedBody = grab_point;
-                rb_joint.breakForce = 100;
-                rb_joint.breakTorque = 100;
+                rb_joint.breakForce = 1000;
+                rb_joint.breakTorque = 1000;
 
                 rb_grabbed.useGravity = false;
             }
@@ -87,9 +90,10 @@ public class SC_Grab : MonoBehaviour
 
             if (launch_timer >= 1)
             {
-                if (launch_timer >= 10) launch_timer = 10; /// Limit the launch speed
+                launch_timer *= 5;
+                if (launch_timer >= 7) launch_timer = 7; /// Limit the launch speed
 
-                ReleaseObject((rb_player.linearVelocity + Camera.main.transform.forward) * launch_timer);
+                ReleaseObject(((rb_player.linearVelocity * 0.25f) + Camera.main.transform.forward) * launch_timer);
             }
 
             launch_timer = 0;

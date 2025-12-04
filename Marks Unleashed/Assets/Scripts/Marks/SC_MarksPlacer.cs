@@ -7,6 +7,7 @@ using UnityEngine.Assertions.Must;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
+    public static SC_MarksPlacer Instance { get; private set; }
     [Header("References")]
     public GameObject mark_placeholder;
     public Image mark_placeholder_image;
@@ -43,7 +44,17 @@ public class SC_MarksPlacer : MonoBehaviour
 
     private bool placing_mark = false;
 
-
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     private void Start()
     {
         StartCoroutine(InitMarksUI());
@@ -147,7 +158,21 @@ public class SC_MarksPlacer : MonoBehaviour
         marks_list_images[(int)type].gameObject.SetActive(true);
     }
 
-    private void UpdateActivateMarksUI()
+    public void RemoveMarkFromPlaced(string mark_name)
+    {
+        for (int i = 0; i < placed_marks.Count; i++)
+        {
+            if (placed_marks[i].name == mark_name)
+            {
+                placed_marks.RemoveAt(i);
+                break;
+            }
+        }
+
+        UpdateActivateMarksUI();
+    }
+
+    public void UpdateActivateMarksUI()
     {
         for (int i = 0; i < im_activation_order.Length; i++)
         {
@@ -159,10 +184,12 @@ public class SC_MarksPlacer : MonoBehaviour
             }
             else
             {
-                im_activation_order[i].gameObject.SetActive(false);
+                if (im_activation_order[i] != null)
+                    im_activation_order[i].gameObject.SetActive(false);
             }
 
-            im_activation_order[i].sprite = spr;
+            if (im_activation_order[i] != null)
+                im_activation_order[i].sprite = spr;
         }
     }
 
@@ -172,8 +199,26 @@ public class SC_MarksPlacer : MonoBehaviour
     private void ActivateMark()
     {
         if (placed_marks.Count <= 0) return;
+        int activate_index = 0;
+        if (placed_marks[0] == null)
+        {
+            placed_marks.RemoveAt(0);
+            for (int i = 0; i < placed_marks.Count; i++)
+            {
+                if (placed_marks[i] != null)
+                {
+                    activate_index = i;
+                    break;
+                }
+                else
+                {
+                    UpdateActivateMarksUI();
+                    return;
+                }
+            }
+        }
 
-        placed_marks[0].GetComponent<SC_Mark>().Activate();
+        placed_marks[activate_index].GetComponent<SC_Mark>().Activate();
         placed_marks.RemoveAt(0);
 
         UpdateActivateMarksUI();
@@ -201,7 +246,7 @@ public class SC_MarksPlacer : MonoBehaviour
         rt.localScale = Vector3.one;
 
         // Create the image
-        GameObject inst = new GameObject($"Mark {mark_info.element.name}");
+        GameObject inst = new GameObject($"Mark {mark_info.element.name} {placed_marks.Count}");
 
         inst.transform.position = position;
         inst.transform.rotation = rotation;
