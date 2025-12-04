@@ -5657,7 +5657,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 31
+    m_Bits: 287
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -5683,6 +5683,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 953372784}
+  - {fileID: 1029391646}
   m_Father: {fileID: 1525013506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &330585547
@@ -6096,7 +6097,7 @@ GameObject:
   - component: {fileID: 702403547}
   - component: {fileID: 702403546}
   - component: {fileID: 702403550}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11775,6 +11776,65 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1029391645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1029391646}
+  - component: {fileID: 1029391647}
+  m_Layer: 0
+  m_Name: Grab joint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1029391646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029391645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.017, y: -0.098, z: 0.551}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 330585546}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1029391647
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029391645}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1035846204
 GameObject:
   m_ObjectHideFlags: 0
@@ -12330,13 +12390,14 @@ GameObject:
   - component: {fileID: 1525013506}
   - component: {fileID: 1525013505}
   - component: {fileID: 1525013504}
+  - component: {fileID: 1525013507}
   - component: {fileID: 1525013512}
   - component: {fileID: 1525013503}
-  - component: {fileID: 1525013507}
   - component: {fileID: 1525013508}
   - component: {fileID: 1525013509}
   - component: {fileID: 1525013510}
   - component: {fileID: 1525013511}
+  - component: {fileID: 1525013513}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -12622,6 +12683,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1525013513}
+        m_TargetAssemblyTypeName: SC_Grab, Assembly-CSharp
+        m_MethodName: GrabInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: bdcf931c-76aa-4342-b91d-763ed669f8a8
     m_ActionName: 'Player/Left click[/Mouse/leftButton]'
   - m_PersistentCalls:
@@ -12629,6 +12702,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1525013511}
         m_TargetAssemblyTypeName: SC_MarksPlacer, Assembly-CSharp
         m_MethodName: ActivateMark
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1525013513}
+        m_TargetAssemblyTypeName: SC_Grab, Assembly-CSharp
+        m_MethodName: LaunchGrabbed
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12761,6 +12846,23 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1525013513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525013502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01a5d4ea93e5774b93b269f1df49fc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grab_distance: 3
+  grab_point: {fileID: 1029391647}
+  grab_layer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &1535087875
 GameObject:
   m_ObjectHideFlags: 0

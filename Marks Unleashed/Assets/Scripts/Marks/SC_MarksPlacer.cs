@@ -122,18 +122,22 @@ public class SC_MarksPlacer : MonoBehaviour
         }
         if (placing_mark)
         {
+            Vector3 new_pos;
             if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing))
             {
-                mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, hit.point, Time.deltaTime * 30);
+                new_pos = hit.point;
                 mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
                 mark_placeholder_image.color = Color.white;
             }
             else
             {
+                new_pos = player.position + Camera.main.transform.forward * range_placing;
                 mark_placeholder_image.color = Color.black;
-                mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, player.position + Camera.main.transform.forward * range_placing, Time.deltaTime * 30);
                 mark_placeholder.transform.LookAt(Camera.main.transform);
             }
+            // Moves the mark to the camera, overlapping with collisions
+            mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, new_pos, Time.deltaTime * 30);
+
         }
     }
 
@@ -214,6 +218,7 @@ public class SC_MarksPlacer : MonoBehaviour
         SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
         mark.particles = mark_info.particles;
         mark.element = mark_info.element;
+        mark.EnableCollision();
 
 
         placed_marks.Add(mark);
