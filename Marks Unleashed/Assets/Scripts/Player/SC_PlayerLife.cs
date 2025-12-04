@@ -30,12 +30,6 @@ public class SC_PlayerLife : SC_LifeSystem
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-            Damage(1);
-    }
-
     public override void UpdateAppliedElementsUI()
     {
         for (int i = 0; i < applied_elements.Length; i++)

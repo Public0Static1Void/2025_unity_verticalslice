@@ -15,6 +15,7 @@ public class SC_MarksPlacer : MonoBehaviour
     public LayerMask layer_placeable;
 
     private Rigidbody mark_placeholder_rb;
+    private SC_CameraRotation cameraRotation;
 
     // Marks activation order UI
     public Transform ui_order_parent;
@@ -70,6 +71,9 @@ public class SC_MarksPlacer : MonoBehaviour
 
         // Marks activation order UI
         im_activation_order = SC_GameManager.GetChildsComponents<Image>(ui_order_parent);
+
+        // Get the camera script
+        cameraRotation = GetComponentInChildren<SC_CameraRotation>();
     }
 
     private IEnumerator InitMarksUI()
@@ -107,10 +111,6 @@ public class SC_MarksPlacer : MonoBehaviour
         }
 
         equipped_mark = marks[current_mark].element;
-
-
-        UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
-        UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
 
         RefreshMarksList();
 
@@ -292,6 +292,8 @@ public class SC_MarksPlacer : MonoBehaviour
     /// </summary>
     private void OpenMarkSelectionMenu()
     {
+        if (unlocked_marks.Count <= 0) return;
+
         open_menu = !open_menu;
         marks_canvas.SetActive(open_menu);
 
@@ -305,10 +307,12 @@ public class SC_MarksPlacer : MonoBehaviour
         // Aquí hay que poner que haga animación etc
         if (open_menu)
         {
+            cameraRotation.SetTurnSpeed(0.75f);
             placing_mark = true;
         }
         else
         {
+            cameraRotation.SetTurnSpeed(1);
             EnableElementHand(-1);
             placing_mark = false;
         }

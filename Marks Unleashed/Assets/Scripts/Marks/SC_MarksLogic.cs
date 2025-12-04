@@ -171,7 +171,7 @@ public class Mark_Air : SC_Mark
             if (rb != null)
             {
                 rb.linearVelocity = Vector3.zero;
-                rb.AddForce(transform.forward * element.strength * 100, ForceMode.Impulse);
+                rb.AddForce(transform.forward * element.strength * 150, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
             if (life != null)
@@ -185,7 +185,7 @@ public class Mark_Air : SC_Mark
 }
 public class Mark_Gravity : SC_Mark
 {
-    public float range = 10;
+    public float range = 15;
 
     public override void Activate()
     {
@@ -200,8 +200,11 @@ public class Mark_Gravity : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                // Calculates the pull force based on the distance
+                float dist = Vector3.Distance(transform.position, rb.position);
+                Debug.Log((0.1f + 1 - (dist / range)));
                 // Adds force in the impulse direction
-                Vector3 dir = (transform.position - coll.transform.position).normalized;
+                Vector3 dir = (transform.position - coll.transform.position).normalized * (0.1f + 1 - (dist / range));
                 rb.AddForce(dir * element.strength * 400, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
@@ -213,4 +216,9 @@ public class Mark_Gravity : SC_Mark
 
         Destroy(gameObject);
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, range);
+    }
+
 }

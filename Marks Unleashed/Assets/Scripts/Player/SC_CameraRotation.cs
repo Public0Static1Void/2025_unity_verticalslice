@@ -8,16 +8,20 @@ public class SC_CameraRotation : MonoBehaviour
     private Transform camera_handle = null;
     public Vector2 input;
 
-    private float x = 0, y = 0;
+    public float x = 0, y = 0;
 
     private Rigidbody rb;
 
+
+    private float max_turn_speed = 0;
 
     void Start()
     {
         camera_handle = parent.GetChild(0);
         UnityEngine.Cursor.visible = false;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+
+        max_turn_speed = turn_speed;
 
         rb = GetComponentInParent<Rigidbody>();
     }
@@ -29,6 +33,8 @@ public class SC_CameraRotation : MonoBehaviour
         x += input.x * turn_speed * Time.deltaTime;
         y += input.y * turn_speed * Time.deltaTime;
 
+        if (x >= 360) x = 0;
+
         y = Mathf.Clamp(y, -80, 90);
 
         // Parent and camera rotation
@@ -39,5 +45,13 @@ public class SC_CameraRotation : MonoBehaviour
     public void CameraTurn(InputAction.CallbackContext con)
     {
         input = con.ReadValue<Vector2>().normalized;
+    }
+
+    /// <summary>
+    /// Set turn speed based on the porcentage
+    /// </summary>
+    public void SetTurnSpeed(float porcentage)
+    {
+        turn_speed = max_turn_speed * porcentage;
     }
 }
