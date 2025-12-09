@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 
 public class SC_GameManager : MonoBehaviour
@@ -44,5 +45,14 @@ public class SC_GameManager : MonoBehaviour
         }
 
         return children;
+    }
+
+    public static Vector3 LimitVector(Vector3 vector, float max_x, float min_x, float max_y, float min_y, float max_z, float min_z)
+    {
+        vector.x = Mathf.Clamp(vector.x, min_x, max_x);
+        vector.y = Mathf.Clamp(vector.y, min_y, max_y);
+        vector.z = Mathf.Clamp(vector.z, min_z, max_z);
+
+        return vector;
     }
 }

@@ -3,12 +3,17 @@ using UnityEngine.InputSystem;
 
 public class SC_Grab : MonoBehaviour
 {
+    [Header("Stats")]
+    public float grabbed_speed = 200;
+    public float grabbed_damping = 100;
     public float grab_distance = 3;
-    public Rigidbody grab_point;
+
+    [Header("References")]
+    public GameObject grab_point;
     public LayerMask grab_layer;
 
     private Rigidbody rb_grabbed;
-    private FixedJoint rb_joint;
+    private ConfigurableJoint rb_joint;
 
     private Rigidbody rb_player;
 
@@ -28,25 +33,36 @@ public class SC_Grab : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (rb_grabbed != null)
+        {
+            Vector3 dir = (grab_point.transform.position - rb_grabbed.transform.position);
+            Vector3 vel = dir * grabbed_speed - rb_grabbed.linearVelocity * grabbed_damping;
+
+            rb_grabbed.AddForce(vel, ForceMode.Force);
+            rb_grabbed.MoveRotation(Quaternion.LookRotation(-transform.forward));
+
+
+            //rb_grabbed.linearVelocity = SC_GameManager.LimitVector(rb_grabbed.linearVelocity, 5, -5, 5, -5, 5, -5);
+        }
+    }
+
     private void GrabObject()
     {
         if (rb_grabbed != null) return;
 
         if (Physics.SphereCast(transform.position, 0.5f, Camera.main.transform.forward, out RaycastHit hit, grab_distance, grab_layer))
         {
-            if (hit.distance <= grab_distance)
+            if (hit.rigidbody != null)
             {
                 rb_grabbed = hit.rigidbody;
-                rb_grabbed.linearVelocity = Vector3.zero;
-
-                rb_joint = rb_grabbed.gameObject.AddComponent<FixedJoint>();
-
-                rb_grabbed.position = grab_point.position;
-                rb_joint.connectedBody = grab_point;
-                rb_joint.breakForce = 1000;
-                rb_joint.breakTorque = 1000;
 
                 rb_grabbed.useGravity = false;
+                rb_grabbed.linearVelocity = Vector3.zero;
+                rb_grabbed.angularVelocity = Vector3.zero;
+
+                rb_grabbed.transform.LookAt(grab_point.transform.parent.position);
             }
         }   
     }

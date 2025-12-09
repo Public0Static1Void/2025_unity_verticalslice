@@ -32,7 +32,7 @@ public class MarkManagerEditor : Editor
                 if (mark != null)
                 {
                     // Call your Init with your desired values
-                    mark.Init(SC_ElementManager.instance.GetElement((ElementTypes)index));
+                    //mark.Init(SC_ElementManager.instance.GetElement((ElementTypes)index));
                 }
             }
         }

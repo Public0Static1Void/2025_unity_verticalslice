@@ -34,6 +34,8 @@ public class Mark_Water : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
+            if (coll.name == name) continue;
+
             SC_LifeSystem lifeSystem = coll.GetComponent<SC_LifeSystem>();
             if (lifeSystem != null)
             {
@@ -66,7 +68,7 @@ public class Mark_Water : SC_Mark
             }
         }
 
-        Destroy(gameObject);
+        DesactivateMark();
     }
 }
 public class Mark_Electricity : SC_Mark
@@ -82,6 +84,8 @@ public class Mark_Electricity : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
+            if (coll.name == name) continue;
+
             SC_LifeSystem lifeSystem = coll.GetComponent<SC_LifeSystem>();
             if (lifeSystem != null)
             {
@@ -111,7 +115,7 @@ public class Mark_Electricity : SC_Mark
             }
         }
 
-        Destroy(gameObject);
+        DesactivateMark();
     }
 }
 public class Mark_Fire : SC_Mark
@@ -125,6 +129,8 @@ public class Mark_Fire : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
+            if (coll.name == name) continue;
+
             SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
             if (lf != null)
             {
@@ -142,7 +148,7 @@ public class Mark_Fire : SC_Mark
             Destroy(burnZone, 5);
         }
 
-        Destroy(gameObject);
+        DesactivateMark();
     }
 }
 public class Mark_Stone : SC_Mark
@@ -153,7 +159,7 @@ public class Mark_Stone : SC_Mark
     {
         Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
 
-        Destroy(gameObject);
+        DesactivateMark();
     }
 }
 public class Mark_Air : SC_Mark
@@ -167,11 +173,13 @@ public class Mark_Air : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
+            if (coll.name == name) continue;
+
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.linearVelocity = Vector3.zero;
-                rb.AddForce(transform.forward * element.strength * 150, ForceMode.Impulse);
+                rb.AddForce(transform.forward * GetElementStrenght() * 150, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
             if (life != null)
@@ -180,7 +188,7 @@ public class Mark_Air : SC_Mark
             }
         }
 
-        Destroy(gameObject);
+        DesactivateMark();
     }
 }
 public class Mark_Gravity : SC_Mark
@@ -196,6 +204,8 @@ public class Mark_Gravity : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
         {
+            if (coll.name == name) continue;
+
             // Pulls all nearby objects
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
@@ -214,7 +224,7 @@ public class Mark_Gravity : SC_Mark
             }
         }
 
-        Destroy(gameObject);
+        DesactivateMark();
     }
     private void OnDrawGizmos()
     {

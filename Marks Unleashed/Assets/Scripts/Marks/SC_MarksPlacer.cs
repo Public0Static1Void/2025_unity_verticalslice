@@ -64,7 +64,7 @@ public class SC_MarksPlacer : MonoBehaviour
         marks_canvas.SetActive(false);
         mark_placeholder.SetActive(false);
         mark_placeholder.GetComponentInChildren<Canvas>().sortingOrder = -2;
-        mark_placeholder_rb =  mark_placeholder.AddComponent<Rigidbody>();
+        mark_placeholder_rb =  mark_placeholder.GetComponent<Rigidbody>();
         mark_placeholder_rb.isKinematic = true;
 
         mark_placeholder_image = mark_placeholder.GetComponentInChildren<Image>();
