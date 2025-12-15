@@ -50,14 +50,7 @@ public class SC_Mark : MonoBehaviour
     }
     public void DesactivateMark()
     {
-        if (!regenerate)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            StartCoroutine(DesintegrateMark());
-        }
+        StartCoroutine(DesintegrateMark());
     }
     private void OnDestroy()
     {
@@ -93,6 +86,10 @@ public class SC_Mark : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             StartCoroutine(ReapearMark());
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
     private IEnumerator ReapearMark()

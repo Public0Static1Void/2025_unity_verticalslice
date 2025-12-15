@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(AudioSource))]
 public class SC_Button : MonoBehaviour
 {
     public float activation_mass = 5;
@@ -11,18 +12,51 @@ public class SC_Button : MonoBehaviour
 
     private GameObject activation_for = null;
 
+    private List<Material> light_emitter = new List<Material>();
+    public List<MeshRenderer> light_meshes = new List<MeshRenderer>();
+
+    private AudioSource audioSource;
+    public AudioClip clip_connected;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = clip_connected;
+        foreach (MeshRenderer m in light_meshes)
+        {
+            m.material.EnableKeyword("_EMISSION");
+            light_emitter.Add(m.material);
+        }
+    }
+
     public void ActivateMecanisms()
     {
+        audioSource.Play();
+
         for (int i = 0; i < attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Activate();
         }
+        foreach (Material mat in light_emitter)
+        {
+            Color emissionColor = Color.white * 5;
+
+            mat.SetColor("_EmissionColor", emissionColor);
+        }
     }
     public void DeactiavteMecanisms()
     {
+
         for (int i = 0; i < attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Deactivate();
+        }
+
+        foreach (Material mat in light_emitter)
+        {
+            Color emissionColor = Color.white * 0;
+
+            mat.SetColor("_EmissionColor", emissionColor);
         }
     }
 
