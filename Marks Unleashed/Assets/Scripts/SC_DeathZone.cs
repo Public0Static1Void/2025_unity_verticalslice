@@ -10,5 +10,9 @@ public class SC_DeathZone : MonoBehaviour
         {
             SceneManager.LoadScene(load_scene);
         }
+        else
+        {
+            Destroy(other.gameObject);
+        }
     }
 }

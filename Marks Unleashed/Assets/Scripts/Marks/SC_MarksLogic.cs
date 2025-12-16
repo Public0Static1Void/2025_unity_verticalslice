@@ -178,7 +178,7 @@ public class Mark_Air : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.linearVelocity = Vector3.zero;
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.forward * GetElementStrenght() * 150, ForceMode.Impulse);
             }
             SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();

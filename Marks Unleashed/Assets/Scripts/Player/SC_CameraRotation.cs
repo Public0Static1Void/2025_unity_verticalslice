@@ -1,5 +1,7 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class SC_CameraRotation : MonoBehaviour
 {
@@ -12,6 +14,8 @@ public class SC_CameraRotation : MonoBehaviour
 
     private Rigidbody rb;
 
+    public Slider slider_sensivity;
+    public TMP_Text txt_value_sensivity;
 
     private float max_turn_speed = 0;
 
@@ -24,6 +28,8 @@ public class SC_CameraRotation : MonoBehaviour
         max_turn_speed = turn_speed;
 
         rb = GetComponentInParent<Rigidbody>();
+
+       txt_value_sensivity.text = slider_sensivity.value.ToString();
     }
 
     void LateUpdate()
@@ -53,5 +59,14 @@ public class SC_CameraRotation : MonoBehaviour
     public void SetTurnSpeed(float porcentage)
     {
         turn_speed = max_turn_speed * porcentage;
+    }
+
+    public void SetSensitivity()
+    {
+        float new_sens = slider_sensivity.value;
+        turn_speed = new_sens;
+        parent_turn_speed = new_sens - (new_sens * 0.5f);
+
+        txt_value_sensivity.text = new_sens.ToString();
     }
 }

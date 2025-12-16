@@ -45,7 +45,7 @@ public class SC_PlayerInteract : MonoBehaviour
     {
         if (nearest_coll == null) return;
 
-        SC_Interactable interactable = nearest_coll.gameObject.GetComponent<SC_Interactable>();
+        IN_Interactable interactable = nearest_coll.gameObject.GetComponent<IN_Interactable>();
         if (interactable != null)
         {
             interactable.Activate();

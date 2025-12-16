@@ -2,11 +2,16 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TMPro;
+using System.Collections;
 
 
 public class SC_GameManager : MonoBehaviour
 {
+    public TMP_Text txt_announce = null;
     public static SC_GameManager instance {  get; private set; }
+
+    public bool mark_unlocked = false;
 
     void Awake()
     {
@@ -14,6 +19,8 @@ public class SC_GameManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
+
+        Application.targetFrameRate = 60;
     }
 
     /// <summary>
@@ -54,5 +61,36 @@ public class SC_GameManager : MonoBehaviour
         vector.z = Mathf.Clamp(vector.z, min_z, max_z);
 
         return vector;
+    }
+
+
+    public void ShowText(string text)
+    {
+        txt_announce.text = text;
+        StartCoroutine(ShowTextCoroutine(2));
+    }
+    private IEnumerator ShowTextCoroutine(float show_speed = 1)
+    {
+        Color col = txt_announce.color;
+        txt_announce.color = new Color(col.r, col.g, col.b, 0);
+
+        float alpha = 0;
+        while (alpha < 1)
+        {
+            alpha += Time.deltaTime * show_speed;
+
+            txt_announce.color = new Color(col.r, col.g, col.b, alpha);
+            yield return null;
+        }
+        yield return new WaitForSeconds(3);
+        while (alpha > 0)
+        {
+            alpha -= Time.deltaTime * show_speed;
+
+            txt_announce.color = new Color(col.r, col.g, col.b, alpha);
+            yield return null;
+        }
+
+        txt_announce.color = new Color(col.r, col.g, col.b, 0);
     }
 }

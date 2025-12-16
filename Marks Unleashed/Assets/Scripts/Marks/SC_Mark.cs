@@ -172,7 +172,7 @@ public class SC_Mark : MonoBehaviour
         if (rb_other != null)
         {
             Debug.Log(rb_other.linearVelocity.magnitude);
-            if (rb_other.linearVelocity.magnitude >= 2.5f)
+            if (rb_other.linearVelocity.magnitude >= 1.5f)
                 Activate();
         }
     }

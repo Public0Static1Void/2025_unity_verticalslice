@@ -29,6 +29,9 @@ public class SC_PlayerMovement : SC_ObjectMovement
         rb = GetComponent<Rigidbody>();
 
         max_speed = speed;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
