@@ -9,6 +9,7 @@ public class SC_Mark : MonoBehaviour
     public ElementTypes type = ElementTypes.NONE_LAST;
     public Element element;
     public GameObject particles;
+    public AudioClip clip_activation;
 
     public LayerMask layer_interactable = ~0;
 
@@ -28,11 +29,12 @@ public class SC_Mark : MonoBehaviour
         rb.isKinematic = true;
     }
 
-    public void Init(Element el, GameObject parts = null)
+    public void Init(Element el, GameObject parts = null, AudioClip clip = null)
     {
         element = el;
         type = el.el_type;
         particles = parts;
+        clip_activation = clip;
     }
     public void EnableCollision()
     {
@@ -46,6 +48,7 @@ public class SC_Mark : MonoBehaviour
     // Mark activation
     public virtual void Activate()
     {
+        SC_SoundManager.instance.InstantiateSound(clip_activation, transform.position);
         Debug.Log("Mark activated");
     }
     public void DesactivateMark()
@@ -54,7 +57,7 @@ public class SC_Mark : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (transform.parent != null)
+        if (transform.parent != null && gameObject != null)
         {
             Destroy(transform.parent.gameObject);
             SC_MarksPlacer.Instance.RemoveMarkFromPlaced(gameObject.name);

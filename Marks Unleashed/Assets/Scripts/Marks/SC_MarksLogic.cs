@@ -8,6 +8,7 @@ public class Mark_Water : SC_Mark
 
     public override void Activate()
     {
+        base.Activate();
         GameObject ob = Instantiate(particles, transform.position, transform.rotation);
         // Get the water puddle child
         Transform water_puddle = ob.transform.GetChild(3);
@@ -77,6 +78,7 @@ public class Mark_Electricity : SC_Mark
 
     public override void Activate()
     {
+        base.Activate();
         Destroy(Instantiate(particles, transform.position + transform.up * 2, transform.rotation), 5);
 
         LayerMask water_layer = 1 << LayerMask.NameToLayer("Water");
@@ -124,6 +126,7 @@ public class Mark_Fire : SC_Mark
 
     public override void Activate()
     {
+        base.Activate();
         Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
@@ -168,6 +171,7 @@ public class Mark_Air : SC_Mark
 
     public override void Activate()
     {
+        base.Activate();
         Destroy(Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward)), 5);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
@@ -176,7 +180,7 @@ public class Mark_Air : SC_Mark
             if (coll.name == name) continue;
 
             Rigidbody rb = coll.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (rb != null && !rb.isKinematic)
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.forward * GetElementStrenght() * 150, ForceMode.Impulse);
@@ -197,6 +201,7 @@ public class Mark_Gravity : SC_Mark
 
     public override void Activate()
     {
+        base.Activate();
         GameObject black_hole = Instantiate(particles, transform.position, transform.rotation);
         black_hole.transform.Rotate(new Vector3(20, 0, 0));
         Destroy(black_hole, 5);

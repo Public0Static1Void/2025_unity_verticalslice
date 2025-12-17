@@ -1,0 +1,29 @@
+using UnityEngine;
+
+public class SC_PlayerAnimations : MonoBehaviour
+{
+    private SC_PlayerMovement player_move = null;
+    private SC_Grab player_grab = null;
+    private SC_MarksPlacer player_marks = null;
+
+    private Animator anim;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        anim = GetComponentInChildren<Animator>();
+
+        player_move = GetComponent<SC_PlayerMovement>();
+        player_grab = GetComponent<SC_Grab>();
+        player_marks = SC_MarksPlacer.Instance;
+    }
+
+    void Update()
+    {
+        anim.SetBool("walk", player_move.moving && player_move.grounded);
+        anim.SetBool("jump", !player_move.grounded);
+        anim.SetBool("grab", player_grab.grabbing);
+        anim.SetBool("pull", player_grab.launching);
+        anim.SetBool("open_marks", player_marks.placing_mark);
+        anim.SetBool("activate_mark", player_marks.activate_mark);
+    }
+}

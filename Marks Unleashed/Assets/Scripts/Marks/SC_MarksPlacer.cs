@@ -14,6 +14,8 @@ public class SC_MarksPlacer : MonoBehaviour
     public Transform player;
     public LayerMask layer_placeable;
 
+    public Transform element_hands_parent;
+
     private Rigidbody mark_placeholder_rb;
     private SC_CameraRotation cameraRotation;
 
@@ -34,6 +36,9 @@ public class SC_MarksPlacer : MonoBehaviour
 
     private bool open_menu = false;
 
+    [Header("Sounds")]
+    public AudioClip clip_place_mark;
+
     [Header("Stats")]
     public float range_placing = 10;
     public int max_marks = 3;
@@ -45,7 +50,8 @@ public class SC_MarksPlacer : MonoBehaviour
 
     private int current_mark = 0;
 
-    private bool placing_mark = false;
+    public bool placing_mark = false;
+    public bool activate_mark = false;
 
     private void Awake()
     {
@@ -122,7 +128,8 @@ public class SC_MarksPlacer : MonoBehaviour
         // Load the element hands
         for (int i = 0; i < marks_list.Count; i++)
         {
-            element_hands.Add(transform.GetChild(2).GetChild(i).gameObject);
+            if (element_hands_parent.GetChild(i) != null)
+                element_hands.Add(element_hands_parent.GetChild(i).gameObject);
         }
     }
 
@@ -139,7 +146,7 @@ public class SC_MarksPlacer : MonoBehaviour
         if (placing_mark)
         {
             Vector3 new_pos;
-            if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing))
+            if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
             {
                 new_pos = hit.point;
                 mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
@@ -204,6 +211,9 @@ public class SC_MarksPlacer : MonoBehaviour
     private void ActivateMark()
     {
         if (placed_marks.Count <= 0) return;
+
+        StartCoroutine(ActivateMarkAnimation());
+
         int activate_index = 0;
         if (placed_marks[0] == null)
         {
@@ -227,6 +237,13 @@ public class SC_MarksPlacer : MonoBehaviour
         placed_marks.RemoveAt(0);
 
         UpdateActivateMarksUI();
+    }
+
+    private IEnumerator ActivateMarkAnimation()
+    {
+        activate_mark = true;
+        yield return new WaitForSeconds(0.1f);
+        activate_mark = false;
     }
 
     private void PlaceMark(int index, Transform hit_transform, Vector3 position, Quaternion rotation)
@@ -262,14 +279,16 @@ public class SC_MarksPlacer : MonoBehaviour
         im.sprite = mark_info.element.im_mark_sprite;
         im.rectTransform.anchoredPosition = Vector2.zero;
         im.rectTransform.sizeDelta = Vector2.one * 0.5f;
-        /// Adds the mark element component
+
+        // Adds the mark element component
         inst.AddComponent(mark_info.GetType());
 
         SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
         mark.particles = mark_info.particles;
         mark.element = mark_info.element;
-        mark.EnableCollision();
+        mark.clip_activation = mark_info.clip_activation;
 
+        SC_SoundManager.instance.InstantiateSound(clip_place_mark, position);
 
         placed_marks.Add(mark);
 
@@ -284,7 +303,7 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         if (!open_menu || !placing_mark || unlocked_marks.Count <= 0) return;
 
-        if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable))
+        if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
         {
             OpenMarkSelectionMenu();
             PlaceMark((int)unlocked_marks[current_mark], hit.transform, hit.point + (hit.normal * 0.1f), Quaternion.LookRotation(hit.normal));

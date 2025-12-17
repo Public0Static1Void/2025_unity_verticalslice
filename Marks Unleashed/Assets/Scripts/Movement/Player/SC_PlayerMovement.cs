@@ -16,12 +16,21 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public float ground_offset = 0.25f;
 
     [Header("Air")]
+    public AudioClip clip_air, clip_ground_hit;
     // Jump
     public bool jumping = false;
     [Range(0, 1)]
     public float air_control = 0.5f;
 
     private Vector2 input;
+
+    public bool moving = false;
+
+    public AudioSource audio_effects;
+
+
+    private bool big_collision = false;
+
 
     private void Start()
     {
@@ -37,6 +46,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private void Update()
     {
         grounded = Physics.Raycast(transform.position, Vector3.down, transform.localScale.y + ground_offset);
+
+        if (grounded && rb.linearVelocity.y < -6)
+            big_collision = true;
+        else
+            big_collision = false;
     }
 
     private void FixedUpdate()
@@ -73,6 +87,32 @@ public class SC_PlayerMovement : SC_ObjectMovement
         vel = ConstrainVelocity(vel);
 
         rb.linearVelocity = vel;
+
+        if (!grounded)
+        {
+            if (!audio_effects.isPlaying)
+            {
+                audio_effects.clip = clip_air;
+                audio_effects.loop = true;
+                audio_effects.Play();
+            }
+
+            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y + 0.15f), 4);
+        }
+        else if (grounded)
+        {
+            if (audio_effects.clip == clip_air && audio_effects.isPlaying)
+            {
+                audio_effects.Stop();
+                if (big_collision)
+                {
+                    audio_effects.clip = clip_ground_hit;
+                    audio_effects.loop = false;
+                    audio_effects.Play();
+                }
+                // Audio hit 
+            }
+        }
     }
 
 
@@ -127,9 +167,15 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public void PlayerMove(InputAction.CallbackContext con)
     {
         if (con.performed)
+        {
             input = con.ReadValue<Vector2>();
+            moving = true;
+        }
         else if (con.canceled)
+        {
             input = Vector2.zero;
+            moving = false;
+        }
     }
 
     public void PlayerJump(InputAction.CallbackContext con)

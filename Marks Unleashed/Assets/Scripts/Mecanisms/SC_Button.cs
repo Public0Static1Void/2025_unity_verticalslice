@@ -8,6 +8,7 @@ public class SC_Button : MonoBehaviour
 {
 
     public List<SC_Interactable> attached_mecanisms = new List<SC_Interactable>();
+    public List<SC_Interactable> attached_mecanisms_inverse = new List<SC_Interactable>();
 
     private List<Material> light_emitter = new List<Material>();
     public List<MeshRenderer> light_meshes = new List<MeshRenderer>();
@@ -21,6 +22,7 @@ public class SC_Button : MonoBehaviour
         audioSource.clip = clip_connected;
         foreach (MeshRenderer m in light_meshes)
         {
+            if (m == null) continue;
             m.material.EnableKeyword("_EMISSION");
             light_emitter.Add(m.material);
         }
@@ -50,6 +52,8 @@ public class SC_Button : MonoBehaviour
         for (int i = 0; i <  attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Activate();
+            if (i < attached_mecanisms_inverse.Count)
+                attached_mecanisms_inverse[i].Deactivate();
         }
 
         SetMatsLight(Color.white, 5);
@@ -61,6 +65,8 @@ public class SC_Button : MonoBehaviour
         for (int i = 0; i < attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Deactivate();
+            if (i < attached_mecanisms_inverse.Count)
+                attached_mecanisms_inverse[i].Activate();
         }
 
         SetMatsLight(Color.white, 0);

@@ -17,7 +17,7 @@ public class SC_Grab : MonoBehaviour
 
     private Rigidbody rb_player;
 
-    private bool launching = false;
+    public bool launching = false;
     public float launch_timer = 0;
 
     public bool grabbing = false;
@@ -53,12 +53,12 @@ public class SC_Grab : MonoBehaviour
     {
         if (rb_grabbed != null) return;
 
-        grabbing = true;
-
         if (Physics.SphereCast(transform.position, 0.5f, Camera.main.transform.forward, out RaycastHit hit, grab_distance, grab_layer))
         {
             if (hit.rigidbody != null)
             {
+                grabbing = true;
+
                 rb_grabbed = hit.rigidbody;
 
                 rb_grabbed.useGravity = false;
@@ -72,9 +72,9 @@ public class SC_Grab : MonoBehaviour
 
     private void ReleaseObject(Vector3 release_speed)
     {
-        if (rb_grabbed == null) return;
-
         grabbing = false;
+
+        if (rb_grabbed == null) return;
 
         // Deattach the fixed object
         if (rb_joint != null)
@@ -111,8 +111,8 @@ public class SC_Grab : MonoBehaviour
 
             if (launch_timer >= 1)
             {
-                launch_timer *= 5;
-                if (launch_timer >= 10) launch_timer = 10; /// Limit the launch speed
+                launch_timer *= 10;
+                if (launch_timer >= 20) launch_timer = 20; /// Limit the launch speed
 
                 ReleaseObject(((rb_player.linearVelocity * 0.25f) + Camera.main.transform.forward) * launch_timer);
             }

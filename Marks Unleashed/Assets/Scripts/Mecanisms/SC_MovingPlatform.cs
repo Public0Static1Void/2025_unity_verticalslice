@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SC_MovingPlatform : SC_Interactable
 {
+    public bool start_active = false;
     public bool move = false, rotate = true;
     private Vector3 pos_start;
     public Vector3 pos_end;
@@ -18,6 +19,9 @@ public class SC_MovingPlatform : SC_Interactable
     {
         pos_start = transform.position;
         rot_start = transform.rotation;
+
+        if (start_active)
+            Activate();
     }
     public override void Activate()
     {
