@@ -17,6 +17,8 @@ public class SC_MarksPlacer : MonoBehaviour
     private Rigidbody mark_placeholder_rb;
     private SC_CameraRotation cameraRotation;
 
+    private SC_Grab script_grab = null;
+
     // Marks activation order UI
     public Transform ui_order_parent;
     private Image[] im_activation_order;
@@ -74,6 +76,9 @@ public class SC_MarksPlacer : MonoBehaviour
 
         // Get the camera script
         cameraRotation = GetComponentInChildren<SC_CameraRotation>();
+
+        // Get the grab script
+        script_grab = GetComponent<SC_Grab>();
     }
 
     private IEnumerator InitMarksUI()
@@ -405,7 +410,7 @@ public class SC_MarksPlacer : MonoBehaviour
     }
     public void ActivateMark(InputAction.CallbackContext con)
     {
-        if (con.performed)
+        if (con.performed && !script_grab.grabbing) // Can't activate the marks while grabbing an object
         {
             ActivateMark();
         }

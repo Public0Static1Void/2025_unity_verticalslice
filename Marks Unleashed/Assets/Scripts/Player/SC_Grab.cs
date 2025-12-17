@@ -20,6 +20,8 @@ public class SC_Grab : MonoBehaviour
     private bool launching = false;
     public float launch_timer = 0;
 
+    public bool grabbing = false;
+
     private void Start()
     {
         rb_player = GetComponent<Rigidbody>();
@@ -37,20 +39,21 @@ public class SC_Grab : MonoBehaviour
     {
         if (rb_grabbed != null)
         {
-            Vector3 dir = (grab_point.transform.position - rb_grabbed.transform.position);
+            Vector3 dir = (
+                (grab_point.transform.position - Camera.main.transform.forward * (Mathf.Min(launch_timer, 1)))
+                - rb_grabbed.transform.position);
             Vector3 vel = dir * grabbed_speed - rb_grabbed.linearVelocity * grabbed_damping;
 
             rb_grabbed.AddForce(vel, ForceMode.Force);
             rb_grabbed.MoveRotation(Quaternion.LookRotation(-transform.forward));
-
-
-            //rb_grabbed.linearVelocity = SC_GameManager.LimitVector(rb_grabbed.linearVelocity, 5, -5, 5, -5, 5, -5);
         }
     }
 
     private void GrabObject()
     {
         if (rb_grabbed != null) return;
+
+        grabbing = true;
 
         if (Physics.SphereCast(transform.position, 0.5f, Camera.main.transform.forward, out RaycastHit hit, grab_distance, grab_layer))
         {
@@ -70,6 +73,8 @@ public class SC_Grab : MonoBehaviour
     private void ReleaseObject(Vector3 release_speed)
     {
         if (rb_grabbed == null) return;
+
+        grabbing = false;
 
         // Deattach the fixed object
         if (rb_joint != null)
@@ -107,7 +112,7 @@ public class SC_Grab : MonoBehaviour
             if (launch_timer >= 1)
             {
                 launch_timer *= 5;
-                if (launch_timer >= 7) launch_timer = 7; /// Limit the launch speed
+                if (launch_timer >= 10) launch_timer = 10; /// Limit the launch speed
 
                 ReleaseObject(((rb_player.linearVelocity * 0.25f) + Camera.main.transform.forward) * launch_timer);
             }
