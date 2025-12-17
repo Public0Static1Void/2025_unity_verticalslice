@@ -15,6 +15,9 @@ public class SC_MovingPlatform : SC_Interactable
 
     private MeshRenderer mesh = null;
 
+    public float delay = 0;
+
+
     private void Start()
     {
         pos_start = transform.position;
@@ -25,23 +28,34 @@ public class SC_MovingPlatform : SC_Interactable
     }
     public override void Activate()
     {
-        if (active)
-        {
-            StopCoroutine(MoveRoutine());
-            StartCoroutine(ReturnRoutine());
-            return;
-        }
-        StartCoroutine(MoveRoutine());
+        StartCoroutine(DelayCoroutine(true));
     }
     public override void Deactivate()
     {
-        if (active)
+        StartCoroutine(DelayCoroutine(false));
+    }
+
+    private IEnumerator DelayCoroutine(bool act)
+    {
+        yield return new WaitForSeconds(delay);
+        if (act)
         {
-            StopCoroutine(ReturnRoutine());
+            if (active)
+            {
+                StopCoroutine(MoveRoutine());
+                StartCoroutine(ReturnRoutine());
+            }
             StartCoroutine(MoveRoutine());
-            return;
         }
-        StartCoroutine(ReturnRoutine());
+        else
+        {
+            if (active)
+            {
+                StopCoroutine(ReturnRoutine());
+                StartCoroutine(MoveRoutine());
+            }
+            StartCoroutine(ReturnRoutine());
+        }
     }
 
     private IEnumerator MoveRoutine()
@@ -62,7 +76,7 @@ public class SC_MovingPlatform : SC_Interactable
             float t = Mathf.SmoothStep(0f, 1f, time);
 
             if (move)
-                transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+                transform.position = Vector3.Lerp(startPos, endPos, t);
 
             if (rotate)
                 transform.rotation = Quaternion.Lerp(startRot, endRot, t);

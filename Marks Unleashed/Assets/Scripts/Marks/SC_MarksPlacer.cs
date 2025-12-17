@@ -1,9 +1,9 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using System.Collections;
-using UnityEngine.Assertions.Must;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
@@ -26,6 +26,10 @@ public class SC_MarksPlacer : MonoBehaviour
     private Image[] im_activation_order;
 
     private List<GameObject> element_hands = new List<GameObject>();
+
+    // World UI
+    public GameObject arrow_gameObject;
+    private Transform transform_arrow;
 
     // Marks selection
     public GameObject marks_canvas;
@@ -85,6 +89,10 @@ public class SC_MarksPlacer : MonoBehaviour
 
         // Get the grab script
         script_grab = GetComponent<SC_Grab>();
+
+        transform_arrow = Instantiate(arrow_gameObject).transform;
+        transform_arrow.localScale = Vector3.one * 0.01f;
+        transform_arrow.gameObject.SetActive(false);
     }
 
     private IEnumerator InitMarksUI()
@@ -162,12 +170,21 @@ public class SC_MarksPlacer : MonoBehaviour
             mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, new_pos, Time.deltaTime * 30);
 
         }
+        // Make the activatios order arrow look to the player
+        if (placed_marks.Count > 0)
+        {
+            transform_arrow.LookAt(transform);
+        }
     }
 
     public void UnlockMark(ElementTypes type)
     {
         unlocked_marks.Add(marks[(int)type].element.el_type);
         marks_list_images[(int)type].gameObject.SetActive(true);
+    }
+    public List<ElementTypes> GetUnlockedMarks()
+    {
+        return unlocked_marks;
     }
 
     public void RemoveMarkFromPlaced(string mark_name)
@@ -236,6 +253,8 @@ public class SC_MarksPlacer : MonoBehaviour
         placed_marks[activate_index].GetComponent<SC_Mark>().Activate();
         placed_marks.RemoveAt(0);
 
+        SetArrowPos();
+
         UpdateActivateMarksUI();
     }
 
@@ -244,6 +263,18 @@ public class SC_MarksPlacer : MonoBehaviour
         activate_mark = true;
         yield return new WaitForSeconds(0.1f);
         activate_mark = false;
+    }
+
+    private void SetArrowPos()
+    {
+        if (placed_marks.Count <= 0)
+        {
+            transform_arrow.gameObject.SetActive(false);
+            return;
+        }
+        // Set the arrow position
+        transform_arrow.position = placed_marks[0].transform.position + placed_marks[0].transform.forward * 1.15f;
+        transform_arrow.gameObject.SetActive(true);
     }
 
     private void PlaceMark(int index, Transform hit_transform, Vector3 position, Quaternion rotation)
@@ -273,7 +304,7 @@ public class SC_MarksPlacer : MonoBehaviour
         inst.transform.position = position;
         inst.transform.rotation = rotation;
 
-        Image im = inst.AddComponent<Image>();
+        UnityEngine.UI.Image im = inst.AddComponent<UnityEngine.UI.Image>();
         im.transform.SetParent(canvas.transform);
 
         im.sprite = mark_info.element.im_mark_sprite;
@@ -292,7 +323,11 @@ public class SC_MarksPlacer : MonoBehaviour
 
         placed_marks.Add(mark);
 
+        // Set the arrow position
+        SetArrowPos();
+
         UpdateActivateMarksUI();
+
 
         placing_mark = false;
     }
@@ -305,8 +340,12 @@ public class SC_MarksPlacer : MonoBehaviour
 
         if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
         {
+            Vector3 position = hit.point + (hit.normal * 0.1f);
+
             OpenMarkSelectionMenu();
-            PlaceMark((int)unlocked_marks[current_mark], hit.transform, hit.point + (hit.normal * 0.1f), Quaternion.LookRotation(hit.normal));
+            PlaceMark((int)unlocked_marks[current_mark], hit.transform, position, Quaternion.LookRotation(hit.normal));
+
+            
         }
     }
 

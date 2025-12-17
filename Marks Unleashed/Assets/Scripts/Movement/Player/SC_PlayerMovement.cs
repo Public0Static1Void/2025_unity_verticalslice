@@ -97,7 +97,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 audio_effects.Play();
             }
 
-            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y + 0.15f), 4);
+            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y + 0.25f), 4);
         }
         else if (grounded)
         {

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Unity.Mathematics;
 
 
 public class SC_GameManager : MonoBehaviour
@@ -13,14 +16,66 @@ public class SC_GameManager : MonoBehaviour
 
     public bool mark_unlocked = false;
 
+    [Header("References")]
+    public Image ob_loading_screen = null;
+    public Image im_loading_bar = null;
+    public Canvas main_canvas;
+
+    private List<ElementTypes> unlocked_elements = new List<ElementTypes>();
+
     void Awake()
     {
-        if (instance == null)
+        if (instance != null)
+        {
+            unlocked_elements = new List<ElementTypes>(instance.unlocked_elements);
+            Destroy(instance.gameObject);
             instance = this;
+        }
         else
-            Destroy(gameObject);
+        {
+            instance = this;    
+        }
+
+        transform.parent = null;
+        DontDestroyOnLoad(gameObject);
 
         Application.targetFrameRate = 60;
+
+        Time.timeScale = 0;
+
+
+        StartCoroutine(FadeOut());
+    }
+
+    private void Start()
+    {
+        // Get your unlocked marks
+        for (int i = 0; i <  unlocked_elements.Count; i++)
+        {
+            SC_MarksPlacer.Instance.UnlockMark(unlocked_elements[i]);
+        }
+    }
+
+    private IEnumerator FadeOut()
+    {
+        SetLoadingAlpha(1);
+        ob_loading_screen.gameObject.SetActive(true);
+
+        float alpha = 1;
+        while (alpha > 0)
+        {
+            alpha -= Time.unscaledDeltaTime;
+            SetLoadingAlpha(alpha);
+            yield return null;
+        }
+        SetLoadingAlpha(0);
+        ob_loading_screen.gameObject.SetActive(false);
+
+        Time.timeScale = 1;
+
+        ob_loading_screen.gameObject.SetActive(false);
+
+        Start();
     }
 
     /// <summary>
@@ -38,7 +93,6 @@ public class SC_GameManager : MonoBehaviour
     {
         return (layer.value & (1 << obj.layer)) != 0;
     }
-
     /// <summary>
     /// Returns all the components of type T attached on the parent children
     /// </summary>
@@ -92,5 +146,57 @@ public class SC_GameManager : MonoBehaviour
         }
 
         txt_announce.color = new Color(col.r, col.g, col.b, 0);
+    }
+
+
+
+    public void LoadSceneAsync(string sceneName)
+    {
+        unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
+        StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
+    }
+    private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
+    {
+        Time.timeScale = 0;
+
+        ob_loading_screen.gameObject.SetActive(true);
+
+        float alpha = 0;
+
+        // Fade in
+        while (alpha < 1)
+        {
+            alpha += Time.unscaledDeltaTime;
+            SetLoadingAlpha(alpha);
+
+            im_loading_bar.fillAmount = alpha;
+
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(UnityEngine.Random.Range(0.75f, 1.5f));
+
+        Time.timeScale = 1;
+
+        SceneManager.LoadScene(sceneName);
+    }
+
+    void SetLoadingAlpha(float a)
+    {
+        Color col = ob_loading_screen.color;
+        ob_loading_screen.color = new Color(col.r, col.g, col.b, a);
+
+        foreach (var img in GetChildsComponents<Image>(ob_loading_screen.transform))
+        {
+            if (img != null)
+                img.color = new Color(img.color.r, img.color.g, img.color.b, a);
+        }
+
+        foreach (var txt in GetChildsComponents<TMP_Text>(ob_loading_screen.transform))
+        {
+            if (txt != null)
+            {
+                txt.color = new Color(txt.color.r, txt.color.g, txt.color.b, a);
+            }
+        }
     }
 }

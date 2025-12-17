@@ -46,5 +46,7 @@ public class SC_ObjectMovement : MonoBehaviour
         speed *= percentage;
         yield return new WaitForSeconds(seconds);
         speed = max_speed;
+        yield return new WaitForSeconds(3);
+        if (speed < max_speed) speed = max_speed;
     }
 }
