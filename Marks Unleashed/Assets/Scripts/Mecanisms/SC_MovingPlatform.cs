@@ -92,7 +92,7 @@ public class SC_MovingPlatform : SC_Interactable
 
         while (time < 1f)
         {
-            time += Time.deltaTime;
+            time += Time.deltaTime * 0.75f;
             float t = Mathf.SmoothStep(0f, 1f, time);
 
             if (move)
@@ -125,7 +125,7 @@ public class SC_MovingPlatform : SC_Interactable
 
         while (time < 1f)
         {
-            time += Time.deltaTime;
+            time += Time.deltaTime * 0.75f;
 
             if (move)
                 transform.position = Vector3.Lerp(startPos, endPos, time);
