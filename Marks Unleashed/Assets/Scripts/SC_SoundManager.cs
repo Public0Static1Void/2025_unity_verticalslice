@@ -25,6 +25,8 @@ public class SC_SoundManager : MonoBehaviour
         GameObject new_ob = new GameObject("AudioSource");
         AudioSource audio_as = new_ob.AddComponent<AudioSource>();
 
+        audio_as.maxDistance = 25;
+
         audio_as.clip = clip;
         audio_as.outputAudioMixerGroup = main_mixer;
 

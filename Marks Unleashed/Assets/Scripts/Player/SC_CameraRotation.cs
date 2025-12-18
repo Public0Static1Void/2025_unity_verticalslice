@@ -50,7 +50,7 @@ public class SC_CameraRotation : MonoBehaviour
 
     public void CameraTurn(InputAction.CallbackContext con)
     {
-        input = con.ReadValue<Vector2>().normalized;
+        input = con.ReadValue<Vector2>();
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class SC_CameraRotation : MonoBehaviour
     {
         float new_sens = slider_sensivity.value;
         turn_speed = new_sens;
-        parent_turn_speed = new_sens - (new_sens * 0.5f);
+        parent_turn_speed = Mathf.Max(new_sens - (new_sens * 0.5f), 10);
 
         txt_value_sensivity.text = new_sens.ToString();
     }

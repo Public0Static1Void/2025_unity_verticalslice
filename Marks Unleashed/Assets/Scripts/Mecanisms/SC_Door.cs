@@ -11,6 +11,9 @@ public class SC_Door : SC_Interactable
     private AudioSource audioSource;
     public AudioClip clip_open;
 
+    private int max_connections = 0;
+    public int required_connections = 1;
+
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -18,9 +21,14 @@ public class SC_Door : SC_Interactable
         anim = GetComponent<Animator>();
         meshRenderer = GetComponent<MeshRenderer>();
         coll = GetComponent<Collider>();
+
+        max_connections = required_connections;
     }
     public override void Activate()
     {
+        required_connections--;
+        if (required_connections > 0) return;
+
         Debug.Log("True");
         coll.enabled = false;
 
@@ -30,6 +38,9 @@ public class SC_Door : SC_Interactable
     }
     public override void Deactivate()
     {
+        required_connections++;
+        if (required_connections > max_connections) required_connections = max_connections;
+
         Debug.Log("False");
         coll.enabled = true;
 

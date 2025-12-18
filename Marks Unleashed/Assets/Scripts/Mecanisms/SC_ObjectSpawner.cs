@@ -29,16 +29,24 @@ public class SC_ObjectSpawner : MonoBehaviour
                 can_spawn = false;
             }
             timer = 0;
-            GameObject instancied = Instantiate(spawn_object, spawn_point.position, transform.rotation);
-            Rigidbody rb = instancied.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.AddForce(transform.up * spawn_force, ForceMode.Impulse);
-            }
 
-            instancied.GetComponent<SC_Cube>().parent_spawner = this; // Assign this parent spawner
-
-            spawned++;
+            SpawnObject();
         }
+    }
+
+    public void SpawnObject()
+    {
+        if (spawned >= spawned_max) return;
+
+        GameObject instancied = Instantiate(spawn_object, spawn_point.position, transform.rotation);
+        Rigidbody rb = instancied.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.AddForce(transform.up * spawn_force, ForceMode.Impulse);
+        }
+
+        instancied.GetComponent<SC_Cube>().parent_spawner = this; // Assign this parent spawner
+
+        spawned++;
     }
 }

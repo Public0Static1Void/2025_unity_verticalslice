@@ -17,6 +17,8 @@ public class SC_MovingPlatform : SC_Interactable
 
     public float delay = 0;
 
+    public UnityEngine.UI.Image im_timer;
+
 
     private void Start()
     {
@@ -35,9 +37,27 @@ public class SC_MovingPlatform : SC_Interactable
         StartCoroutine(DelayCoroutine(false));
     }
 
+    private IEnumerator TimerRoutine(float d)
+    {
+        if (im_timer != null)
+        {
+            im_timer.gameObject.SetActive(true);
+            float t = 0;
+            while (t < d)
+            {
+                t += Time.deltaTime;
+                im_timer.fillAmount = t / d;
+                yield return null;
+            }
+            im_timer.fillAmount = 1;
+            im_timer.gameObject.SetActive(false);
+        }
+    }
+
     private IEnumerator DelayCoroutine(bool act)
     {
-        yield return new WaitForSeconds(delay);
+        StartCoroutine(TimerRoutine(act ? delay : delay * 2));
+        yield return new WaitForSeconds(act ? delay : delay * 2);
         if (act)
         {
             if (active)

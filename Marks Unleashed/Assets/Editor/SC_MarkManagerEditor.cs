@@ -8,55 +8,56 @@ using System.Reflection;
 [CustomEditor(typeof(MarkManager))]
 public class MarkManagerEditor : Editor
 {
+    private static Type[] cachedMarkTypes;
+
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
+        if (target == null || serializedObject == null)
+            return;
+
+        try
+        {
+            base.OnInspectorGUI();
+        }
+        catch
+        {
+            return;
+        }
+
         GUILayout.Space(10);
 
-        var manager = (MarkManager)target;
+        var manager = target as MarkManager;
         if (manager == null)
             return;
 
-        var baseType = typeof(SC_Mark);
-        var assembly = Assembly.GetAssembly(baseType);
-
-        if (assembly == null)
+        if (cachedMarkTypes == null)
         {
-            EditorGUILayout.HelpBox("SC_Mark assembly not found.", MessageType.Error);
-            return;
+            var baseType = typeof(SC_Mark);
+            var assembly = Assembly.GetAssembly(baseType);
+
+            try
+            {
+                cachedMarkTypes = assembly.GetTypes()
+                    .Where(t =>
+                        t != null &&
+                        t.IsSubclassOf(baseType) &&
+                        !t.IsAbstract &&
+                        typeof(MonoBehaviour).IsAssignableFrom(t) &&
+                        !t.Assembly.FullName.Contains("Editor")
+                    ).ToArray();
+            }
+            catch
+            {
+                cachedMarkTypes = Array.Empty<Type>();
+            }
         }
 
-        Type[] types;
-        try
+        foreach (var type in cachedMarkTypes)
         {
-            types = assembly.GetTypes();
-        }
-        catch (ReflectionTypeLoadException e)
-        {
-            types = e.Types.Where(t => t != null).ToArray();
-        }
-
-        foreach (var type in types)
-        {
-            if (type == null)
-                continue;
-
-            if (!type.IsSubclassOf(baseType))
-                continue;
-
-            if (type.IsAbstract)
-                continue;
-
-            if (!typeof(MonoBehaviour).IsAssignableFrom(type))
-                continue;
-
-            // Prevent editor-only scripts
-            if (type.Assembly.FullName.Contains("Editor"))
-                continue;
-
             if (GUILayout.Button("Add " + type.Name))
             {
-                Undo.AddComponent(manager.gameObject, type);
+                Undo.RecordObject(manager.gameObject, "Add Mark Component");
+                manager.gameObject.AddComponent(type);
                 EditorUtility.SetDirty(manager.gameObject);
             }
         }

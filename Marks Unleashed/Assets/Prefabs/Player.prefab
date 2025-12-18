@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d38f9e002f7c604e94ccd2d871a5d6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turn_speed: 400
+  turn_speed: 10
   parent_turn_speed: 25
   parent: {fileID: 8976910792773025556}
   input: {x: 0, y: 0}
@@ -15916,6 +15916,7 @@ MonoBehaviour:
   ground_offset: 0.2
   clip_air: {fileID: 8300000, guid: 463cbd631bb5e054fbbeb0fe5a6bc199, type: 3}
   clip_ground_hit: {fileID: 8300000, guid: bef328481e3152b459a8910718e605ec, type: 3}
+  clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
   jumping: 0
   air_control: 0.15
   moving: 0

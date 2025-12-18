@@ -15,6 +15,7 @@ public class SC_Button_Hold : SC_Button
     private bool can_activate = true;
 
     public float detection_range = 1;
+    public float offset = 0.65f;
 
     private void Update()
     {
@@ -26,6 +27,11 @@ public class SC_Button_Hold : SC_Button
                 activate_timer = 0;
                 can_activate = true;
             }
+        }
+
+        if (activation_for != null && activation_for.name != "Player")
+        {
+            activation_for.transform.position = Vector3.Lerp(activation_for.transform.position, transform.position + transform.up, Time.deltaTime * offset);
         }
     }
 
@@ -92,5 +98,6 @@ public class SC_Button_Hold : SC_Button
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, detection_range);
+        Gizmos.DrawWireSphere(transform.position + transform.up * offset, 0.5f);
     }
 }

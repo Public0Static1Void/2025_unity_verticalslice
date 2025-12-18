@@ -16,11 +16,12 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public float ground_offset = 0.25f;
 
     [Header("Air")]
-    public AudioClip clip_air, clip_ground_hit;
+    public AudioClip clip_air, clip_ground_hit, clip_jump;
     // Jump
     public bool jumping = false;
     [Range(0, 1)]
     public float air_control = 0.5f;
+    private float distance_from_ground = 0;
 
     private Vector2 input;
 
@@ -45,7 +46,9 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, transform.localScale.y + ground_offset);
+        grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, transform.localScale.y + ground_offset);
+
+        distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 
         if (grounded && rb.linearVelocity.y < -6)
             big_collision = true;
@@ -88,7 +91,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         rb.linearVelocity = vel;
 
-        if (!grounded)
+        Debug.Log(distance_from_ground);
+        if (!grounded && distance_from_ground >= 1.2f)
         {
             if (!audio_effects.isPlaying)
             {
@@ -97,7 +101,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 audio_effects.Play();
             }
 
-            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y + 0.25f), 4);
+            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y * 0.075f), 1);
         }
         else if (grounded)
         {
@@ -122,6 +126,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
         if (grounded && can_move)
         {
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            SC_SoundManager.instance.InstantiateSound(clip_jump, transform.position);
             jumping = true;
         }
     }
