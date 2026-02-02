@@ -8,7 +8,7 @@ using UnityEngine.Timeline;
 using UnityEngine.UIElements;
 
 
-public struct Entry
+public struct Entry : IComparable<Entry>
 {
     public int particleIndex;
     public uint cellKey;
@@ -17,6 +17,11 @@ public struct Entry
     {
         this.particleIndex = particleIndex;
         this.cellKey = cellKey;
+    }
+
+    public int CompareTo(Entry other)
+    {
+        return cellKey.CompareTo(other.cellKey);
     }
 }
 
@@ -407,7 +412,7 @@ public class SC_WaterSimulation : MonoBehaviour
 
             float other_density = densities[j];
             float other_pressure = ConvertDensityToPressure(other_density);
-
+            
             Vector3 gradient = SpikyKernelGradient(offset, dist);
             pressureForce += -mass * (part_pressure + other_pressure) / (2 * other_density) * gradient;
             //pressureForce += gradient;

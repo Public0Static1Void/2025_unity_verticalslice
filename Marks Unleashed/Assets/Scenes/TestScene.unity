@@ -135,7 +135,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &17051157
 Transform:
   m_ObjectHideFlags: 0
@@ -181,6 +181,76 @@ MonoBehaviour:
   boundsSize: {x: 5, y: 6, z: 1}
   randomizeStartPos: 1
   densities: []
+--- !u!1 &337352876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 337352878}
+  - component: {fileID: 337352879}
+  m_Layer: 0
+  m_Name: Water simulation (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &337352878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337352876}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &337352879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337352876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4797b08b17882724d819cc8061d4fded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleMesh: {fileID: 2540817853737639666, guid: d32128f4d00c56a439b000ff4dec2624, type: 3}
+  particleMaterial: {fileID: 2100000, guid: 4b8b03af87b05f44d94fdbd29b41e382, type: 2}
+  randomizeStartPos: 1
+  particleAmount: 1000
+  gravity: 3
+  boxSize: {x: 10, y: 9, z: 10}
+  radius: 0
+  targetDensity: 10
+  recommendedDensity: 10
+  pressureMultiplier: 15
+  nearPressureMultiplier: 0.4
+  subSteps: 1
+  particleSize: 5
+  collisionDamping: 0.25
+  velocityDamping: 0.99
+  viscorityStrength: 0.1
+  smoothingRadius: 0.5
+  mass: 1
+  _densities: []
+  show_density: 1
+  col_low_speed: {r: 0, g: 1, b: 1, a: 1}
+  col_max_speed: {r: 1, g: 0, b: 0, a: 1}
+  max_speed: 2
+  min_speed: 0
+  mouseForce: 200
+  mouseRange: 4
 --- !u!1 &1930707626
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +313,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -268,7 +338,7 @@ Transform:
   m_GameObject: {fileID: 1930707626}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -7}
+  m_LocalPosition: {x: 0, y: 0, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -434,3 +504,4 @@ SceneRoots:
   - {fileID: 1930707629}
   - {fileID: 2018798925}
   - {fileID: 17051157}
+  - {fileID: 337352878}
