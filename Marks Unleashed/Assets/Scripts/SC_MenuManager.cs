@@ -10,6 +10,19 @@ public class SC_MenuManager : MonoBehaviour
 
     public UnityEngine.UI.Image ob_loading_screen;
     public UnityEngine.UI.Image im_loading_bar;
+
+    [SerializeField] private GameObject _optionsMenu;
+    [SerializeField] private GameObject _creditsMenu;
+
+    private void Start()
+    {
+        CloseAllMenus();
+    }
+    public void CloseAllMenus() //Cierra cualquier menu que se haya quedado abierto
+    {
+        _optionsMenu.SetActive(false);
+        _creditsMenu.SetActive(false);
+    }
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
