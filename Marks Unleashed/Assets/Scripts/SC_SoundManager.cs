@@ -23,9 +23,14 @@ public class SC_SoundManager : MonoBehaviour
         if (clip == null) return;
 
         GameObject new_ob = new GameObject("AudioSource");
+        new_ob.transform.position = position;
+
         AudioSource audio_as = new_ob.AddComponent<AudioSource>();
 
+        audio_as.rolloffMode = AudioRolloffMode.Linear;
+
         audio_as.maxDistance = 25;
+        audio_as.spatialBlend = 5;
 
         audio_as.clip = clip;
         audio_as.outputAudioMixerGroup = main_mixer;
