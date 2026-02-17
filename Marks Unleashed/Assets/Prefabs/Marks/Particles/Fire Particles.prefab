@@ -30,7 +30,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.303, z: 7.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1544833287507488595}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &1108315065129020964
@@ -1051,7 +1052,7 @@ ParticleSystem:
           tangentMode: 34
           weightedMode: 0
           inWeight: 0
-          outWeight: 0
+          outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
           value: 1
@@ -1059,7 +1060,7 @@ ParticleSystem:
           outSlope: 1
           tangentMode: 34
           weightedMode: 0
-          inWeight: 0
+          inWeight: 0.33333334
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -1375,15 +1376,15 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 17155
-        ctime2: 25829
-        ctime3: 45875
-        ctime4: 0
+        ctime1: 8867
+        ctime2: 13107
+        ctime3: 22937
+        ctime4: 28527
         ctime5: 0
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 17348
+        atime1: 23901
         atime2: 65535
         atime3: 0
         atime4: 0
@@ -2634,7 +2635,7 @@ ParticleSystem:
     magnitude:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2747,7 +2748,7 @@ ParticleSystem:
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.15
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4891,3 +4892,65 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1001 &3389722819919357544
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4213943465207204155}
+    m_Modifications:
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6841039883908395380, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+      propertyPath: m_Name
+      value: Fire Particles Permanent
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+--- !u!4 &1544833287507488595 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4213943465207204155, guid: 32892635c50d53249973dcecd76a43e2, type: 3}
+  m_PrefabInstance: {fileID: 3389722819919357544}
+  m_PrefabAsset: {fileID: 0}

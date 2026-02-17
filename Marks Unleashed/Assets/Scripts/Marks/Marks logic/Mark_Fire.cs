@@ -7,7 +7,15 @@ public class Mark_Fire : SC_Mark
     public override void Activate()
     {
         base.Activate();
-        Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+
+        GameObject parts_parent = Instantiate(particles, transform.position, transform.rotation);
+        ParticleSystem parts = parts_parent.transform.GetChild(0).GetComponentInChildren<ParticleSystem>();
+        ParticleSystem.MainModule main = parts.main;
+        parts.Stop();
+        main.duration = 0.1f;
+        parts.Play();
+
+        Destroy(parts.gameObject, 5);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
@@ -25,10 +33,14 @@ public class Mark_Fire : SC_Mark
         colls = Physics.OverlapSphere(transform.position, range, burnable_layer);
         foreach (Collider coll in colls)
         {
+            // Add a burn zone that will elevate burnable objects
             GameObject burnZone = new GameObject("BurnZone");
+            burnZone.transform.position = transform.position;
+            burnZone.transform.rotation = Quaternion.LookRotation(transform.up);
+
             SC_ZoneBurn zone = burnZone.AddComponent<SC_ZoneBurn>();
-            zone.StartBurn(element.strength, coll.transform.localScale.x);
-            Destroy(burnZone, 5);
+            zone.parts_fire = particles;
+            zone.StartBurn(element.strength, range);            
         }
 
         DesactivateMark();
