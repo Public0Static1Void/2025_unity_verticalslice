@@ -14,6 +14,11 @@ public class Mark_Air : SC_Mark
         {
             if (coll.name == name) continue;
 
+            if (coll.name == "Player")
+            {
+                SC_CameraRotation.instance.ShakeCamera(0.75f, 0.2f);
+            }
+
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null && !rb.isKinematic)
             {

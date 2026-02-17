@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -91,7 +92,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         rb.linearVelocity = vel;
 
-        Debug.Log(distance_from_ground);
         if (!grounded && distance_from_ground >= 1.2f)
         {
             if (!audio_effects.isPlaying)
@@ -113,12 +113,28 @@ public class SC_PlayerMovement : SC_ObjectMovement
                     audio_effects.clip = clip_ground_hit;
                     audio_effects.loop = false;
                     audio_effects.Play();
+
+
+                    float normalizedYSpeed = Mathf.InverseLerp(0, 15, Mathf.Abs(rb.linearVelocity.y));
+                    float force = Mathf.Min(0.75f,
+                                            Mathf.Max(0.3f, normalizedYSpeed)
+                                            );
+                    Debug.Log(force);
+                    SC_CameraRotation.instance.ShakeCamera(force, 0.25f);
+
+                    StartCoroutine(DisableMovement(0.5f));
                 }
                 // Audio hit 
             }
         }
     }
 
+    private IEnumerator DisableMovement(float duration)
+    {
+        can_move = false;
+        yield return new WaitForSeconds(duration);
+        can_move = true;
+    }
 
     #region Physics functions
     public void Jump()

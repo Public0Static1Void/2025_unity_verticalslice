@@ -317,7 +317,11 @@ public class SC_MarksPlacer : MonoBehaviour
         SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
         mark.particles = mark_info.particles;
         mark.element = mark_info.element;
+        mark.enable_collision_activation = true;
         mark.clip_activation = mark_info.clip_activation;
+
+        BoxCollider coll = mark.gameObject.AddComponent<BoxCollider>();
+        coll.isTrigger = true;
 
         SC_SoundManager.instance.InstantiateSound(clip_place_mark, position);
 

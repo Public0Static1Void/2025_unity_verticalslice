@@ -29,7 +29,7 @@ public class SC_ZoneBurn : MonoBehaviour
         combustible_mask = 1 << LayerMask.NameToLayer("Combustible");
 
         // Create the particles
-        Instantiate(parts_fire, transform.position, Quaternion.LookRotation(transform.up));
+        parts_fire = Instantiate(parts_fire, transform.position, Quaternion.LookRotation(transform.up));
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -86,7 +86,10 @@ public class SC_ZoneBurn : MonoBehaviour
         {
             inter.Deactivate();
         }
-        Destroy(parts_fire);
+
+        ParticleSystem parts = parts_fire.GetComponent<ParticleSystem>();
+        parts.Stop();
+        Destroy(parts_fire, 5);
     }
 
     IEnumerator DamagePerSecond(int damage_per_second)

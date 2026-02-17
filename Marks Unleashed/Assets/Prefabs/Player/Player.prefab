@@ -286,6 +286,7 @@ MonoBehaviour:
   y: 0
   slider_sensivity: {fileID: 0}
   txt_value_sensivity: {fileID: 0}
+  shake_force: 3
 --- !u!1 &3250005224308948845
 GameObject:
   m_ObjectHideFlags: 0
@@ -15911,7 +15912,7 @@ MonoBehaviour:
   acceleration: 1.1
   vel: {x: 0, y: 0, z: 0}
   grounded: 0
-  ground_friction: 0.92
+  ground_friction: 0.9
   ground_offset: 0.2
   clip_air: {fileID: 8300000, guid: 463cbd631bb5e054fbbeb0fe5a6bc199, type: 3}
   clip_ground_hit: {fileID: 8300000, guid: bef328481e3152b459a8910718e605ec, type: 3}

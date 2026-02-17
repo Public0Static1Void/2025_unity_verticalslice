@@ -228,14 +228,14 @@ MonoBehaviour:
   particleMesh: {fileID: 2540817853737639666, guid: d32128f4d00c56a439b000ff4dec2624, type: 3}
   particleMaterial: {fileID: 2100000, guid: 4b8b03af87b05f44d94fdbd29b41e382, type: 2}
   randomizeStartPos: 1
-  particleAmount: 1000
-  gravity: 3
+  particleAmount: 500
+  gravity: 0
   boxSize: {x: 10, y: 9, z: 10}
   radius: 0
   targetDensity: 10
   recommendedDensity: 10
   pressureMultiplier: 15
-  nearPressureMultiplier: 0.4
+  nearPressureMultiplier: 1
   subSteps: 1
   particleSize: 5
   collisionDamping: 0.25
