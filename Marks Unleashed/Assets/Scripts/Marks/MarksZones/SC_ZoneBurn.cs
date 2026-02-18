@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SC_ZoneBurn : MonoBehaviour
+public class SC_ZoneBurn : SC_Zone
 {
     // Stats
-    [Header("Stats")]
-    public float range = 6;
     public float max_life = 3;
-    private float current_life = 3;
-
-    // References
-    [Header("References")]
-    public GameObject parts_fire;
+    private float current_life = 3;    
 
 
     private List<SC_Interactable> affected_objects = new List<SC_Interactable>();
@@ -21,15 +15,19 @@ public class SC_ZoneBurn : MonoBehaviour
 
 
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         current_life = max_life;
 
         balloon_mask = 1 << LayerMask.NameToLayer("Burnable");
         combustible_mask = 1 << LayerMask.NameToLayer("Combustible");
 
         // Create the particles
-        parts_fire = Instantiate(parts_fire, transform.position, Quaternion.LookRotation(transform.up));
+        particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up));
+        ParticleSystem.MainModule main = particles.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+        main.loop = true;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -80,16 +78,16 @@ public class SC_ZoneBurn : MonoBehaviour
     }
 
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         foreach (SC_Interactable inter in affected_objects)
         {
             inter.Deactivate();
         }
 
-        ParticleSystem parts = parts_fire.GetComponent<ParticleSystem>();
+        ParticleSystem parts = particles.GetComponent<ParticleSystem>();
         parts.Stop();
-        Destroy(parts_fire, 5);
+        Destroy(particles, 5);
     }
 
     IEnumerator DamagePerSecond(int damage_per_second)

@@ -51,7 +51,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 
-        if (grounded && rb.linearVelocity.y < -6)
+        if (grounded && rb.linearVelocity.magnitude > 10)
             big_collision = true;
         else
             big_collision = false;
@@ -114,19 +114,30 @@ public class SC_PlayerMovement : SC_ObjectMovement
                     audio_effects.loop = false;
                     audio_effects.Play();
 
-
-                    float normalizedYSpeed = Mathf.InverseLerp(0, 15, Mathf.Abs(rb.linearVelocity.y));
-                    float force = Mathf.Min(0.75f,
-                                            Mathf.Max(0.3f, normalizedYSpeed)
-                                            );
-                    Debug.Log(force);
-                    SC_CameraRotation.instance.ShakeCamera(force, 0.25f);
-
-                    StartCoroutine(DisableMovement(0.5f));
+                    HandleBigCollision();
                 }
                 // Audio hit 
             }
         }
+    }
+
+    /// <summary>
+    /// Handles the collisions at high speed
+    /// </summary>
+    private void HandleBigCollision()
+    {
+        float normalizedYSpeed = Mathf.InverseLerp(0, 15, Mathf.Abs(rb.linearVelocity.y));
+        // Clamps the camera shake force
+        float force = Mathf.Min(0.75f,
+                                Mathf.Max(0.4f, normalizedYSpeed)
+                                );
+        SC_CameraRotation.instance.ShakeCamera(force, 0.25f);
+
+        // The player is falling and collided with the ground
+        if (rb.linearVelocity.y < 0)
+            SC_CameraRotation.instance.OffsetCamera(Vector3.down, 0.2f, Quaternion.Euler(1, 0, 0), 0.5f);
+
+        StartCoroutine(DisableMovement(0.75f));
     }
 
     private IEnumerator DisableMovement(float duration)

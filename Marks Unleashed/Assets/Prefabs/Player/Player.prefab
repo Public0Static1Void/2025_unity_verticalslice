@@ -15493,6 +15493,7 @@ GameObject:
   - component: {fileID: 1536250707576338277}
   - component: {fileID: 2931825435595630837}
   - component: {fileID: 6608115200241079631}
+  - component: {fileID: 4883419843801603469}
   - component: {fileID: 4485371566872726750}
   - component: {fileID: 1131227705100964302}
   - component: {fileID: 8433562515177970415}
@@ -15811,6 +15812,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 4883419843801603469}
+        m_TargetAssemblyTypeName: SC_MarksSelector, Assembly-CSharp
+        m_MethodName: ProcessDeleteZoneInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: f072a834-f95a-4e64-a5da-14d77a1b7cb8
     m_ActionName: 'Player/Right click[/Mouse/rightButton]'
   - m_PersistentCalls:
@@ -15967,6 +15980,22 @@ MonoBehaviour:
   im_life_bar: {fileID: 0}
   reload_scene: SampleScene
   applied_elements_parent: {fileID: 0}
+--- !u!114 &4883419843801603469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8045915302376248859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a7b53e82c200cd469bec2f195452ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layer_marks:
+    serializedVersion: 2
+    m_Bits: 1024
+  selected_mark_zone: {fileID: 0}
 --- !u!114 &4485371566872726750
 MonoBehaviour:
   m_ObjectHideFlags: 0

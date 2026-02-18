@@ -39,7 +39,7 @@ public class Mark_Fire : SC_Mark
             burnZone.transform.rotation = Quaternion.LookRotation(transform.up);
 
             SC_ZoneBurn zone = burnZone.AddComponent<SC_ZoneBurn>();
-            zone.parts_fire = particles;
+            zone.particles = particles;
             zone.StartBurn(element.strength, range);            
         }
 

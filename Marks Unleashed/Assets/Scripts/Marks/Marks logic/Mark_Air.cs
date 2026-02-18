@@ -7,7 +7,7 @@ public class Mark_Air : SC_Mark
     public override void Activate()
     {
         base.Activate();
-        Destroy(Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward)), 5);
+        particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
@@ -19,6 +19,16 @@ public class Mark_Air : SC_Mark
                 SC_CameraRotation.instance.ShakeCamera(0.75f, 0.2f);
             }
 
+            // Creates an air zone
+            GameObject ob_airZone = new GameObject("Air zone");
+            ob_airZone.transform.position = transform.position;
+            ob_airZone.transform.rotation = transform.rotation;
+
+            SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
+            zone_air.InitAirZone(range, layer_interactable, GetElementStrenght() * 200, particles);
+            break;
+
+            /*
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null && !rb.isKinematic)
             {
@@ -30,6 +40,7 @@ public class Mark_Air : SC_Mark
             {
                 life.ApplyElement(element);
             }
+            */
         }
 
         DesactivateMark();
