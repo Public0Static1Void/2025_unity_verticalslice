@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SC_PlayerMovement : SC_ObjectMovement
@@ -22,6 +24,9 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public bool jumping = false;
     [Range(0, 1)]
     public float air_control = 0.5f;
+    public Volume camera_volume;
+    private MotionBlur camera_blur;
+
     private float distance_from_ground = 0;
 
     private Vector2 input;
@@ -29,6 +34,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public bool moving = false;
 
     public AudioSource audio_effects;
+
+    private SC_PlayerLife playerLife;
 
 
     private bool big_collision = false;
@@ -38,6 +45,15 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         can_move = true;
         rb = GetComponent<Rigidbody>();
+        playerLife = GetComponent<SC_PlayerLife>();
+
+        camera_volume.profile.TryGet<MotionBlur>(out camera_blur);
+        if (camera_blur != null)
+        {
+            camera_blur.intensity.value = 0;
+        }
+        else
+            Debug.LogWarning("Motion blur not added to the camera volume");
 
         max_speed = speed;
 
@@ -85,7 +101,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         vel.x = Mathf.Clamp(vel.x, -15, 15);
         vel.z = Mathf.Clamp(vel.z, -15, 15);
-        vel.y = Mathf.Clamp(vel.y, -30, 12);
+        vel.y = Mathf.Clamp(vel.y, -40, 15);
 
         vel = ApplyGroundFriction(vel);
         vel = ConstrainVelocity(vel);
@@ -94,6 +110,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         if (!grounded && distance_from_ground >= 1.2f)
         {
+            float current_speed = rb.linearVelocity.magnitude / 15;
+            Debug.Log($"Current: {current_speed}");
+            if (current_speed > 0.65f)
+                playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.25f), Color.black);
             if (!audio_effects.isPlaying)
             {
                 audio_effects.clip = clip_air;
@@ -101,13 +121,17 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 audio_effects.Play();
             }
 
-            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y * 0.075f), 1);
+            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y * 0.09f), 1);
+            
         }
         else if (grounded)
         {
+            camera_blur.intensity.value = 0;
+
             if (audio_effects.clip == clip_air && audio_effects.isPlaying)
             {
                 audio_effects.Stop();
+                playerLife.SetVignetteValue(0, Color.black);
                 if (big_collision)
                 {
                     audio_effects.clip = clip_ground_hit;
@@ -119,6 +143,20 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 // Audio hit 
             }
         }
+
+        HandleCameraBlur();
+    }
+
+    private void HandleCameraBlur()
+    {
+        if (rb.linearVelocity.magnitude < 8)
+        {
+            camera_blur.intensity.value = 0;
+            return;
+        }
+
+        camera_blur.intensity.value = Mathf.Max(Mathf.InverseLerp(8, max_speed, rb.linearVelocity.magnitude), 0.5f);
+        //Debug.Log(camera_blur.intensity.value);
     }
 
     /// <summary>
@@ -129,7 +167,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
         float normalizedYSpeed = Mathf.InverseLerp(0, 15, Mathf.Abs(rb.linearVelocity.y));
         // Clamps the camera shake force
         float force = Mathf.Min(0.75f,
-                                Mathf.Max(0.4f, normalizedYSpeed)
+                                Mathf.Max(0.35f, normalizedYSpeed)
                                 );
         SC_CameraRotation.instance.ShakeCamera(force, 0.25f);
 

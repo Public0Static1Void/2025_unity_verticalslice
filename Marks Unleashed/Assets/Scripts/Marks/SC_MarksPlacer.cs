@@ -205,6 +205,8 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         for (int i = 0; i < im_activation_order.Length; i++)
         {
+            if (im_activation_order[i] == null) continue;
+
             Sprite spr = null;
             if (i < placed_marks.Count && placed_marks[i] != null)
             {

@@ -8,7 +8,16 @@ using UnityEngine.UI;
 public class SC_CameraRotation : MonoBehaviour
 {
     public static SC_CameraRotation instance {  get; private set; }
-    public float turn_speed = 10, parent_turn_speed = 8;
+
+    [Header("Stats")]
+    public float turn_speed = 10;
+    public float parent_turn_speed = 8;
+    [Range(0, 1)] public float fov_multiplier = 0.5f;
+
+    private float base_fov;
+
+    [Header("References")]
+    public Camera mainCamera;
     public Transform parent = null;
     private Transform camera_handle = null;
     public Vector2 input;
@@ -16,6 +25,7 @@ public class SC_CameraRotation : MonoBehaviour
     public float x = 0, y = 0;
 
     private Rigidbody rb;
+    private SC_PlayerMovement playerMovement;
 
     public Slider slider_sensivity;
     public TMP_Text txt_value_sensivity;
@@ -39,10 +49,14 @@ public class SC_CameraRotation : MonoBehaviour
     void Start()
     {
         camera_handle = parent.GetChild(0);
+
+        playerMovement = parent.GetComponent<SC_PlayerMovement>();
+
         UnityEngine.Cursor.visible = false;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
 
         max_turn_speed = turn_speed;
+        base_fov = Camera.main.fieldOfView;
 
         rb = GetComponentInParent<Rigidbody>();
 
@@ -51,6 +65,12 @@ public class SC_CameraRotation : MonoBehaviour
 
         pos_start_local = transform.localPosition;
         rot_offset_current = Quaternion.identity;
+    }
+
+    private void FixedUpdate()
+    {
+        float targetFov = base_fov + Mathf.Clamp(rb.linearVelocity.magnitude * (playerMovement.grounded ? 0 : fov_multiplier), 0, 10);
+        mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, targetFov, Time.deltaTime * 10);
     }
 
     void LateUpdate()

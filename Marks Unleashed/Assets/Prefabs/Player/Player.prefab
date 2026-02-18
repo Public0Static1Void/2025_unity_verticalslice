@@ -280,6 +280,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turn_speed: 10
   parent_turn_speed: 25
+  fov_multiplier: 0.25
+  mainCamera: {fileID: 7534136154024164982}
   parent: {fileID: 8976910792773025556}
   input: {x: 0, y: 0}
   x: 180
@@ -10268,6 +10270,55 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!1 &5633602147038208925
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2178089751570445785}
+  - component: {fileID: 8198841637628476776}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2178089751570445785
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5633602147038208925}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8976910792773025556}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8198841637628476776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5633602147038208925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 9be49a1c9cc5a91438c4e32847d2af17, type: 2}
 --- !u!1 &6241227198112216943
 GameObject:
   m_ObjectHideFlags: 0
@@ -15522,6 +15573,7 @@ Transform:
   - {fileID: 3368454928321425439}
   - {fileID: 3385456652427929298}
   - {fileID: 5236203006655784492}
+  - {fileID: 2178089751570445785}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5670107609483913175
@@ -15932,6 +15984,7 @@ MonoBehaviour:
   clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
   jumping: 0
   air_control: 0.2
+  camera_volume: {fileID: 0}
   moving: 0
   audio_effects: {fileID: 6502494316371359186}
 --- !u!54 &2931825435595630837
@@ -15977,9 +16030,11 @@ MonoBehaviour:
   life: 3
   update_life_on_start: 1
   damage: 1
-  im_life_bar: {fileID: 0}
+  recover_time: 5
+  vignette_color: {r: 0.5471698, g: 0, b: 0, a: 0}
   reload_scene: SampleScene
   applied_elements_parent: {fileID: 0}
+  camera_volume: {fileID: 8198841637628476776}
 --- !u!114 &4883419843801603469
 MonoBehaviour:
   m_ObjectHideFlags: 0

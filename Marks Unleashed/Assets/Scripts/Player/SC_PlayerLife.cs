@@ -1,37 +1,63 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SC_PlayerLife : SC_LifeSystem
 {
-    public Image im_life_bar;
+    [Header("Stats")]
+    public float recover_time = 5;
+    public Color vignette_color;
+
+    [Header("Scene")]
     public string reload_scene = "SampleScene";
 
+    [Header("References")]
     public GameObject applied_elements_parent;
     private List<Image> applied_elements_images = new List<Image>();
+
+    public Volume camera_volume;
+    private Vignette camera_vignette = null;
+
+
+    private bool recovering_health = false;
+
+    private Coroutine routine_color = null;
+
+    private float target_intensity = 0;
+    private Color target_color = Color.white;
 
 
     private void Start()
     {
-        List<Sprite> marks_sprites = SC_ElementManager.instance.im_marks; // Gets a copy of the sprites list
-        for (int i = 0; i < applied_elements.Length; i++)
+        // Load volume component
+        camera_volume.profile.TryGet<Vignette>(out Vignette v);
+        if (v != null)
         {
-            // Creates the object and sets it's parent
-            GameObject ob_image = new GameObject($"Effect {i + 1}");            
-            ob_image.transform.SetParent(applied_elements_parent.transform, false);
-
-            ob_image.SetActive(false);
-
-            // Saves the created image component
-            Image im = ob_image.AddComponent<Image>();
-            applied_elements_images.Add(im);
+            camera_vignette = v;
+            camera_vignette.intensity.value = 0;
         }
+        else
+            Debug.LogWarning("Vignette not added to the volume camera");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+            Damage(1);
+
+        // Lerp the camera vignette values
+        camera_vignette.intensity.value = Mathf.Lerp(camera_vignette.intensity.value, target_intensity, Time.deltaTime * 10);
+        camera_vignette.color.value = Color.Lerp(camera_vignette.color.value, target_color, Time.deltaTime * 10);
     }
 
     public override void UpdateAppliedElementsUI()
     {
+        return;
         for (int i = 0; i < applied_elements.Length; i++)
         {
             Sprite sprite = null;
@@ -52,8 +78,56 @@ public class SC_PlayerLife : SC_LifeSystem
     {
         base.Damage(damage);
 
-        im_life_bar.transform.localScale = Vector3.one * ((float)life / (float)max_life);
+        SC_CameraRotation.instance.ShakeCamera(0.25f, 0.25f);
+
+        float vignette_value = 1 - ((float)life / (float)max_life);
+        target_intensity = vignette_value * 0.75f;
+        target_color = vignette_color;
+
+        RecoverHealth();
     }
+
+
+    private void RecoverHealth()
+    {
+        if (recovering_health) return;
+
+        recovering_health = true;
+        StartCoroutine(RecoverHealthRoutine());
+    }
+
+    private IEnumerator RecoverHealthRoutine()
+    {
+        float lifePerSecond = (max_life - life) / recover_time; // Get how many life to give for second
+
+        float current_life = life;
+
+        float timer = 0;
+        while (timer < recover_time)
+        {
+            current_life += lifePerSecond * Time.deltaTime;
+            life = Mathf.FloorToInt(current_life);
+
+            if (target_color == vignette_color)
+            {
+                target_intensity = max_life - current_life;
+                target_color = vignette_color;
+            }
+            
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        recovering_health = false;
+    }
+
+    public void SetVignetteValue(float newValue, Color newColor)
+    {
+        target_intensity = newValue;
+        target_color = newColor;
+    }
+
+
     public override void Die()
     {
         Debug.Log("Dead x)");

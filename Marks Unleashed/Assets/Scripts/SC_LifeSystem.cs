@@ -46,6 +46,7 @@ public class SC_LifeSystem : MonoBehaviour
 
     public void ApplyElement(Element element, SC_Mark from_mark = null)
     {
+        return;
         bool full = true;
         // Add an element to the list
         for (int i = 0; i < applied_elements.Length; i++)
