@@ -1435,10 +1435,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a819f4e46c04bb4286b974202ccbeae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentCount: 10
-  segmentLength: 1
+  segmentCount: 5
+  segmentLength: 3
   calculationNum: 5
   moveForce: 5
+  ropeDamping: 0.9
   ropeRenderer: {fileID: 1263276526}
   anchor: {fileID: 1263276524}
   playerMovement: {fileID: 1221751921}

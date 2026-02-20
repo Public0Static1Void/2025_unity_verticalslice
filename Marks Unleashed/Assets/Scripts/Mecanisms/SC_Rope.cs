@@ -21,6 +21,7 @@ public class SC_Rope : MonoBehaviour
     public float segmentLength = 0.5f;
     public int calculationNum = 5;
     public float moveForce = 5;
+    [Range(0, 1)] public float ropeDamping = 0.9f;
 
     [Header("References")]
     public LineRenderer ropeRenderer;
@@ -72,12 +73,23 @@ public class SC_Rope : MonoBehaviour
         {
             RopePoint point = points[i];
 
-            Vector3 vel = point.position - point.previousPosition; // Inertia
+            Vector3 vel = (point.position - point.previousPosition) * ropeDamping; // Inertia
 
             point.previousPosition = point.position;
 
             point.position += vel; // Moves the point based on the inertia stored
-            point.position += Physics.gravity * Time.fixedDeltaTime;
+
+            // Decrease gravity towards the swing edges
+            Vector3 swing_dir = vel.normalized;
+            float angle = Vector3.Dot(Physics.gravity.normalized, swing_dir);
+            point.position += Physics.gravity * Time.fixedDeltaTime * Mathf.Clamp01(1 - Mathf.Abs(angle));
+
+            if (anchor != null)
+            {
+                float heightFactor = Mathf.InverseLerp(anchor.transform.position.y - 5f, anchor.transform.position.y, point.position.y);
+                // Slightly pull point toward anchor at apex
+                point.position = Vector3.Lerp(point.position, anchor.transform.position, 0.02f * heightFactor);
+            }
         }
     }
     private void ApplyConstraints()
