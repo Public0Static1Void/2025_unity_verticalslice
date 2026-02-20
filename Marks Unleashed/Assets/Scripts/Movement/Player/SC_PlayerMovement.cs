@@ -203,11 +203,20 @@ public class SC_PlayerMovement : SC_ObjectMovement
     
     public void Jump()
     {
-        if (grounded && can_move)
+        if ((grounded && can_move) || (!grounded && grabbing))
         {
+            float up_force = jumpForce;
+            if (grabbing)
+            {
+                rb.useGravity = true;
+                //jumpForce *= 2;
+            }
+
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             SC_SoundManager.instance.InstantiateSound(clip_jump, transform.position);
             jumping = true;
+            
+            grabbing = false;
         }
     }
     Vector3 ConstrainVelocity(Vector3 vel)

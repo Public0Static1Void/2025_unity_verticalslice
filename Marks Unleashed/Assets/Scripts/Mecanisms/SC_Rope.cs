@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 public class RopePoint
 {
@@ -48,7 +49,7 @@ public class SC_Rope : MonoBehaviour
         {
             playerMovement.rb.useGravity = false;
             //ClimbRope(playerMovement.input.y);
-            AddImpulse(-playerMovement.input.y);
+            AddImpulse(playerMovement.input.y);
         }
     }
 
@@ -114,8 +115,20 @@ public class SC_Rope : MonoBehaviour
 
     private void AddImpulse(float dir)
     {
-        points[grabbed_index].position += Camera.main.transform.forward * (dir * Time.fixedDeltaTime * moveForce);
-        playerMovement.rb.MovePosition(points[grabbed_index].position);
+        RopePoint p = points[grabbed_index];
+
+        Vector3 impulse = playerMovement.transform.forward * (dir * Time.fixedDeltaTime * moveForce);
+
+        p.previousPosition -= impulse; // Adds inertia
+
+        Vector3 player_vel = p.position - playerMovement.rb.position;
+
+        float springStrength = 30;
+        float damping = 4;
+
+        Vector3 player_force = player_vel * springStrength - playerMovement.rb.linearVelocity * damping;
+
+        playerMovement.rb.AddForce(player_force, ForceMode.Acceleration);
     }
 
     private void ClimbRope(float dir)
