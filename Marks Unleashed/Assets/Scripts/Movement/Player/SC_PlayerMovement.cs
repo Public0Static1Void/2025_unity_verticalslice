@@ -27,11 +27,17 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public Volume camera_volume;
     private MotionBlur camera_blur;
 
+    public bool moving = false;
+
+    [Header("Grab")]
+    public bool grabbing = false;
+    public RopePoint grabPoint;
+    public SC_Rope grabbedRope;
+
     private float distance_from_ground = 0;
 
-    private Vector2 input;
+    public Vector2 input;
 
-    public bool moving = false;
 
     public AudioSource audio_effects;
 
@@ -75,74 +81,81 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     private void FixedUpdate()
     {
-        vel = rb.linearVelocity;
-
-        Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
-        if (!can_move) moveDir = Vector3.zero;
-
-        // Get the desired speed for the frame
-        Vector3 desiredVel = moveDir * speed;
-
-        Vector3 horizontalVel = new Vector3(vel.x, 0, vel.z);
-
-        if (moveDir.magnitude > 0.1f)
+        if (grabbing && grabPoint != null)
         {
-            Vector3 diff = desiredVel - horizontalVel;
-            Vector3 accel = diff.normalized * acceleration;
-
-            /// Get the speed by input
-            float input_speed = GetSpeedByInput();
-            /// Set the horizontal speed based on the acceleration and air control
-            horizontalVel += accel * input_speed * (!grounded! ? air_control : 1);
+            rb.MovePosition(grabPoint.position);
         }
-
-        vel.x = horizontalVel.x;
-        vel.z = horizontalVel.z;
-
-        vel.x = Mathf.Clamp(vel.x, -15, 15);
-        vel.z = Mathf.Clamp(vel.z, -15, 15);
-        vel.y = Mathf.Clamp(vel.y, -40, 15);
-
-        vel = ApplyGroundFriction(vel);
-        vel = ConstrainVelocity(vel);
-
-        rb.linearVelocity = vel;
-
-        if (!grounded && distance_from_ground >= 1.2f)
+        else
         {
-            float current_speed = rb.linearVelocity.magnitude / 15;
-            Debug.Log($"Current: {current_speed}");
-            if (current_speed > 0.65f)
-                playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.25f), Color.black);
-            if (!audio_effects.isPlaying)
+            vel = rb.linearVelocity;
+
+            Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
+            if (!can_move) moveDir = Vector3.zero;
+
+            // Get the desired speed for the frame
+            Vector3 desiredVel = moveDir * speed;
+
+            Vector3 horizontalVel = new Vector3(vel.x, 0, vel.z);
+
+            if (moveDir.magnitude > 0.1f)
             {
-                audio_effects.clip = clip_air;
-                audio_effects.loop = true;
-                audio_effects.Play();
+                Vector3 diff = desiredVel - horizontalVel;
+                Vector3 accel = diff.normalized * acceleration;
+
+                /// Get the speed by input
+                float input_speed = GetSpeedByInput();
+                /// Set the horizontal speed based on the acceleration and air control
+                horizontalVel += accel * input_speed * (!grounded! ? air_control : 1);
             }
 
-            audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y * 0.09f), 1);
-            
-        }
-        else if (grounded)
-        {
-            camera_blur.intensity.value = 0;
+            vel.x = horizontalVel.x;
+            vel.z = horizontalVel.z;
 
-            if (audio_effects.clip == clip_air && audio_effects.isPlaying)
+            vel.x = Mathf.Clamp(vel.x, -15, 15);
+            vel.z = Mathf.Clamp(vel.z, -15, 15);
+            vel.y = Mathf.Clamp(vel.y, -40, 15);
+
+            vel = ApplyGroundFriction(vel);
+            vel = ConstrainVelocity(vel);
+
+            rb.linearVelocity = vel;
+
+            if (!grounded && distance_from_ground >= 1.2f)
             {
-                audio_effects.Stop();
-                playerLife.SetVignetteValue(0, Color.black);
-                if (big_collision)
+                float current_speed = rb.linearVelocity.magnitude / 15;
+                if (current_speed > 0.65f)
+                    playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.25f), Color.black);
+                if (!audio_effects.isPlaying)
                 {
-                    audio_effects.clip = clip_ground_hit;
-                    audio_effects.loop = false;
+                    audio_effects.clip = clip_air;
+                    audio_effects.loop = true;
                     audio_effects.Play();
-
-                    HandleBigCollision();
                 }
-                // Audio hit 
+
+                audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y * 0.09f), 1);
+
+            }
+            else if (grounded)
+            {
+                camera_blur.intensity.value = 0;
+
+                if (audio_effects.clip == clip_air && audio_effects.isPlaying)
+                {
+                    audio_effects.Stop();
+                    playerLife.SetVignetteValue(0, Color.black);
+                    if (big_collision)
+                    {
+                        audio_effects.clip = clip_ground_hit;
+                        audio_effects.loop = false;
+                        audio_effects.Play();
+
+                        HandleBigCollision();
+                    }
+                    // Audio hit 
+                }
             }
         }
+            
 
         HandleCameraBlur();
     }
@@ -186,6 +199,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     }
 
     #region Physics functions
+    
+    
     public void Jump()
     {
         if (grounded && can_move)
