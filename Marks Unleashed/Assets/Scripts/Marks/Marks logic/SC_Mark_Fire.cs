@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Mark_Fire : SC_Mark
+public class SC_Mark_Fire : SC_Mark
 {
     public float range = 3;
 

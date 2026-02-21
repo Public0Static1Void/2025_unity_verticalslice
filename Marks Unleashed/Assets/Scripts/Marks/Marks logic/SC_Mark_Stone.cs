@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Mark_Stone : SC_Mark
+public class SC_Mark_Stone : SC_Mark
 {
     public float range = 3;
 

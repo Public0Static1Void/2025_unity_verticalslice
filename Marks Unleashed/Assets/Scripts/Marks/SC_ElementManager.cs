@@ -73,17 +73,17 @@ public class SC_ElementManager : MonoBehaviour
     private void InitMarks()
     {
         // Water
-        marks.Add(marks_objects[0].AddComponent<Mark_Water>());
+        marks.Add(marks_objects[0].AddComponent<SC_Mark_Water>());
         // Fire
-        marks.Add(marks_objects[1].AddComponent<Mark_Fire>());
+        marks.Add(marks_objects[1].AddComponent<SC_Mark_Fire>());
         // Stone
-        marks.Add(marks_objects[2].AddComponent<Mark_Stone>());
+        marks.Add(marks_objects[2].AddComponent<SC_Mark_Stone>());
         // Electricity
-        marks.Add(marks_objects[3].AddComponent<Mark_Electricity>());
+        marks.Add(marks_objects[3].AddComponent<SC_Mark_Electricity>());
         // Gravity
-        marks.Add(marks_objects[4].AddComponent<Mark_Gravity>());
+        marks.Add(marks_objects[4].AddComponent<SC_Mark_Gravity>());
         // Air
-        marks.Add(marks_objects[5].AddComponent<Mark_Air>());
+        marks.Add(marks_objects[5].AddComponent<SC_Mark_Air>());
 
         for (int i = 0; i < marks.Count; i++) /// Asign the correct element stats
         {

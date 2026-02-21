@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Mark_Gravity : SC_Mark
+public class SC_Mark_Gravity : SC_Mark
 {
     public float range = 15;
 

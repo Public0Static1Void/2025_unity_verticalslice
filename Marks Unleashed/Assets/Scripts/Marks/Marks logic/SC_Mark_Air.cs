@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Mark_Air : SC_Mark
+public class SC_Mark_Air : SC_Mark
 {
     public float range = 4;
 
