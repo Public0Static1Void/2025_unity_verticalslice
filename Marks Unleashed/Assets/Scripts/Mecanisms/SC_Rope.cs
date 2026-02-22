@@ -1,3 +1,4 @@
+﻿using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
@@ -22,8 +23,11 @@ public class SC_Rope : MonoBehaviour
     public int calculationNum = 5;
     public float moveForce = 5;
     [Range(0, 1)] public float ropeDamping = 0.9f;
+    public float collision_radius = 1f;
+
 
     [Header("References")]
+    public LayerMask layer_collision;
     public LineRenderer ropeRenderer;
     public GameObject anchor;
     public SC_PlayerMovement playerMovement;
@@ -35,12 +39,14 @@ public class SC_Rope : MonoBehaviour
     private void Start()
     {
         points = new RopePoint[segmentCount];
+
+        Vector3 start = Vector3.zero;
         for (int i = 0; i < segmentCount; i++)
         {
-            points[i] = new RopePoint(Vector3.zero);
+            points[i] = new RopePoint(start + Vector3.down * segmentLength * i);
         }
 
-        grabbed_index = segmentCount - 3;
+        grabbed_index = segmentCount - 2;
     }
 
     private void Update()
@@ -58,7 +64,13 @@ public class SC_Rope : MonoBehaviour
     {
         ApplyGravity();
         for (int i = 0; i < calculationNum; i++)
+        {
             ApplyConstraints();
+        }
+        CheckCollisions();
+    }
+    private void LateUpdate()
+    {
         DrawRope();
     }
     /// <summary>
@@ -76,20 +88,9 @@ public class SC_Rope : MonoBehaviour
             Vector3 vel = (point.position - point.previousPosition) * ropeDamping; // Inertia
 
             point.previousPosition = point.position;
-
             point.position += vel; // Moves the point based on the inertia stored
 
-            // Decrease gravity towards the swing edges
-            Vector3 swing_dir = vel.normalized;
-            float angle = Vector3.Dot(Physics.gravity.normalized, swing_dir);
-            point.position += Physics.gravity * Time.fixedDeltaTime * Mathf.Clamp01(1 - Mathf.Abs(angle));
-
-            if (anchor != null)
-            {
-                float heightFactor = Mathf.InverseLerp(anchor.transform.position.y - 5f, anchor.transform.position.y, point.position.y);
-                // Slightly pull point toward anchor at apex
-                point.position = Vector3.Lerp(point.position, anchor.transform.position, 0.02f * heightFactor);
-            }
+            point.position += Physics.gravity * Time.fixedDeltaTime;
         }
     }
     private void ApplyConstraints()
@@ -102,15 +103,46 @@ public class SC_Rope : MonoBehaviour
             Vector3 diff = points[i + 1].position - points[i].position;
 
             float dist = diff.magnitude;
+
             float error = dist - segmentLength; // Gets the difference between the desired distance and the real one
                                                 // If dist > segmentLength it will retract, and viceversa
 
-            Vector3 change = diff.normalized * error * 0.5f;
+            Vector3 change = diff.normalized * error * 0.5f * 0.8f;
 
             if (i != 0) // Don't move the first point
+            {
                 points[i].position += change;
+            }
             if (i != points.Length - 1) // Don't move the second point
+            {
                 points[i + 1].position -= change;
+            }
+        }
+    }
+
+    private void CheckCollisions()
+    {
+        for (int i = anchor != null ? 1 : 0; i < points.Length; i++)
+        {
+            RopePoint point = points[i];
+            // Get the nearby colliders
+            Collider[] colls = Physics.OverlapSphere(point.position, collision_radius, layer_collision);
+
+            foreach (Collider coll in colls)
+            {
+                Vector3 closest = coll.ClosestPoint(point.position);
+
+                Vector3 repel_dir = point.position - closest; // Gets the repel direction
+
+                float dist = repel_dir.magnitude;
+                if (dist == 0) continue; /// Don't check collisions with itself
+
+                float penetration = collision_radius - dist; /// Calculate how inside the collision is
+                if (penetration > 0)
+                {
+                    point.position += repel_dir * penetration * ropeDamping;
+                }
+            }
         }
     }
 
@@ -191,5 +223,16 @@ public class SC_Rope : MonoBehaviour
         playerMovement.grabPoint = points[closest];
 
         playerMovement.rb.constraints = RigidbodyConstraints.FreezeRotation;
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        if (points == null) return;
+
+        Gizmos.color = Color.red;
+
+        foreach (var p in points)
+            Gizmos.DrawWireSphere(p.position, collision_radius);
     }
 }
