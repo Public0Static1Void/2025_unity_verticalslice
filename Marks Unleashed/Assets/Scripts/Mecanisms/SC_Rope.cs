@@ -40,10 +40,10 @@ public class SC_Rope : MonoBehaviour
     {
         points = new RopePoint[segmentCount];
 
-        Vector3 start = Vector3.zero;
+        Vector3 start = transform.position;
         for (int i = 0; i < segmentCount; i++)
         {
-            points[i] = new RopePoint(start + Vector3.down * segmentLength * i);
+            points[i] = new RopePoint(start + Vector3.right * segmentLength * i);
         }
 
         grabbed_index = segmentCount - 2;
@@ -65,9 +65,9 @@ public class SC_Rope : MonoBehaviour
         ApplyGravity();
         for (int i = 0; i < calculationNum; i++)
         {
+            CheckCollisions();
             ApplyConstraints();
         }
-        CheckCollisions();
     }
     private void LateUpdate()
     {
@@ -132,16 +132,24 @@ public class SC_Rope : MonoBehaviour
             {
                 Vector3 closest = coll.ClosestPoint(point.position);
 
-                Vector3 repel_dir = point.position - closest; // Gets the repel direction
-
+                Vector3 repel_dir = (point.position - closest); // Gets the repel direction
                 float dist = repel_dir.magnitude;
-                if (dist == 0) continue; /// Don't check collisions with itself
+
+                Vector3 normal = Vector3.zero;
+                if (dist <= 0.001f) // Expulses the rope point in case it's inside the collision
+                {
+                    normal = (point.position - coll.bounds.center).normalized;
+                    dist = 0.001f;
+                }
+                else
+                    normal = repel_dir / dist;
 
                 float penetration = collision_radius - dist; /// Calculate how inside the collision is
                 if (penetration > 0)
                 {
-                    point.position += repel_dir * penetration * ropeDamping;
+                    point.position += normal * penetration * ropeDamping;
                 }
+
             }
         }
     }
