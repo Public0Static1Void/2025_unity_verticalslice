@@ -3,10 +3,12 @@ using UnityEngine;
 public class SC_Mark_Stone : SC_Mark
 {
     public float range = 3;
-
-    public override void Activate()
+    
+    public override void ActivateMark()
     {
-        Destroy(Instantiate(particles, transform.position, transform.rotation), 5);
+        //Instancia partículas y las destruye desués de X segundos
+        GameObject stone_wall = Instantiate(particles, transform.position, particles.transform.rotation);
+        Destroy(stone_wall, 5);
 
         DesactivateMark();
     }

@@ -4,9 +4,9 @@ public class SC_Mark_Fire : SC_Mark
 {
     public float range = 3;
 
-    public override void Activate()
+    public override void ActivateMark()
     {
-        base.Activate();
+        base.ActivateMark();
 
         GameObject parts_parent = Instantiate(particles, transform.position, transform.rotation);
         ParticleSystem parts = parts_parent.transform.GetChild(0).GetComponentInChildren<ParticleSystem>();

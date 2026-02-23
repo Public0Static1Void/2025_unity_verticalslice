@@ -150,13 +150,21 @@ public class SC_MarksPlacer : MonoBehaviour
             UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
             UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
             UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
+            UnlockMark(marks[(int)ElementTypes.STONE].element.el_type);
         }
         if (placing_mark)
         {
+            //Horizontal del jugador
             Vector3 new_pos;
             if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
             {
                 new_pos = hit.point;
+                //img gira sobre si misma y marca no se queda bien al ponerse en paredes
+                float playerY = player.eulerAngles.y;
+
+                mark_placeholder_image.rectTransform.localRotation =
+                    Quaternion.Euler(0f, 0f, -playerY);
+
                 mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
                 mark_placeholder_image.color = Color.white;
             }
@@ -252,7 +260,7 @@ public class SC_MarksPlacer : MonoBehaviour
             }
         }
 
-        placed_marks[activate_index].GetComponent<SC_Mark>().Activate();
+        placed_marks[activate_index].GetComponent<SC_Mark>().ActivateMark();
         placed_marks.RemoveAt(0);
 
         SetArrowPos();

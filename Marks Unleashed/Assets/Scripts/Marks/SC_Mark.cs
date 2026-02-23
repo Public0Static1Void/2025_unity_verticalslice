@@ -45,7 +45,7 @@ public class SC_Mark : MonoBehaviour
     }
 
     // Mark activation
-    public virtual void Activate()
+    public virtual void ActivateMark()
     {
         SC_SoundManager.instance.InstantiateSound(clip_activation, transform.position);
         Debug.Log("Mark activated");
@@ -139,7 +139,7 @@ public class SC_Mark : MonoBehaviour
 
         return ret_element;
     }
-    public int GetElementStrenght()
+    public int GetElementStrength()
     {
         int str = 1;
         
@@ -166,7 +166,7 @@ public class SC_Mark : MonoBehaviour
 
         if (rb.linearVelocity.magnitude >= 1)
         {
-            Activate();
+            ActivateMark();
             return;
         }
 
@@ -175,7 +175,7 @@ public class SC_Mark : MonoBehaviour
         {
             Debug.Log(rb_other.linearVelocity.magnitude);
             if (rb_other.linearVelocity.magnitude >= 1.5f)
-                Activate();
+                ActivateMark();
         }
     }
 }

@@ -4,9 +4,9 @@ public class SC_Mark_Water : SC_Mark
 {
     public float range = 3;
 
-    public override void Activate()
+    public override void ActivateMark()
     {
-        base.Activate();
+        base.ActivateMark();
         GameObject ob = Instantiate(particles, transform.position, transform.rotation);
         // Get the water puddle child
         Transform water_puddle = ob.transform.GetChild(3);

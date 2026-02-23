@@ -4,9 +4,9 @@ public class SC_Mark_Electricity : SC_Mark
 {
     public float range = 3;
 
-    public override void Activate()
+    public override void ActivateMark()
     {
-        base.Activate();
+        base.ActivateMark();
         Destroy(Instantiate(particles, transform.position + transform.up * 2, transform.rotation), 5);
 
         LayerMask water_layer = 1 << LayerMask.NameToLayer("Water");

@@ -4,9 +4,9 @@ public class SC_Mark_Air : SC_Mark
 {
     public float range = 4;
 
-    public override void Activate()
+    public override void ActivateMark()
     {
-        base.Activate();
+        base.ActivateMark();
         particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
@@ -25,7 +25,7 @@ public class SC_Mark_Air : SC_Mark
             ob_airZone.transform.rotation = transform.rotation;
 
             SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
-            zone_air.InitAirZone(range, layer_interactable, GetElementStrenght() * 200, particles);
+            zone_air.InitAirZone(range, layer_interactable, GetElementStrength() * 200, particles);
             break;
 
             /*

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 
+//Almacena e inicializa referencias de runas
 public class SC_ElementManager : MonoBehaviour
 {
     public static SC_ElementManager instance {  get; private set; }

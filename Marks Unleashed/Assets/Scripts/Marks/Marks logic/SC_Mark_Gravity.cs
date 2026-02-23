@@ -4,9 +4,9 @@ public class SC_Mark_Gravity : SC_Mark
 {
     public float range = 15;
 
-    public override void Activate()
+    public override void ActivateMark()
     {
-        base.Activate();
+        base.ActivateMark();
         GameObject black_hole = Instantiate(particles, transform.position, transform.rotation);
         black_hole.transform.Rotate(new Vector3(20, 0, 0));
         Destroy(black_hole, 4);

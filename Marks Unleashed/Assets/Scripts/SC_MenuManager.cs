@@ -102,7 +102,10 @@ public class SC_MenuManager : MonoBehaviour
     public void CloseAllMenus() //Cierra cualquier menu que se haya quedado abierto
     {
         _optionsMenu.SetActive(false);
-        _creditsMenu.SetActive(false);
+        if(_creditsMenu != null)
+        {
+            _creditsMenu.SetActive(false);
+        }
     }
 
     public void LoadScene(string sceneName)
