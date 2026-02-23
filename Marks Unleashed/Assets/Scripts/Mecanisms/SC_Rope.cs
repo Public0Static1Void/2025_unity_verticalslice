@@ -51,6 +51,13 @@ public class SC_Rope : MonoBehaviour
 
     private void Update()
     {
+        
+    }
+
+    private void FixedUpdate()
+    {
+        ApplyGravity();
+
         // Process the player input
         if (playerMovement.grabbing && playerMovement.grabbedRope == this)
         {
@@ -58,11 +65,7 @@ public class SC_Rope : MonoBehaviour
             //ClimbRope(playerMovement.input.y);
             AddImpulse(playerMovement.input.y);
         }
-    }
 
-    private void FixedUpdate()
-    {
-        ApplyGravity();
         for (int i = 0; i < calculationNum; i++)
         {
             CheckCollisions();
@@ -182,7 +185,7 @@ public class SC_Rope : MonoBehaviour
 
         // Gets the direction of the rope point from the anchor
         Vector3 rope_dir = (p.position - points[0].position).normalized;
-        Vector3 tangent = Vector3.Cross(Vector3.Cross(Vector3.up, rope_dir), rope_dir).normalized;
+        Vector3 tangent = Vector3.ProjectOnPlane(playerMovement.transform.forward, rope_dir).normalized;
 
         Vector3 impulse = tangent * dir * moveForce * Time.fixedDeltaTime;
 
