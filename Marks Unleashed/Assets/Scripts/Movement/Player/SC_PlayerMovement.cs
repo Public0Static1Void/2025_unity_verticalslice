@@ -139,6 +139,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             {
                 camera_blur.intensity.value = 0;
 
+                // The player just collisioned with the ground
                 if (audio_effects.clip == clip_air && audio_effects.isPlaying)
                 {
                     audio_effects.Stop();
@@ -151,7 +152,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
                         HandleBigCollision();
                     }
-                    // Audio hit 
+
+                    grabPoint = null;
                 }
             }
         }
@@ -186,7 +188,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         // The player is falling and collided with the ground
         if (rb.linearVelocity.y < 0)
-            SC_CameraRotation.instance.OffsetCamera(Vector3.down, 0.2f, Quaternion.Euler(1, 0, 0), 0.5f);
+            SC_CameraRotation.instance.OffsetCamera(Vector3.down, 0.3f, Quaternion.Euler(3, 0, 0), 0.75f);
 
         StartCoroutine(DisableMovement(0.75f));
     }

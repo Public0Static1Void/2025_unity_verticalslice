@@ -130,6 +130,16 @@ public class SC_Rope : MonoBehaviour
 
             foreach (Collider coll in colls)
             {
+                // Check if the player has to be attached to the rope
+                if (coll.name == "Player" && playerMovement.jumping && playerMovement.grabPoint == null)
+                {
+                    grabbed_index = i;
+                    playerMovement.grabbing = true;
+                    playerMovement.grabPoint = point;
+                    continue;
+                }
+                if (coll.name == "Player" && playerMovement.grabbing)
+                    continue;
                 Vector3 closest = coll.ClosestPoint(point.position);
 
                 Vector3 repel_dir = (point.position - closest); // Gets the repel direction
@@ -149,7 +159,6 @@ public class SC_Rope : MonoBehaviour
                 {
                     point.position += normal * penetration * ropeDamping;
                 }
-
             }
         }
     }
@@ -169,18 +178,16 @@ public class SC_Rope : MonoBehaviour
     {
         RopePoint p = points[grabbed_index];
 
-        Vector3 impulse = playerMovement.transform.forward * (dir * Time.fixedDeltaTime * moveForce);
+        if (Mathf.Abs(dir) < 0.01f) return;
 
-        p.previousPosition -= impulse; // Adds inertia
+        // Gets the direction of the rope point from the anchor
+        Vector3 rope_dir = (p.position - points[0].position).normalized;
+        Vector3 tangent = Vector3.Cross(Vector3.Cross(Vector3.up, rope_dir), rope_dir).normalized;
 
-        Vector3 player_vel = p.position - playerMovement.rb.position;
+        Vector3 impulse = tangent * dir * moveForce * Time.fixedDeltaTime;
 
-        float springStrength = 30;
-        float damping = 4;
-
-        Vector3 player_force = player_vel * springStrength - playerMovement.rb.linearVelocity * damping;
-
-        playerMovement.rb.AddForce(player_force, ForceMode.Acceleration);
+        // Build up inertia
+        p.previousPosition -= impulse;
     }
 
     private void ClimbRope(float dir)
