@@ -57,6 +57,10 @@ public class SC_MenuManager : MonoBehaviour
 
         fullscreenToggle.isOn = Screen.fullScreen;
 
+        _masterSlider.onValueChanged.AddListener(SetMasterVolume);
+        _musicSlider.onValueChanged.AddListener(SetMusicVolume);
+        _sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+
         //Carga volumen de PlayerPrefs
         _masterSlider.value = PlayerPrefs.GetFloat("MasterVolume", 0f);
         _musicSlider.value = PlayerPrefs.GetFloat("MusicVolume", 0f);
@@ -83,17 +87,17 @@ public class SC_MenuManager : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
     }
 
-    private void SetMasterVolume(float _value)
+    public void SetMasterVolume(float _value)
     {
         audioMixer.SetFloat("MasterVolume", _value);
         PlayerPrefs.SetFloat("MasterVolume", _value);
     }
-    private void SetMusicVolume(float _value)
+    public void SetMusicVolume(float _value)
     {
         audioMixer.SetFloat("MusicVolume", _value);
         PlayerPrefs.SetFloat("MusicVolume", _value);
     }
-    private void SetSFXVolume(float _value)
+    public void SetSFXVolume(float _value)
     {
         audioMixer.SetFloat("SFXVolume", _value);
         PlayerPrefs.SetFloat("SFXVolume", _value);
