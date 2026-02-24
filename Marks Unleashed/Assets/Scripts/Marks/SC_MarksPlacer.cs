@@ -145,9 +145,6 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            UnlockMark(marks[(int)ElementTypes.WATER].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.ELECTRICITY].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
             UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
             UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
             UnlockMark(marks[(int)ElementTypes.STONE].element.el_type);
