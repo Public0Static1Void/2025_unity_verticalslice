@@ -159,13 +159,8 @@ public class SC_MarksPlacer : MonoBehaviour
             if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
             {
                 new_pos = hit.point;
-                //img gira sobre si misma y marca no se queda bien al ponerse en paredes
-                float playerY = player.eulerAngles.y;
 
-                mark_placeholder_image.rectTransform.localRotation =
-                    Quaternion.Euler(0f, 0f, -playerY);
-
-                mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
+                mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal, transform.forward);
                 mark_placeholder_image.color = Color.white;
             }
             else
@@ -357,9 +352,8 @@ public class SC_MarksPlacer : MonoBehaviour
             Vector3 position = hit.point + (hit.normal * 0.1f);
 
             OpenMarkSelectionMenu();
-            PlaceMark((int)unlocked_marks[current_mark], hit.transform, position, Quaternion.LookRotation(hit.normal));
-
-            
+            // Places the mark on the look point
+            PlaceMark((int)unlocked_marks[current_mark], hit.transform, position, Quaternion.LookRotation(hit.normal, transform.forward));
         }
     }
 

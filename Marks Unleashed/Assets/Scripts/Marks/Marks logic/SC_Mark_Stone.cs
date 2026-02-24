@@ -7,7 +7,7 @@ public class SC_Mark_Stone : SC_Mark
     public override void ActivateMark()
     {
         //Instancia partículas y las destruye desués de X segundos
-        GameObject stone_wall = Instantiate(particles, transform.position, particles.transform.rotation);
+        GameObject stone_wall = Instantiate(particles, transform.position, transform.rotation);
         Destroy(stone_wall, 5);
 
         DesactivateMark();
