@@ -7,6 +7,8 @@ using UnityEngine.Rendering.Universal;
 [RequireComponent(typeof(Rigidbody))]
 public class SC_PlayerMovement : SC_ObjectMovement
 {
+    public static SC_PlayerMovement instance { get; private set; }
+
     [Header("Stats")]
     public float jumpForce;
     public float acceleration = 1.1f;
@@ -47,6 +49,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private bool big_collision = false;
 
 
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         can_move = true;
@@ -124,7 +130,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             {
                 float current_speed = rb.linearVelocity.magnitude / 15;
                 if (current_speed > 0.65f)
-                    playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.25f), Color.black);
+                    playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.2f), Color.black);
                 if (!audio_effects.isPlaying)
                 {
                     audio_effects.clip = clip_air;
@@ -157,7 +163,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 }
             }
         }
-            
 
         HandleCameraBlur();
     }
@@ -211,7 +216,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (grabbing)
             {
                 rb.useGravity = true;
-                //jumpForce *= 2;
+                rb.AddForce(Camera.main.transform.forward * vel.magnitude, ForceMode.Force);
             }
 
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);

@@ -148,6 +148,7 @@ public class SC_MarksPlacer : MonoBehaviour
             UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
             UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
             UnlockMark(marks[(int)ElementTypes.STONE].element.el_type);
+            UnlockMark(marks[(int)ElementTypes.ICE].element.el_type);
         }
         if (placing_mark)
         {

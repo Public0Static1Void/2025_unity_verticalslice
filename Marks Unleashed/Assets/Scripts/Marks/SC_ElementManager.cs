@@ -20,6 +20,9 @@ public class SC_ElementManager : MonoBehaviour
     [Header("Particles")]
     public List<GameObject> part_marks = new List<GameObject>();
 
+    [Header("Other references")]
+    public AudioClip clip_snow_slide;
+
     void Awake()
     {
         if (instance == null)
@@ -48,6 +51,8 @@ public class SC_ElementManager : MonoBehaviour
         SetElement("Stone", 1, ElementTypes.STONE, new[] { ElementTypes.WATER }, new[] { ElementTypes.STONE });
         /// Gravity
         SetElement("Gravity", 1, ElementTypes.GRAVITY, new[] { ElementTypes.STONE, ElementTypes.WATER }, new[] { ElementTypes.NONE_LAST });
+        /// Ice
+        SetElement("Ice", 1, ElementTypes.ICE, new[] { ElementTypes.ELECTRICITY, ElementTypes.WATER }, new[] { ElementTypes.NONE_LAST });
 
 
         // Set marks images
@@ -85,6 +90,8 @@ public class SC_ElementManager : MonoBehaviour
         marks.Add(marks_objects[4].AddComponent<SC_Mark_Gravity>());
         // Air
         marks.Add(marks_objects[5].AddComponent<SC_Mark_Air>());
+        // Ice
+        marks.Add(marks_objects[6].AddComponent<SC_Mark_Ice>());
 
         for (int i = 0; i < marks.Count; i++) /// Asign the correct element stats
         {
@@ -113,7 +120,7 @@ public class SC_ElementManager : MonoBehaviour
                 {
                     dict["slow"] = GetElement(ElementTypes.WATER).strength * 2;
                 }
-                if (element2 == ElementTypes.ELECTRICITY)
+                else if (element2 == ElementTypes.ELECTRICITY)
                 {
                     dict["stop_time"] = GetElement(ElementTypes.WATER).strength + GetElement(ElementTypes.ELECTRICITY).strength;
                     dict["damage"] = GetElement(ElementTypes.WATER).strength * GetElement(ElementTypes.ELECTRICITY).strength; 
@@ -131,7 +138,7 @@ public class SC_ElementManager : MonoBehaviour
                 {
                     dict["clear_burn"] = 1;
                 }
-                if (element2 == ElementTypes.FIRE)
+                else if (element2 == ElementTypes.FIRE)
                 {
                     dict["burn"] = (GetElement(ElementTypes.FIRE).strength * GetElement(ElementTypes.FIRE).strength) * 0.5f;
                 }

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public enum ElementTypes
 {
-    WATER, FIRE, STONE, ELECTRICITY, GRAVITY, AIR, NONE_LAST
+    WATER, FIRE, STONE, ELECTRICITY, GRAVITY, AIR, ICE, NONE_LAST
 }
 public class Element
 {

@@ -18,9 +18,9 @@ public class SC_SoundManager : MonoBehaviour
         main_audiosource.Play();
     }
 
-    public void InstantiateSound(AudioClip clip, Vector3 position)
+    public GameObject InstantiateSound(AudioClip clip, Vector3 position, bool loop = false)
     {
-        if (clip == null) return;
+        if (clip == null) return null;
 
         GameObject new_ob = new GameObject("AudioSource");
         new_ob.transform.position = position;
@@ -35,8 +35,20 @@ public class SC_SoundManager : MonoBehaviour
         audio_as.clip = clip;
         audio_as.outputAudioMixerGroup = main_mixer;
 
+        audio_as.loop = loop;
+
         audio_as.Play();
 
-        Destroy(new_ob, clip.length + 1);
+        if (!loop)
+            Destroy(new_ob, clip.length + 1);
+
+        return new_ob;
+    }
+
+    public void AttachAudioToObject(GameObject audio_object, GameObject other_object)
+    {
+        audio_object.transform.SetParent(other_object.transform, false);
+        audio_object.transform.position = Vector3.zero;
+        audio_object.transform.localPosition = Vector3.zero;
     }
 }

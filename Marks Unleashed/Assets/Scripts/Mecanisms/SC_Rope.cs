@@ -1,4 +1,5 @@
-﻿using Unity.VisualScripting;
+﻿using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
@@ -21,7 +22,8 @@ public class SC_Rope : MonoBehaviour
     public int segmentCount = 5;
     public float segmentLength = 0.5f;
     public int calculationNum = 5;
-    public float moveForce = 5;
+    public float moveForce = 5, slide_speed = 5;
+    public float slide_acceleration = 5;
     [Range(0, 1)] public float ropeDamping = 0.9f;
     public float collision_radius = 1f;
 
@@ -29,11 +31,18 @@ public class SC_Rope : MonoBehaviour
     [Header("References")]
     public LayerMask layer_collision;
     public LineRenderer ropeRenderer;
-    public GameObject anchor;
+    public GameObject anchor, bottom_anchor;
     public SC_PlayerMovement playerMovement;
+
+    [Header("Functions")]
+    public bool scalable = false;
+    public bool slideable = false;
 
     public int grabbed_index = 0;
     public float t = 0;
+    public float current_distance = 0;
+
+    public float start_slide_speed = 0, max_slide_speed = 8;
 
 
     private void Start()
@@ -47,11 +56,9 @@ public class SC_Rope : MonoBehaviour
         }
 
         grabbed_index = segmentCount - 2;
-    }
 
-    private void Update()
-    {
-        
+        start_slide_speed = slide_speed;
+        max_slide_speed = start_slide_speed + 10;
     }
 
     private void FixedUpdate()
@@ -62,8 +69,15 @@ public class SC_Rope : MonoBehaviour
         if (playerMovement.grabbing && playerMovement.grabbedRope == this)
         {
             playerMovement.rb.useGravity = false;
-            //ClimbRope(playerMovement.input.y);
-            AddImpulse(playerMovement.input.y);
+
+            if (scalable)
+            {
+                ClimbRope(playerMovement.input.y);
+            }
+            else
+            {
+                AddImpulse(playerMovement.input.y);
+            }
         }
 
         for (int i = 0; i < calculationNum; i++)
@@ -84,7 +98,7 @@ public class SC_Rope : MonoBehaviour
     {
         // Simulate gravity
 
-        for (int i = anchor != null ? 1 : 0; i < points.Length; i++)
+        for (int i = anchor != null ? 1 : 0; i < points.Length - (bottom_anchor != null ? 1 : 0); i++)
         {
             RopePoint point = points[i];
 
@@ -100,6 +114,8 @@ public class SC_Rope : MonoBehaviour
     {
         if (anchor != null)
             points[0].position = anchor.transform.position;
+        if (bottom_anchor != null)
+            points[points.Length -1].position = bottom_anchor.transform.position;
 
         for (int i = 0; i < points.Length - 1; i++)
         {
@@ -125,7 +141,7 @@ public class SC_Rope : MonoBehaviour
 
     private void CheckCollisions()
     {
-        for (int i = anchor != null ? 1 : 0; i < points.Length; i++)
+        for (int i = anchor != null ? 1 : 0; i < points.Length - (bottom_anchor != null ? 1 : 0); i++)
         {
             RopePoint point = points[i];
             // Get the nearby colliders
@@ -136,9 +152,7 @@ public class SC_Rope : MonoBehaviour
                 // Check if the player has to be attached to the rope
                 if (coll.name == "Player" && playerMovement.jumping && playerMovement.grabPoint == null)
                 {
-                    grabbed_index = i;
-                    playerMovement.grabbing = true;
-                    playerMovement.grabPoint = point;
+                    HandlePlayerGrab(i, point);
                     continue;
                 }
                 if (coll.name == "Player" && playerMovement.grabbing)
@@ -164,6 +178,14 @@ public class SC_Rope : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void HandlePlayerGrab(int i, RopePoint point)
+    {
+        grabbed_index = i;
+        current_distance = 1 - (Vector3.Distance(points[grabbed_index].position, points[0].position) / RopeLength());
+        playerMovement.grabbing = true;
+        playerMovement.grabPoint = point;
     }
 
     private void DrawRope()
@@ -195,7 +217,21 @@ public class SC_Rope : MonoBehaviour
 
     private void ClimbRope(float dir)
     {
-        t += Time.fixedDeltaTime * 3 * -dir;
+        float speed = moveForce;
+        if (slideable && dir == 0)
+        {
+            dir = GetIndexDirToLowest();
+            slide_speed = Mathf.Lerp(slide_speed, max_slide_speed, Time.deltaTime * slide_acceleration);
+            if (slide_speed > max_slide_speed)
+                slide_speed = max_slide_speed;
+
+            speed += slide_speed;
+        }
+        else
+            slide_speed = 0;
+
+        t += Time.fixedDeltaTime * dir * speed;
+
         if (t >= 1)
         {
             if (grabbed_index < points.Length - 3) // Not on top
@@ -204,8 +240,10 @@ public class SC_Rope : MonoBehaviour
                 grabbed_index++;
             }
             else // On top
+            {
                 t = 1;
-            
+            }
+
         }
         else if (t <= 0)
         {
@@ -220,8 +258,43 @@ public class SC_Rope : MonoBehaviour
 
         Vector3 targetPos = Vector3.Lerp(points[grabbed_index].position, points[grabbed_index + 1].position, t);
         playerMovement.rb.MovePosition(targetPos);
+        playerMovement.vel = Vector3.one * speed;
     }
 
+    private int GetIndexDirToLowest(bool search_lowest = true)
+    {
+        if (grabbed_index <= 0) return 1;
+        if (grabbed_index >= points.Length - 1) return -1;
+
+        float lowest = points[grabbed_index].position.y;
+        float next_lowest_index = 0;
+        for (int i = 0; i < points.Length; i++)
+        {
+            if (i == grabbed_index) continue;
+
+            if (search_lowest)
+            {
+                if (points[i].position.y < lowest)
+                {
+                    lowest = points[i].position.y;
+                    next_lowest_index = i;
+                    break;
+                }
+            }
+            else
+            {
+                if (points[i].position.y > lowest)
+                {
+                    lowest = points[i].position.y;
+                    next_lowest_index = i;
+                }
+            }
+        }
+
+        if (grabbed_index == next_lowest_index) return 0;
+
+        return next_lowest_index > grabbed_index ? 1 : -1;
+    }
     public void GrabRope(Vector3 point)
     {
         // Find the closest point
@@ -243,12 +316,24 @@ public class SC_Rope : MonoBehaviour
         playerMovement.rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
+    /// <summary>
+    /// Gets the max distance of the rope
+    /// </summary>
+    float RopeLength()
+    {
+        float accumulated = 0;
+        for (int i = 0; i < points.Length - 1; i++)
+        {
+            accumulated += Vector3.Distance(points[i].position, points[i + 1].position);
+        }
+        return accumulated;
+    }
 
     private void OnDrawGizmos()
     {
         if (points == null) return;
 
-        Gizmos.color = Color.red;
+        Gizmos.color = UnityEngine.Color.red;
 
         foreach (var p in points)
             Gizmos.DrawWireSphere(p.position, collision_radius);
