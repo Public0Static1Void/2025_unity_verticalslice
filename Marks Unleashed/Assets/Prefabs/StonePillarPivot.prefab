@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2247032239674981859}
   - component: {fileID: 1567439668964646443}
   - component: {fileID: 7226397175369726718}
-  - component: {fileID: 3732583207786398706}
   m_Layer: 0
   m_Name: ReferenceCube
   m_TagString: Untagged
@@ -87,27 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3732583207786398706
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2387768665414745678}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3531623493159137114
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,7 +97,6 @@ GameObject:
   - component: {fileID: 4831280908747263417}
   - component: {fileID: 1108479667202897067}
   - component: {fileID: 5094212689374754329}
-  - component: {fileID: 9216255417284374083}
   m_Layer: 0
   m_Name: StonePillar
   m_TagString: Untagged
@@ -196,27 +173,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9216255417284374083
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3531623493159137114}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5282153666895378513
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +184,7 @@ GameObject:
   - component: {fileID: 4859898120948914976}
   - component: {fileID: 378117303909649352}
   - component: {fileID: 5783338239483755504}
+  - component: {fileID: 4210717753034003340}
   m_Layer: 0
   m_Name: StonePillarPivot
   m_TagString: Untagged
@@ -292,3 +249,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotDuration: 0.5
   rotAngle: -90
+--- !u!65 &4210717753034003340
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5282153666895378513}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 10, z: 1.5}
+  m_Center: {x: 0, y: -5, z: 0}

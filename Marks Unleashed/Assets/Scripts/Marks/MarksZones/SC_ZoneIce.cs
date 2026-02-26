@@ -112,6 +112,7 @@ public class SC_ZoneIce : SC_Zone
             for (int i = 0; i < affected_col.Count; i++)
             {                    
                 affected_col[i].material = null;
+                Destroy(attached_audio[i]);
             }
         }
     }

@@ -19,7 +19,11 @@ public class SC_PlayerAnimations : MonoBehaviour
 
     void Update()
     {
-        if (!player_move.can_move) return;
+        if (!player_move.can_move)
+        {
+            anim.SetBool("Walk", false);
+            return;
+        }
 
         anim.SetBool("walk", player_move.moving && player_move.grounded);
         anim.SetBool("jump", !player_move.grounded);

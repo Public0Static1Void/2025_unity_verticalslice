@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using NUnit.Framework;
+using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
@@ -24,7 +25,7 @@ public class SC_Rope : MonoBehaviour
     public int calculationNum = 5;
     public float moveForce = 5, slide_speed = 5;
     public float slide_acceleration = 5;
-    [Range(0, 1)] public float ropeDamping = 0.9f;
+    [UnityEngine.Range(0, 1)] public float ropeDamping = 0.9f;
     public float collision_radius = 1f;
 
 
@@ -33,6 +34,7 @@ public class SC_Rope : MonoBehaviour
     public LineRenderer ropeRenderer;
     public GameObject anchor, bottom_anchor;
     public SC_PlayerMovement playerMovement;
+    public AudioClip clip_slide;
 
     [Header("Functions")]
     public bool scalable = false;
@@ -44,15 +46,20 @@ public class SC_Rope : MonoBehaviour
 
     public float start_slide_speed = 0, max_slide_speed = 8;
 
+    private AudioSource slide_audiosource = null;
+
 
     private void Start()
     {
+        slide_audiosource = SC_SoundManager.instance.InstantiateSound(clip_slide, transform.position, true).GetComponent<AudioSource>();
+        slide_audiosource.Stop();
+
         points = new RopePoint[segmentCount];
 
         Vector3 start = transform.position;
         for (int i = 0; i < segmentCount; i++)
         {
-            points[i] = new RopePoint(start + Vector3.right * segmentLength * i);
+            points[i] = new RopePoint(start + Vector3.left * segmentLength * i);
         }
 
         grabbed_index = segmentCount - 2;
@@ -72,12 +79,14 @@ public class SC_Rope : MonoBehaviour
 
             if (scalable)
             {
-                ClimbRope(playerMovement.input.y);
+                ClimbRope(-playerMovement.input.y);
             }
             else
             {
                 AddImpulse(playerMovement.input.y);
             }
+
+            slide_audiosource.transform.position = playerMovement.transform.position + Vector3.up * 2;
         }
 
         for (int i = 0; i < calculationNum; i++)
@@ -103,11 +112,12 @@ public class SC_Rope : MonoBehaviour
             RopePoint point = points[i];
 
             Vector3 vel = (point.position - point.previousPosition) * ropeDamping; // Inertia
+            vel += Vector3.ProjectOnPlane(vel, (point.position - points[0].position).normalized) * 0.1f;
 
             point.previousPosition = point.position;
             point.position += vel; // Moves the point based on the inertia stored
 
-            point.position += Physics.gravity * Time.fixedDeltaTime;
+            point.position += Physics.gravity * (Time.fixedDeltaTime);
         }
     }
     private void ApplyConstraints()
@@ -150,7 +160,7 @@ public class SC_Rope : MonoBehaviour
             foreach (Collider coll in colls)
             {
                 // Check if the player has to be attached to the rope
-                if (coll.name == "Player" && playerMovement.jumping && playerMovement.grabPoint == null)
+                if (coll.name == "Player" && !playerMovement.grounded && playerMovement.grabPoint == null && playerMovement.grabbedRope != this)
                 {
                     HandlePlayerGrab(i, point);
                     continue;
@@ -185,7 +195,10 @@ public class SC_Rope : MonoBehaviour
         grabbed_index = i;
         current_distance = 1 - (Vector3.Distance(points[grabbed_index].position, points[0].position) / RopeLength());
         playerMovement.grabbing = true;
+        playerMovement.grabbedRope = this;
         playerMovement.grabPoint = point;
+
+        points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.5f;
     }
 
     private void DrawRope()
@@ -205,14 +218,22 @@ public class SC_Rope : MonoBehaviour
 
         if (Mathf.Abs(dir) < 0.01f) return;
 
+        // Gets the current speed of the rope
+        Vector3 rope_velocity = p.position - p.previousPosition;
+
         // Gets the direction of the rope point from the anchor
         Vector3 rope_dir = (p.position - points[0].position).normalized;
         Vector3 tangent = Vector3.ProjectOnPlane(playerMovement.transform.forward, rope_dir).normalized;
 
-        Vector3 impulse = tangent * dir * moveForce * Time.fixedDeltaTime;
+        float swing_dir = Vector3.Dot(rope_velocity, tangent);
+
+        float timing = Mathf.Sign(dir) == Mathf.Sign(swing_dir) ? 1.5f : 0;
+
+        Vector3 impulse = tangent * dir * moveForce * timing * Time.fixedDeltaTime;
 
         // Build up inertia
         p.previousPosition -= impulse;
+        playerMovement.vel += impulse;
     }
 
     private void ClimbRope(float dir)
@@ -228,9 +249,29 @@ public class SC_Rope : MonoBehaviour
             speed += slide_speed;
         }
         else
+        {
             slide_speed = 0;
+        }
 
-        t += Time.fixedDeltaTime * dir * speed;
+        if (dir != 0 || (dir == 0 && slideable))
+        {
+            // Play slide sound
+            if (!slide_audiosource.isPlaying)
+            {
+                slide_audiosource.Play();
+            }
+        }
+        if ((slideable && grabbed_index == points.Length - 3) || (dir == -1 && grabbed_index == 0))
+        {
+            // Play slide sound
+            if (slide_audiosource.isPlaying)
+            {
+                slide_audiosource.Stop();
+            }
+        }
+
+        float segmentLength = Vector3.Distance(points[grabbed_index].position, points[grabbed_index + 1].position);
+        t += (Time.fixedDeltaTime * dir * speed) / segmentLength;
 
         if (t >= 1)
         {
@@ -253,7 +294,9 @@ public class SC_Rope : MonoBehaviour
                 grabbed_index--;
             }
             else // On bottom
+            {
                 t = 0;
+            }
         }
 
         Vector3 targetPos = Vector3.Lerp(points[grabbed_index].position, points[grabbed_index + 1].position, t);
@@ -331,6 +374,42 @@ public class SC_Rope : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (!Application.isPlaying)
+        {
+            Gizmos.color = UnityEngine.Color.gray;
+            if (bottom_anchor == null)
+            {
+                for (int i = 0; i < segmentCount; i++)
+                {
+                    Gizmos.DrawWireSphere(transform.position + Vector3.down * segmentLength * i, collision_radius);
+                }
+            }
+            else
+            {
+                Vector3 start = transform.position;
+                Vector3 end = bottom_anchor.transform.position;
+
+                float sagAmount = 3; // how much rope sags
+
+                // midpoint between anchors
+                Vector3 mid = (start + end) * 0.5f;
+
+                // pull midpoint DOWN to create sag
+                Vector3 control = mid + Vector3.down * sagAmount;
+
+                for (int i = 0; i < segmentCount; i++)
+                {
+                    float t = i / (float)(segmentCount - 1);
+
+                    Vector3 pos =
+                        Mathf.Pow(1 - t, 2) * start +
+                        2 * (1 - t) * t * control +
+                        Mathf.Pow(t, 2) * end;
+
+                    Gizmos.DrawWireSphere(pos, collision_radius);
+                }
+            }
+        }
         if (points == null) return;
 
         Gizmos.color = UnityEngine.Color.red;

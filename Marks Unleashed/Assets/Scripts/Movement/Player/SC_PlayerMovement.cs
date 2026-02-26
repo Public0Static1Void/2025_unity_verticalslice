@@ -43,7 +43,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     public AudioSource audio_effects;
 
-    private SC_PlayerLife playerLife;
+    [HideInInspector]
+    public SC_PlayerLife playerLife;
 
 
     private bool big_collision = false;
@@ -89,7 +90,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         if (grabbing && grabPoint != null)
         {
-            rb.MovePosition(grabPoint.position);
+            if (!grabbedRope.slideable && !grabbedRope.scalable)
+                rb.MovePosition(grabPoint.position);
         }
         else
         {
@@ -129,7 +131,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (!grounded && distance_from_ground >= 1.2f)
             {
                 float current_speed = rb.linearVelocity.magnitude / 15;
-                if (current_speed > 0.65f)
+                if (current_speed > 0.65f && can_move)
                     playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.2f), Color.black);
                 if (!audio_effects.isPlaying)
                 {
@@ -149,7 +151,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 if (audio_effects.clip == clip_air && audio_effects.isPlaying)
                 {
                     audio_effects.Stop();
-                    playerLife.SetVignetteValue(0, Color.black);
+                    if (can_move)
+                        playerLife.SetVignetteValue(0, Color.black);
                     if (big_collision)
                     {
                         audio_effects.clip = clip_ground_hit;
@@ -160,6 +163,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
                     }
 
                     grabPoint = null;
+                    grabbedRope = null;
                 }
             }
         }
@@ -216,7 +220,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (grabbing)
             {
                 rb.useGravity = true;
-                rb.AddForce(Camera.main.transform.forward * vel.magnitude, ForceMode.Force);
+                rb.linearVelocity = (Camera.main.transform.forward + Vector3.up) * (vel.magnitude * 0.2f);
+                grabPoint = null;
             }
 
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);

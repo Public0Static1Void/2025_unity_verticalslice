@@ -11,6 +11,8 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     private Quaternion _startRot;
     private Quaternion _targetRot;
 
+    public bool can_move = true;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -30,11 +32,14 @@ public class SC_Test_Mark_Stone : MonoBehaviour
 
         while (elapsed < rotDuration) 
         {
-            elapsed += Time.fixedDeltaTime;
-            float t = elapsed / rotDuration;
+            if (can_move)
+            {
+                elapsed += Time.fixedDeltaTime;
+                float t = elapsed / rotDuration;
 
-            Quaternion newRot = Quaternion.Slerp(_startRot, _targetRot, t);
-            _rb.MoveRotation(newRot);
+                Quaternion newRot = Quaternion.Slerp(_startRot, _targetRot, t);
+                _rb.MoveRotation(newRot);
+            }
 
             yield return new WaitForFixedUpdate();
         }
