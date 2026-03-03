@@ -46,8 +46,9 @@ public class SC_Rope : MonoBehaviour
 
     public float start_slide_speed = 0, max_slide_speed = 8;
 
-    private AudioSource slide_audiosource = null;
+    public float climbOffset = 0.5f;
 
+    private AudioSource slide_audiosource = null;
 
     private void Start()
     {
@@ -238,8 +239,9 @@ public class SC_Rope : MonoBehaviour
 
     private void ClimbRope(float dir)
     {
+        //Slide
         float speed = moveForce;
-        if (slideable && dir == 0)
+        if (slideable && dir == 0) //dir == 0 significa que el jugador no está pulsando ni W ni S
         {
             dir = GetIndexDirToLowest();
             slide_speed = Mathf.Lerp(slide_speed, max_slide_speed, Time.deltaTime * slide_acceleration);
@@ -308,7 +310,11 @@ public class SC_Rope : MonoBehaviour
         }
 
         Vector3 targetPos = Vector3.Lerp(points[grabbed_index].position, points[grabbed_index + 1].position, t);
-        playerMovement.rb.MovePosition(targetPos);
+
+        // Offset hacia atrás respecto al jugador
+        Vector3 climbOffset = -playerMovement.transform.forward * this.climbOffset;
+
+        playerMovement.rb.MovePosition(targetPos + climbOffset);
         playerMovement.vel = Vector3.one * speed;
     }
 
