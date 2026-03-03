@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.XR;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
@@ -56,6 +57,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
     public bool placing_mark = false;
     public bool activate_mark = false;
+
 
     private void Awake()
     {
@@ -131,7 +133,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
         equipped_mark = marks[current_mark].element;
 
-        RefreshMarksList();
+        RefreshMarksList(0);
 
         // Load the element hands
         for (int i = 0; i < marks_list.Count; i++)
@@ -222,7 +224,21 @@ public class SC_MarksPlacer : MonoBehaviour
 
             if (im_activation_order[i] != null)
                 im_activation_order[i].sprite = spr;
+        }  
+    }
+    private IEnumerator UpdateMarkUIPosition(Transform tr, Vector3 start_pos, Vector3 end_pos, Quaternion start_rot, Quaternion end_rot)
+    {
+        float t = 0;
+        while (t < 1)
+        {
+            tr.position = Vector3.Lerp(start_pos, end_pos, t);
+            tr.rotation = Quaternion.Lerp(start_rot, end_rot, t);
+            t += Time.deltaTime;
+            yield return null;
         }
+
+        tr.position = end_pos;
+        tr.rotation = end_rot;
     }
 
     /// <summary>
@@ -412,14 +428,15 @@ public class SC_MarksPlacer : MonoBehaviour
         if (current_mark > unlocked_marks.Count - 1) current_mark = 0;
         else if (current_mark < 0) current_mark = unlocked_marks.Count - 1;
 
-        RefreshMarksList();
+        RefreshMarksList(direction);
     }
 
     /// <summary>
     /// Refreshes the order for the scroll on the marks in-game menu
     /// </summary>
-    private void RefreshMarksList()
+    private void RefreshMarksList(int dir)
     {
+        /*
         int count = unlocked_marks.Count;
         if (count == 0) return;
 
@@ -432,6 +449,35 @@ public class SC_MarksPlacer : MonoBehaviour
 
             marks_list_images[(int)unlocked_marks[i]].rectTransform.anchoredPosition = new Vector2(x, y);
             marks_list_images[(int)unlocked_marks[i]].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
+        }
+        */
+
+        int rune_count = unlocked_marks.Count;
+        if (rune_count == 0) return;
+
+        for (int i = 0; i < rune_count; i++)
+        {
+            int next_index = (i + dir + rune_count) % rune_count;
+
+            // Compute angle using NEXT index
+            float angle = next_index * Mathf.PI * 2f / rune_count;
+
+            float x = Mathf.Cos(angle);
+            float y = Mathf.Sin(angle);
+
+            Transform tr = marks_list[(int)unlocked_marks[i]].transform;
+
+            Vector3 targetPos = new Vector3(x, y, tr.position.z);
+
+            StartCoroutine(
+                UpdateMarkUIPosition(
+                    tr,
+                    tr.position,
+                    targetPos,
+                    tr.rotation,
+                    tr.rotation
+                )
+            );
         }
 
         int index = (int)unlocked_marks[current_mark];
