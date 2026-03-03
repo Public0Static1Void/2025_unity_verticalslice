@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,9 +8,13 @@ public class SC_MarksSelector : MonoBehaviour
 
     public SC_Zone selected_mark_zone;
 
+    public GameObject mark_selector_indicator;
+
     void Start()
     {
-        
+        mark_selector_indicator = Instantiate(mark_selector_indicator, transform.position, Quaternion.identity);
+        mark_selector_indicator.SetActive(false);
+        mark_selector_indicator.transform.localScale = Vector3.one * 0.03f;
     }
 
     void FixedUpdate()
@@ -20,7 +25,18 @@ public class SC_MarksSelector : MonoBehaviour
             if (selected_mark_zone != null)
             {
                 selected_mark_zone.HighlightZone();
+                if (mark_selector_indicator != null)
+                {
+                    mark_selector_indicator.SetActive(true);
+                    mark_selector_indicator.transform.position = selected_mark_zone.transform.position + Vector3.up * 3;
+                    mark_selector_indicator.transform.LookAt(transform);
+                }
             }
+        }
+        else
+        {
+            selected_mark_zone = null;
+            mark_selector_indicator.SetActive(false);
         }
     }
 

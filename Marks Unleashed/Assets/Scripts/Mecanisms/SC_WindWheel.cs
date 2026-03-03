@@ -15,7 +15,7 @@ public class SC_WindWheel : SC_Interactable
     public override void Activate()
     {
         while_active = true;
-        for (int i = 0; i < attached_mechanisms.Count; i++) 
+        for (int i = 0; i < attached_mechanisms.Count; i++)
         {
             attached_mechanisms[i].Activate();
         }

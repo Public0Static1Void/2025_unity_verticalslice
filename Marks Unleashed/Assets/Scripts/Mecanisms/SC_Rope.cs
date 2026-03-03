@@ -253,6 +253,14 @@ public class SC_Rope : MonoBehaviour
             slide_speed = 0;
         }
 
+        // Audio control
+        if (dir == 0 && !slideable)
+        {
+            if (slide_audiosource.isPlaying)
+            {
+                slide_audiosource.Stop();
+            }
+        }
         if (dir != 0 || (dir == 0 && slideable))
         {
             // Play slide sound

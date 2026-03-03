@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SC_Mark_Fire : SC_Mark
 {
-    public float range = 3;
+    public float range = 6;
 
     public override void ActivateMark()
     {

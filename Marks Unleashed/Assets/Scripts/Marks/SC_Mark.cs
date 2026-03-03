@@ -59,7 +59,8 @@ public class SC_Mark : MonoBehaviour
         if (transform.parent != null && gameObject != null)
         {
             Destroy(transform.parent.gameObject);
-            SC_MarksPlacer.Instance.RemoveMarkFromPlaced(gameObject.name);
+            if (gameObject != null)
+                SC_MarksPlacer.Instance.RemoveMarkFromPlaced(gameObject.name);
         }
     }
 

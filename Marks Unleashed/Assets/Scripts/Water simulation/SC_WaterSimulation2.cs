@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 
 public class SC_WaterSimulation2 : MonoBehaviour
 {

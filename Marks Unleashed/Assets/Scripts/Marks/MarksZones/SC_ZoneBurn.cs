@@ -80,14 +80,16 @@ public class SC_ZoneBurn : SC_Zone
 
     protected override void OnDestroy()
     {
-        foreach (SC_Interactable inter in affected_objects)
-        {
-            inter.Deactivate();
-        }
+        if (particles == null) return;
 
         ParticleSystem parts = particles.GetComponent<ParticleSystem>();
         parts.Stop();
         Destroy(particles, 5);
+
+        foreach (SC_Interactable inter in affected_objects)
+        {
+            inter.Deactivate();
+        }
     }
 
     IEnumerator DamagePerSecond(int damage_per_second)
