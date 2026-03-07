@@ -23,10 +23,11 @@ public class SC_Rope : MonoBehaviour
     public int segmentCount = 5;
     public float segmentLength = 0.5f;
     public int calculationNum = 5;
-    public float moveForce = 5, slide_speed = 5;
+    public float moveForce = 4, slide_speed = 5;
     public float slide_acceleration = 5;
     [UnityEngine.Range(0, 1)] public float ropeDamping = 0.9f;
     public float collision_radius = 1f;
+    public float maxSwingSpeed = 5f;
 
 
     [Header("References")]
@@ -46,10 +47,12 @@ public class SC_Rope : MonoBehaviour
 
     public float start_slide_speed = 0, max_slide_speed = 8;
 
-    public float climbOffset = 0.5f;
-
     private AudioSource slide_audiosource = null;
 
+    [Header("RopeOffsets")]
+    public float climbOffset = 0.5f;
+    public float slideOffset = 0.5f;
+    public float swingOffset = 0.5f;
     private void Start()
     {
         slide_audiosource = SC_SoundManager.instance.InstantiateSound(clip_slide, transform.position, true).GetComponent<AudioSource>();
@@ -193,13 +196,32 @@ public class SC_Rope : MonoBehaviour
 
     private void HandlePlayerGrab(int i, RopePoint point)
     {
-        grabbed_index = i;
+        //Agarrar segmento mas bajo de las cuerdas de balanceo
+        if (!scalable && !slideable)
+            grabbed_index = points.Length - 2;
+        else
+            grabbed_index = i;
+
         current_distance = 1 - (Vector3.Distance(points[grabbed_index].position, points[0].position) / RopeLength());
+        
         playerMovement.grabbing = true;
         playerMovement.grabbedRope = this;
-        playerMovement.grabPoint = point;
+        playerMovement.grabPoint = points[grabbed_index];
 
         points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.5f;
+
+        /*
+        //Offset para cuerdas de balanceo (no funcional)
+        Vector3 ropeDir;
+
+        if (i < points.Length - 1)
+            ropeDir = (points[i + 1].position - points[i].position).normalized;
+        else
+            ropeDir = (points[i].position - points[i - 1].position).normalized;
+
+        Vector3 offsetDir = Vector3.Cross(Vector3.up, ropeDir).normalized;
+
+        playerMovement.rb.position = point.position + offsetDir * swingOffset;*/
     }
 
     private void DrawRope()
@@ -222,13 +244,17 @@ public class SC_Rope : MonoBehaviour
         // Gets the current speed of the rope
         Vector3 rope_velocity = p.position - p.previousPosition;
 
+        float currentSpeed = rope_velocity.magnitude;
+        if (currentSpeed > maxSwingSpeed)
+            return;
+
         // Gets the direction of the rope point from the anchor
         Vector3 rope_dir = (p.position - points[0].position).normalized;
         Vector3 tangent = Vector3.ProjectOnPlane(playerMovement.transform.forward, rope_dir).normalized;
 
         float swing_dir = Vector3.Dot(rope_velocity, tangent);
 
-        float timing = Mathf.Sign(dir) == Mathf.Sign(swing_dir) ? 1.5f : 0;
+        float timing = Mathf.Sign(dir) == Mathf.Sign(swing_dir) ? 1.2f : 0;
 
         Vector3 impulse = tangent * dir * moveForce * timing * Time.fixedDeltaTime;
 
@@ -311,11 +337,28 @@ public class SC_Rope : MonoBehaviour
 
         Vector3 targetPos = Vector3.Lerp(points[grabbed_index].position, points[grabbed_index + 1].position, t);
 
+        //Offset cuerdas slideables
+        if (slideable)
+        {
+            targetPos += Vector3.up * slideOffset;
+        }
+
+        //Offset para cuerdas de trepar (vertical)
+        else
+        {
+            targetPos += -playerMovement.transform.forward * climbOffset;
+        }
+
+        playerMovement.rb.MovePosition(targetPos);
+        playerMovement.vel = Vector3.one * speed;
+        /*
+        playerMovement.rb.MovePosition(targetPos);
+
         // Offset hacia atrás respecto al jugador
         Vector3 climbOffset = -playerMovement.transform.forward * this.climbOffset;
 
         playerMovement.rb.MovePosition(targetPos + climbOffset);
-        playerMovement.vel = Vector3.one * speed;
+        playerMovement.vel = Vector3.one * speed;*/
     }
 
     private int GetIndexDirToLowest(bool search_lowest = true)
