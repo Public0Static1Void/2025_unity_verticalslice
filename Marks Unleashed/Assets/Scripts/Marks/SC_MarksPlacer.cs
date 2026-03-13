@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +39,7 @@ public class SC_MarksPlacer : MonoBehaviour
     private List<ElementTypes> unlocked_marks = new List<ElementTypes>();
     private List<SC_Mark> marks = new List<SC_Mark>();
     private List<Image> marks_list_images = new List<Image>();
+    public float marks_radius = 10;
 
     private bool open_menu = false;
 
@@ -117,10 +119,15 @@ public class SC_MarksPlacer : MonoBehaviour
             Image im = ob.AddComponent<Image>();
             im.sprite = mark.element.im_mark_sprite;
 
-            // Place it around the parent
-            float angle = i * Mathf.PI * 2 / marks_count; /// Get the angle where the mark will be
-            float x = Mathf.Cos(angle) * 1;
-            float y = Mathf.Sin(angle) * 1;
+            float t = (float)i / (4 - 1);
+            float anngle = t * Mathf.PI;
+
+            float x = Mathf.Cos(anngle + 45) * marks_radius;
+            float y = Mathf.Sin(anngle + 45) * marks_radius;
+
+            ob.transform.localPosition = new Vector3(x, y, 0);
+
+
 
             RectTransform rect = ob.GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(0.5f, 0.5f);
@@ -226,19 +233,19 @@ public class SC_MarksPlacer : MonoBehaviour
                 im_activation_order[i].sprite = spr;
         }  
     }
-    private IEnumerator UpdateMarkUIPosition(Transform tr, Vector3 start_pos, Vector3 end_pos, Quaternion start_rot, Quaternion end_rot)
+    private IEnumerator UpdateMarkUIPosition(RectTransform tr, Vector2 start_pos, Vector2 end_pos, Quaternion start_rot, Quaternion end_rot)
     {
         float t = 0;
         while (t < 1)
         {
-            tr.position = Vector3.Lerp(start_pos, end_pos, t);
-            tr.rotation = Quaternion.Lerp(start_rot, end_rot, t);
-            t += Time.deltaTime;
+            tr.anchoredPosition = Vector2.Lerp(start_pos, end_pos, t);
+            //tr.rotation = Quaternion.Lerp(start_rot, end_rot, t);
+            t += Time.deltaTime * 10;
             yield return null;
         }
 
-        tr.position = end_pos;
-        tr.rotation = end_rot;
+        tr.anchoredPosition = end_pos;
+        //tr.rotation = end_rot;
     }
 
     /// <summary>
@@ -425,8 +432,8 @@ public class SC_MarksPlacer : MonoBehaviour
         if (marks_list.Count <= 1) return;
 
         current_mark += direction;
-        if (current_mark > unlocked_marks.Count - 1) current_mark = 0;
-        else if (current_mark < 0) current_mark = unlocked_marks.Count - 1;
+        if (current_mark > unlocked_marks.Count - 1) current_mark = unlocked_marks.Count - 1;
+        else if (current_mark < 0) current_mark = 0;
 
         RefreshMarksList(direction);
     }
@@ -455,29 +462,28 @@ public class SC_MarksPlacer : MonoBehaviour
         int rune_count = unlocked_marks.Count;
         if (rune_count == 0) return;
 
+        //float angle = (180 / rune_count) * current_mark;
+        //marks_canvas.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+        StopCoroutine("UpdateMarkUIPosition");
+        float step = Mathf.PI / (rune_count - 1);
         for (int i = 0; i < rune_count; i++)
         {
-            int next_index = (i + dir + rune_count) % rune_count;
+            int indx = (int)unlocked_marks[i];
 
-            // Compute angle using NEXT index
-            float angle = next_index * Mathf.PI * 2f / rune_count;
+            float angle = (i - current_mark) * step + Mathf.PI / 2;
 
-            float x = Mathf.Cos(angle);
-            float y = Mathf.Sin(angle);
+            float x = Mathf.Cos(angle) * marks_radius;
+            float y = Mathf.Sin(angle) * marks_radius;
 
-            Transform tr = marks_list[(int)unlocked_marks[i]].transform;
-
-            Vector3 targetPos = new Vector3(x, y, tr.position.z);
-
-            StartCoroutine(
-                UpdateMarkUIPosition(
-                    tr,
-                    tr.position,
-                    targetPos,
-                    tr.rotation,
-                    tr.rotation
-                )
-            );
+            StartCoroutine(UpdateMarkUIPosition(
+                marks_list_images[indx].rectTransform,
+                marks_list_images[indx].rectTransform.anchoredPosition,
+                new Vector2(x, y),
+                Quaternion.identity, Quaternion.identity
+            ));
+            //marks_list_images[indx].rectTransform.anchoredPosition = new Vector2(x, y);
+            //marks_list_images[indx].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
         }
 
         int index = (int)unlocked_marks[current_mark];
