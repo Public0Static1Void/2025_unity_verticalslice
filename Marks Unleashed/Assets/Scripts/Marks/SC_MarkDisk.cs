@@ -6,24 +6,53 @@ using static UnityEditor.Profiling.FrameDataView;
 public class SC_MarkDisk : MonoBehaviour
 {
     public SC_Mark stored_mark;
-
     private SC_MarksPlacer marksPlacer;
-    private Vector3 move_dir;
-    private float move_speed;
+    private Transform rune_disk;
+    private Rigidbody rb;
 
-    // Update is called once per frame
-    void Update()
+    private Vector3 previous_pos;
+
+    private void Awake()
     {
-        transform.Translate(move_dir * move_speed * Time.deltaTime);
+        rb = gameObject.AddComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
+        Destroy(gameObject, 10);
+    }
+
+    public void InitDisk(SC_MarksPlacer marks_placer, SC_Mark place_mark, Vector3 direction, float speed, GameObject mesh)
+    {
+        marksPlacer = marks_placer;
+        stored_mark = place_mark;
+
+        GameObject ob = Instantiate(mesh, transform.position, transform.rotation);
+        ob.transform.SetParent(transform, false);
+        ob.transform.localPosition = Vector3.zero;
+
+        rune_disk = ob.transform;
+
+        // Adds force to the rigidbody
+        rb.AddForce(direction * speed, ForceMode.Impulse);
+    }
+
+    private void Update()
+    {
+        // Rotate the disk with the current movement direction
+        Vector3 dir = (transform.position - previous_pos).normalized;
+        if (dir.sqrMagnitude > 0.0001f)
+            rune_disk.transform.rotation = Quaternion.LookRotation(dir);
+
+        /// Store the last frame position
+        previous_pos = transform.position;
     }
     private void FixedUpdate()
     {
         Collider[] colls = Physics.OverlapSphere(transform.position, 1);
-        foreach (Collider coll in colls)
+        if (colls.Length > 0 && colls[0].name != "Player")
         {
-            if (coll.name == "Player") continue;
-
-            Vector3 dir_to_nearest = (coll.transform.position - transform.position).normalized;
+            Vector3 dir_to_nearest = (colls[0].transform.position - transform.position).normalized;
             if (CheckNearbySurface(dir_to_nearest))
                 Destroy(gameObject);
         }
@@ -33,7 +62,8 @@ public class SC_MarkDisk : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1))
         {
-            Vector3 position = hit.point;
+            // Get the position and rotation
+            Vector3 position = hit.point + hit.normal * 0.1f;
             Quaternion rotation = Quaternion.LookRotation(hit.normal);
 
             GameObject mark_canvas = new GameObject($"Mark {stored_mark.element.name} canvas");
@@ -85,13 +115,7 @@ public class SC_MarkDisk : MonoBehaviour
         return false;
     }
 
-    public void InitDisk(SC_MarksPlacer marks_placer, SC_Mark place_mark, Vector3 direction, float speed)
-    {
-        marksPlacer = marks_placer;
-        stored_mark = place_mark;
-        move_dir = direction;
-        move_speed = speed;
-    }
+    
 
     private void OnDrawGizmos()
     {

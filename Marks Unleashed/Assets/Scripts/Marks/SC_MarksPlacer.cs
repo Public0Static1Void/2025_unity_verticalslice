@@ -5,14 +5,16 @@ using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using UnityEngine.XR;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
     public static SC_MarksPlacer Instance { get; private set; }
     [Header("References")]
+    public GameObject ob_mark_disk;
     public GameObject mark_placeholder;
-    public Image mark_placeholder_image;
+    public UnityEngine.UI.Image mark_placeholder_image;
     public Transform player;
     public LayerMask layer_placeable;
 
@@ -25,7 +27,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
     // Marks activation order UI
     public Transform ui_order_parent;
-    private Image[] im_activation_order;
+    private UnityEngine.UI.Image[] im_activation_order;
 
     private List<GameObject> element_hands = new List<GameObject>();
 
@@ -38,13 +40,14 @@ public class SC_MarksPlacer : MonoBehaviour
     private List<GameObject> marks_list = new List<GameObject>();
     private List<ElementTypes> unlocked_marks = new List<ElementTypes>();
     private List<SC_Mark> marks = new List<SC_Mark>();
-    private List<Image> marks_list_images = new List<Image>();
+    private List<UnityEngine.UI.Image> marks_list_images = new List<UnityEngine.UI.Image>();
     public float marks_radius = 10;
 
     private bool open_menu = false;
 
     [Header("Sounds")]
     public AudioClip clip_place_mark;
+    public List<AudioClip> clips_swhoosh;
 
     [Header("Stats")]
     public float range_placing = 10;
@@ -83,10 +86,10 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_placeholder_rb =  mark_placeholder.GetComponent<Rigidbody>();
         mark_placeholder_rb.isKinematic = true;
 
-        mark_placeholder_image = mark_placeholder.GetComponentInChildren<Image>();
+        mark_placeholder_image = mark_placeholder.GetComponentInChildren<UnityEngine.UI.Image>();
 
         // Marks activation order UI
-        im_activation_order = SC_GameManager.GetChildsComponents<Image>(ui_order_parent);
+        im_activation_order = SC_GameManager.GetChildsComponents<UnityEngine.UI.Image>(ui_order_parent);
 
         // Get the camera script
         cameraRotation = GetComponentInChildren<SC_CameraRotation>();
@@ -116,7 +119,7 @@ public class SC_MarksPlacer : MonoBehaviour
             mark = SC_ElementManager.instance.marks[i];
             Debug.Log($"Im: {mark.element.im_mark_sprite}");
 
-            Image im = ob.AddComponent<Image>();
+            UnityEngine.UI.Image im = ob.AddComponent<UnityEngine.UI.Image>();
             im.sprite = mark.element.im_mark_sprite;
 
             float t = (float)i / (4 - 1);
@@ -303,7 +306,7 @@ public class SC_MarksPlacer : MonoBehaviour
         transform_arrow.gameObject.SetActive(true);
     }
 
-    private void PlaceMark(int index, Transform hit_transform, Vector3 position, Quaternion rotation)
+    private void PlaceMark(int index)
     {
         // Get the selected mark info
         SC_Mark mark_info = SC_ElementManager.instance.marks[index];
@@ -312,7 +315,9 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_disk.transform.position = transform.position + transform.forward * 2;
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
-        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 5);
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 50, ob_mark_disk);
+
+        SC_SoundManager.instance.InstantiateSound(clips_swhoosh[UnityEngine.Random.Range(0, clips_swhoosh.Count)], transform.position);
 
         placing_mark = false;
         /*
@@ -332,13 +337,13 @@ public class SC_MarksPlacer : MonoBehaviour
         rt.sizeDelta = new Vector2(0.5f, 0.5f);
         rt.localScale = Vector3.one;
 
-        // Create the image
+        // Create the UnityEngine.UI.Image
         GameObject inst = new GameObject($"Mark {mark_info.element.name} {placed_marks.Count}");
 
         inst.transform.position = position;
         inst.transform.rotation = rotation;
 
-        UnityEngine.UI.Image im = inst.AddComponent<UnityEngine.UI.Image>();
+        UnityEngine.UI.UnityEngine.UI.Image im = inst.AddComponent<UnityEngine.UI.UnityEngine.UI.Image>();
         im.transform.SetParent(canvas.transform);
 
         im.sprite = mark_info.element.im_mark_sprite;
@@ -369,6 +374,9 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         if (!open_menu || !placing_mark || unlocked_marks.Count <= 0) return;
 
+        OpenMarkSelectionMenu();
+        PlaceMark((int)unlocked_marks[current_mark]);
+        /*
         if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
         {
             Vector3 position = hit.point + (hit.normal * 0.1f);
@@ -377,6 +385,7 @@ public class SC_MarksPlacer : MonoBehaviour
             // Places the mark on the look point
             PlaceMark((int)unlocked_marks[current_mark], hit.transform, position, Quaternion.LookRotation(hit.normal, transform.forward));
         }
+        */
     }
 
     #region SelectionMenu
