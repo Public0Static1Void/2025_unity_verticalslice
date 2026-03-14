@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,6 +39,10 @@ public class SC_CameraRotation : MonoBehaviour
     private Vector3 pos_offset_current, pos_shake_current;
     private Quaternion rot_offset_current;
     private Coroutine routine_shake, routine_offset;
+
+    [Header("UI Elements")]
+    public float ui_elements_speed = 1;
+    public List<RectTransform> ui_elements_to_move;
 
     private void Awake()
     {
@@ -90,6 +95,21 @@ public class SC_CameraRotation : MonoBehaviour
 
         // Add the current offset and shake
         transform.localPosition = pos_start_local + pos_offset_current + pos_shake_current;
+
+        MoveUIElements();
+    }
+
+    private void MoveUIElements()
+    {
+        for (int i = 0; i < ui_elements_to_move.Count; i++)
+        {
+            Vector2 pos = ui_elements_to_move[i].anchoredPosition;
+            Vector2 inp = input.normalized;
+            ui_elements_to_move[i].anchoredPosition = new Vector2(
+                Mathf.Lerp(pos.x, inp.x * (ui_elements_to_move[i].rect.x + (ui_elements_to_move[i].rect.width * ui_elements_to_move[i].localScale.x) * 0.75f), Time.deltaTime * ui_elements_speed),
+                Mathf.Lerp(pos.y, inp.y * (ui_elements_to_move[i].rect.y + (ui_elements_to_move[i].rect.height * ui_elements_to_move[i].localScale.y) * 0.75f), Time.deltaTime * ui_elements_speed)
+            );
+        }
     }
 
     public void CameraTurn(InputAction.CallbackContext con)

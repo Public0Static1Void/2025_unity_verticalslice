@@ -9,8 +9,11 @@ public class SC_MarkDisk : MonoBehaviour
     private SC_MarksPlacer marksPlacer;
     private Transform rune_disk;
     private Rigidbody rb;
+    private GameObject ob_disk;
 
     private Vector3 previous_pos;
+
+    private bool activated = false;
 
     private void Awake()
     {
@@ -27,11 +30,11 @@ public class SC_MarkDisk : MonoBehaviour
         marksPlacer = marks_placer;
         stored_mark = place_mark;
 
-        GameObject ob = Instantiate(stored_mark.disk, transform.position, transform.rotation);
-        ob.transform.SetParent(transform, false);
-        ob.transform.localPosition = Vector3.zero;
+        ob_disk = Instantiate(stored_mark.disk, transform.position, transform.rotation);
+        ob_disk.transform.SetParent(transform, false);
+        ob_disk.transform.localPosition = Vector3.zero;
 
-        rune_disk = ob.transform;
+        rune_disk = ob_disk.transform;
 
         // Adds force to the rigidbody
         rb.AddForce(direction * speed, ForceMode.Impulse);
@@ -49,15 +52,22 @@ public class SC_MarkDisk : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (activated) return;
+
         Collider[] colls = Physics.OverlapSphere(transform.position, 1);
         if (colls.Length > 0 && colls[0].name != "Player")
         {
             Vector3 dir_to_nearest = (colls[0].transform.position - transform.position).normalized;
             if (CheckNearbySurface(dir_to_nearest))
             {
-                ParticleSystem parts = stored_mark.disk.GetComponent<ParticleSystem>();
+                // Deactivate the particles
+                ParticleSystem parts = ob_disk.GetComponentInChildren<ParticleSystem>();
                 parts.Stop();
+                ParticleSystem.MainModule main = parts.main;
+                //main.loop = false;
+                parts.transform.parent = null;
 
+                activated = true;
                 Destroy(gameObject);
             }
         }
@@ -118,11 +128,6 @@ public class SC_MarkDisk : MonoBehaviour
             return true;
         }
         return false;
-    }
-
-    private void OnDestroy()
-    {
-        Destroy(rune_disk.gameObject, 10);
     }
 
     private void OnDrawGizmos()
