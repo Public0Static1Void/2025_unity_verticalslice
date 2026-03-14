@@ -7,7 +7,7 @@ public class SC_Mark : MonoBehaviour
 {
     public ElementTypes type = ElementTypes.NONE_LAST;
     public Element element;
-    public GameObject particles;
+    public GameObject particles, disk;
     public AudioClip clip_activation;
 
     public LayerMask layer_interactable = ~0;
@@ -28,11 +28,12 @@ public class SC_Mark : MonoBehaviour
         rb.isKinematic = true;
     }
 
-    public void Init(Element el, GameObject parts = null, AudioClip clip = null)
+    public void Init(Element el, GameObject parts = null, AudioClip clip = null, GameObject rune_disk = null)
     {
         element = el;
         type = el.el_type;
         particles = parts;
+        disk = rune_disk;
         clip_activation = clip;
     }
     public void EnableCollision()

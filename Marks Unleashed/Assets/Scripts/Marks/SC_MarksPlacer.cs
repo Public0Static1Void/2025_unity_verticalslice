@@ -315,9 +315,10 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_disk.transform.position = transform.position + transform.forward * 2;
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
-        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 50, ob_mark_disk);
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 50);
 
         SC_SoundManager.instance.InstantiateSound(clips_swhoosh[UnityEngine.Random.Range(0, clips_swhoosh.Count)], transform.position);
+        SC_CameraRotation.instance.ShakeCamera(0.25f, 0.05f);
 
         placing_mark = false;
         /*

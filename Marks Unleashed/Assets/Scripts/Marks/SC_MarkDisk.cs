@@ -22,12 +22,12 @@ public class SC_MarkDisk : MonoBehaviour
         Destroy(gameObject, 10);
     }
 
-    public void InitDisk(SC_MarksPlacer marks_placer, SC_Mark place_mark, Vector3 direction, float speed, GameObject mesh)
+    public void InitDisk(SC_MarksPlacer marks_placer, SC_Mark place_mark, Vector3 direction, float speed)
     {
         marksPlacer = marks_placer;
         stored_mark = place_mark;
 
-        GameObject ob = Instantiate(mesh, transform.position, transform.rotation);
+        GameObject ob = Instantiate(stored_mark.disk, transform.position, transform.rotation);
         ob.transform.SetParent(transform, false);
         ob.transform.localPosition = Vector3.zero;
 
@@ -54,7 +54,12 @@ public class SC_MarkDisk : MonoBehaviour
         {
             Vector3 dir_to_nearest = (colls[0].transform.position - transform.position).normalized;
             if (CheckNearbySurface(dir_to_nearest))
+            {
+                ParticleSystem parts = stored_mark.disk.GetComponent<ParticleSystem>();
+                parts.Stop();
+
                 Destroy(gameObject);
+            }
         }
     }
 
@@ -115,7 +120,10 @@ public class SC_MarkDisk : MonoBehaviour
         return false;
     }
 
-    
+    private void OnDestroy()
+    {
+        Destroy(rune_disk.gameObject, 10);
+    }
 
     private void OnDrawGizmos()
     {
