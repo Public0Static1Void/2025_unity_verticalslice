@@ -163,7 +163,7 @@ public class SC_Mark : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (!enable_collision_activation) return;
+        if (!enable_collision_activation || rb == null) return;
 
         if (rb.linearVelocity.magnitude >= 1)
         {

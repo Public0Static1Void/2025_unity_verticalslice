@@ -233,19 +233,19 @@ public class SC_MarksPlacer : MonoBehaviour
                 im_activation_order[i].sprite = spr;
         }  
     }
-    private IEnumerator UpdateMarkUIPosition(RectTransform tr, Vector2 start_pos, Vector2 end_pos, Quaternion start_rot, Quaternion end_rot)
+    private IEnumerator UpdateMarkUIPosition(Transform tr, Vector2 start_pos, Vector2 end_pos, Quaternion start_rot, Quaternion end_rot)
     {
         float t = 0;
         while (t < 1)
         {
-            tr.anchoredPosition = Vector2.Lerp(start_pos, end_pos, t);
-            //tr.rotation = Quaternion.Lerp(start_rot, end_rot, t);
+            tr.localPosition = Vector2.Lerp(start_pos, end_pos, t);
+            tr.rotation = Quaternion.Lerp(start_rot, end_rot, t);
             t += Time.deltaTime * 10;
             yield return null;
         }
 
-        tr.anchoredPosition = end_pos;
-        //tr.rotation = end_rot;
+        tr.localPosition = end_pos;
+        tr.rotation = end_rot;
     }
 
     /// <summary>
@@ -291,7 +291,7 @@ public class SC_MarksPlacer : MonoBehaviour
         activate_mark = false;
     }
 
-    private void SetArrowPos()
+    public void SetArrowPos()
     {
         if (placed_marks.Count <= 0)
         {
@@ -308,6 +308,14 @@ public class SC_MarksPlacer : MonoBehaviour
         // Get the selected mark info
         SC_Mark mark_info = SC_ElementManager.instance.marks[index];
 
+        GameObject mark_disk = new GameObject($"Mark {mark_info.element.name} disk");
+        mark_disk.transform.position = transform.position + transform.forward * 2;
+
+        SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 5);
+
+        placing_mark = false;
+        /*
         // Create canvas parent
         GameObject mark_canvas = new GameObject($"Mark {mark_info.element.name} canvas");
         mark_canvas.transform.position = position;
@@ -352,14 +360,7 @@ public class SC_MarksPlacer : MonoBehaviour
         SC_SoundManager.instance.InstantiateSound(clip_place_mark, position);
 
         placed_marks.Add(mark);
-
-        // Set the arrow position
-        SetArrowPos();
-
-        UpdateActivateMarksUI();
-
-
-        placing_mark = false;
+        */
     }
     /// <summary>
     /// Instantiates a mark on the looking surface and adds it to the placed marks list
@@ -476,11 +477,20 @@ public class SC_MarksPlacer : MonoBehaviour
             float x = Mathf.Cos(angle) * marks_radius;
             float y = Mathf.Sin(angle) * marks_radius;
 
+            Vector3 local_dir = (marks_list_images[current_mark].transform.localPosition - marks_list_images[i].transform.localPosition).normalized;
+            Quaternion target_rot = Quaternion.LookRotation(local_dir);
+            if (i == current_mark)
+            {
+                Vector3 dir_to_camera = (Camera.main.transform.position - marks_list_images[i].transform.position).normalized;
+                target_rot = Quaternion.LookRotation(dir_to_camera);
+            }
+
             StartCoroutine(UpdateMarkUIPosition(
-                marks_list_images[indx].rectTransform,
-                marks_list_images[indx].rectTransform.anchoredPosition,
+                marks_list_images[indx].transform,
+                marks_list_images[indx].transform.localPosition,
                 new Vector2(x, y),
-                Quaternion.identity, Quaternion.identity
+                marks_list_images[indx].transform.localRotation,
+                target_rot
             ));
             //marks_list_images[indx].rectTransform.anchoredPosition = new Vector2(x, y);
             //marks_list_images[indx].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
