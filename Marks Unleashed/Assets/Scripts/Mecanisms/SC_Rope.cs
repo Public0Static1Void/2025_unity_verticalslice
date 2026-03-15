@@ -92,6 +92,11 @@ public class SC_Rope : MonoBehaviour
 
             slide_audiosource.transform.position = playerMovement.transform.position + Vector3.up * 2;
         }
+        else
+        {
+            if (slide_audiosource.isPlaying)
+                slide_audiosource.Stop();
+        }
 
         for (int i = 0; i < calculationNum; i++)
         {
