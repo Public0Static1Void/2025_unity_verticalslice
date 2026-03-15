@@ -847,6 +847,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -862,6 +863,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!4 &485561454
 Transform:
   m_ObjectHideFlags: 0
@@ -1045,6 +1049,10 @@ PrefabInstance:
       propertyPath: 'ui_elements_to_move.Array.data[1]'
       value: 
       objectReference: {fileID: 930804243}
+    - target: {fileID: 6458044406472068616, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 16608
+      objectReference: {fileID: 0}
     - target: {fileID: 6608115200241079631, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: im_life_bar
       value: 
@@ -1700,6 +1708,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1715,6 +1724,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!4 &644892483
 Transform:
   m_ObjectHideFlags: 0
@@ -2082,6 +2094,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2097,6 +2110,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!4 &846641765
 Transform:
   m_ObjectHideFlags: 0
@@ -3634,6 +3650,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -3649,6 +3666,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!1 &1273643326
 GameObject:
   m_ObjectHideFlags: 0
@@ -4686,6 +4706,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -4701,6 +4722,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!4 &1612780766
 Transform:
   m_ObjectHideFlags: 0
@@ -4997,6 +5021,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5012,6 +5037,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!4 &1696609646
 Transform:
   m_ObjectHideFlags: 0
@@ -5312,6 +5340,7 @@ MonoBehaviour:
   slide_acceleration: 0.1
   ropeDamping: 0.9
   collision_radius: 0.2
+  maxSwingSpeed: 5
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5327,6 +5356,9 @@ MonoBehaviour:
   current_distance: 0.1521088
   start_slide_speed: 2
   max_slide_speed: 12
+  climbOffset: 0.5
+  slideOffset: 0.5
+  swingOffset: 0.5
 --- !u!4 &1773415979
 Transform:
   m_ObjectHideFlags: 0
