@@ -25,7 +25,13 @@ public abstract class SC_Zone : MonoBehaviour
     }
     protected virtual void OnDestroy()
     {
-        Destroy(particles);
+        particles.GetComponent<ParticleSystem>().Stop();
+        Transform tr = particles.transform.GetChild(0);
+        if (tr != null)
+        {
+            tr.GetComponent<ParticleSystem>().Stop();
+        }
+        Destroy(particles, 10);
         Debug.Log($"Destroyed: {name}");
     }
 

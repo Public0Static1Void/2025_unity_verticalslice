@@ -64,6 +64,11 @@ public class SC_MarksPlacer : MonoBehaviour
     public bool activate_mark = false;
 
 
+    private float launch_timer = 0;
+    private bool launching_disk = false;
+    private bool launch_mode = false;
+
+
     private void Awake()
     {
         if (Instance == null)
@@ -155,6 +160,10 @@ public class SC_MarksPlacer : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            launch_mode = !launch_mode;
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
             UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
@@ -187,6 +196,11 @@ public class SC_MarksPlacer : MonoBehaviour
         if (placed_marks.Count > 0)
         {
             transform_arrow.LookAt(transform);
+        }
+
+        if (launching_disk)
+        {
+            launch_timer += Time.deltaTime;
         }
     }
 
@@ -306,8 +320,9 @@ public class SC_MarksPlacer : MonoBehaviour
         transform_arrow.gameObject.SetActive(true);
     }
 
-    private void PlaceMark(int index)
+    private void PlaceMark(int index, float timer)
     {
+        if (timer > 1) timer = 1;
         // Get the selected mark info
         SC_Mark mark_info = SC_ElementManager.instance.marks[index];
 
@@ -315,10 +330,10 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_disk.transform.position = transform.position + transform.forward * 2;
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
-        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 50);
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 75 * timer);
 
         SC_SoundManager.instance.InstantiateSound(clips_swhoosh[UnityEngine.Random.Range(0, clips_swhoosh.Count)], transform.position);
-        SC_CameraRotation.instance.ShakeCamera(0.25f, 0.05f);
+        cameraRotation.ShakeCamera(0.25f, 0.05f);
 
         placing_mark = false;
         /*
@@ -371,12 +386,12 @@ public class SC_MarksPlacer : MonoBehaviour
     /// <summary>
     /// Instantiates a mark on the looking surface and adds it to the placed marks list
     /// </summary>
-    private void PlaceMarkOnSurface()
+    private void PlaceMarkOnSurface(float timer)
     {
         if (!open_menu || !placing_mark || unlocked_marks.Count <= 0) return;
 
         OpenMarkSelectionMenu();
-        PlaceMark((int)unlocked_marks[current_mark]);
+        PlaceMark((int)unlocked_marks[current_mark], timer);
         /*
         if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
         {
@@ -480,6 +495,8 @@ public class SC_MarksPlacer : MonoBehaviour
         float step = Mathf.PI / (rune_count - 1);
         for (int i = 0; i < rune_count; i++)
         {
+            if (i >= marks_list_images.Count) break;
+
             int indx = (int)unlocked_marks[i];
 
             float angle = (i - current_mark) * step + Mathf.PI / 2;
@@ -541,7 +558,27 @@ public class SC_MarksPlacer : MonoBehaviour
         if (con.performed && marks_canvas.activeSelf
             && placed_marks.Count < max_marks)
         {
-            PlaceMarkOnSurface();
+            if (!launch_mode)
+            {
+                launching_disk = true;
+                cameraRotation.ChangeFov(70, 1.5f);
+            }
+            else
+            {
+                PlaceMarkOnSurface(1);
+            }
+        }
+        if (con.canceled && launch_timer > 0)
+        {
+            if (!launch_mode)
+            {
+                cameraRotation.ChangeFov(cameraRotation.base_fov, 0.25f);
+
+                launching_disk = false;
+
+                PlaceMarkOnSurface(launch_timer);
+                launch_timer = 0;
+            }
         }
     }
     public void ActivateMark(InputAction.CallbackContext con)

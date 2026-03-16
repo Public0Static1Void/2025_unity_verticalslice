@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,7 +16,7 @@ public class SC_CameraRotation : MonoBehaviour
     public float parent_turn_speed = 8;
     [Range(0, 1)] public float fov_multiplier = 0.5f;
 
-    private float base_fov;
+    [HideInInspector] public float base_fov;
 
     [Header("References")]
     public Camera mainCamera;
@@ -38,11 +39,13 @@ public class SC_CameraRotation : MonoBehaviour
     private Vector3 pos_start_local;
     private Vector3 pos_offset_current, pos_shake_current;
     private Quaternion rot_offset_current;
-    private Coroutine routine_shake, routine_offset;
+    
 
     [Header("UI Elements")]
     public float ui_elements_speed = 1;
     public List<RectTransform> ui_elements_to_move;
+
+    private Coroutine routine_shake, routine_offset, routine_fov;
 
     private void Awake()
     {
@@ -74,8 +77,11 @@ public class SC_CameraRotation : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float targetFov = base_fov + Mathf.Clamp(rb.linearVelocity.magnitude * (playerMovement.grounded ? 0 : fov_multiplier), 0, 10);
-        mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, targetFov, Time.deltaTime * 10);
+        if (routine_fov == null)
+        {
+            float targetFov = base_fov + Mathf.Clamp(rb.linearVelocity.magnitude * (playerMovement.grounded ? 0 : fov_multiplier), 0, 10);
+            mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, targetFov, Time.deltaTime * 10);
+        }
     }
 
     void LateUpdate()
@@ -156,6 +162,27 @@ public class SC_CameraRotation : MonoBehaviour
     #endregion
 
     #region CameraOffsets
+    public void ChangeFov(float new_fov, float duration)
+    {
+        if (routine_fov != null) StopCoroutine(routine_fov);
+        routine_fov = StartCoroutine(ChangeFovRoutine(new_fov, duration));
+    }
+    private IEnumerator ChangeFovRoutine(float new_fov, float duration)
+    {
+        float timer = 0;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = timer / duration;
+
+            mainCamera.fieldOfView = Mathf.Lerp(base_fov, new_fov, t);
+
+            yield return null;
+        }
+
+        mainCamera.fieldOfView = new_fov;
+    }
     public void OffsetCamera(Vector3 direction, float distance, Quaternion rotation, float duration)
     {
         if (routine_offset != null) return;

@@ -1,7 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.Profiling.FrameDataView;
 
 public class SC_MarkDisk : MonoBehaviour
 {
