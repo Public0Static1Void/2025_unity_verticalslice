@@ -3,7 +3,10 @@ using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
-
+//TO DO: Añadir impulso despues de saltar de la cuerda balanceable
+//Move Rope y Rope damping ayudan a que el balanceo se sienta mejor
+//Hay que tener cuidado de "arrebatar el control" al jugador en un FPS ya que se puede desorientar muy facilmente
+//  (snappear al jugador en el segmento mas bajo de la cuerda)
 public class RopePoint
 {
     public Vector3 position;
@@ -50,9 +53,9 @@ public class SC_Rope : MonoBehaviour
     private AudioSource slide_audiosource = null;
 
     [Header("RopeOffsets")]
-    public float climbOffset = 0.5f;
+    public Vector3 climbOffset = Vector3.zero;
     public float slideOffset = 0.5f;
-    public float swingOffset = 0.5f;
+    public Vector3 swingOffset = Vector3.zero;
     private void Start()
     {
         slide_audiosource = SC_SoundManager.instance.InstantiateSound(clip_slide, transform.position, true).GetComponent<AudioSource>();
@@ -126,7 +129,7 @@ public class SC_Rope : MonoBehaviour
             point.previousPosition = point.position;
             point.position += vel; // Moves the point based on the inertia stored
 
-            point.position += Physics.gravity * (Time.fixedDeltaTime);
+            point.position += new Vector3(0,-2,0) * (Time.fixedDeltaTime);
         }
     }
     private void ApplyConstraints()
@@ -214,19 +217,6 @@ public class SC_Rope : MonoBehaviour
         playerMovement.grabPoint = points[grabbed_index];
 
         points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.5f;
-
-        /*
-        //Offset para cuerdas de balanceo (no funcional)
-        Vector3 ropeDir;
-
-        if (i < points.Length - 1)
-            ropeDir = (points[i + 1].position - points[i].position).normalized;
-        else
-            ropeDir = (points[i].position - points[i - 1].position).normalized;
-
-        Vector3 offsetDir = Vector3.Cross(Vector3.up, ropeDir).normalized;
-
-        playerMovement.rb.position = point.position + offsetDir * swingOffset;*/
     }
 
     private void DrawRope()
@@ -349,13 +339,19 @@ public class SC_Rope : MonoBehaviour
         }
 
         //Offset para cuerdas de trepar (vertical)
+        else if (scalable)
+        {
+            targetPos += climbOffset;
+        }
+        //CAMBIAR - Tiene que ir en una funcion que se llame en el swing, ahora la ejecucion no llega hasta el offset
         else
         {
-            targetPos += -playerMovement.transform.forward * climbOffset;
+            targetPos += swingOffset;
         }
 
         playerMovement.rb.MovePosition(targetPos);
         playerMovement.vel = Vector3.one * speed;
+        //todo esto
         /*
         playerMovement.rb.MovePosition(targetPos);
 
