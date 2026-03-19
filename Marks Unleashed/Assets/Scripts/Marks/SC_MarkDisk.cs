@@ -10,6 +10,7 @@ public class SC_MarkDisk : MonoBehaviour
     private Rigidbody rb;
     private GameObject ob_disk;
 
+    private Vector3 move_dir;
     private Vector3 previous_pos;
 
     private bool activated = false;
@@ -17,17 +18,20 @@ public class SC_MarkDisk : MonoBehaviour
     private void Awake()
     {
         rb = gameObject.AddComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     }
 
     private void Start()
     {
         Destroy(gameObject, 10);
+        gameObject.AddComponent<BoxCollider>();
     }
 
     public void InitDisk(SC_MarksPlacer marks_placer, SC_Mark place_mark, Vector3 direction, float speed)
     {
         marksPlacer = marks_placer;
         stored_mark = place_mark;
+        move_dir = direction;
 
         ob_disk = Instantiate(stored_mark.disk, transform.position, transform.rotation);
         ob_disk.transform.SetParent(transform, false);
@@ -49,28 +53,6 @@ public class SC_MarkDisk : MonoBehaviour
         /// Store the last frame position
         previous_pos = transform.position;
     }
-    private void FixedUpdate()
-    {
-        if (activated) return;
-
-        Collider[] colls = Physics.OverlapSphere(transform.position, 1);
-        if (colls.Length > 0 && colls[0].name != "Player")
-        {
-            Vector3 dir_to_nearest = (colls[0].transform.position - transform.position).normalized;
-            if (CheckNearbySurface(dir_to_nearest))
-            {
-                // Deactivate the particles
-                ParticleSystem parts = ob_disk.GetComponentInChildren<ParticleSystem>();
-                parts.Stop();
-                ParticleSystem.MainModule main = parts.main;
-                //main.loop = false;
-                parts.transform.parent = null;
-
-                activated = true;
-                Destroy(gameObject);
-            }
-        }
-    }
 
     private bool CheckNearbySurface(Vector3 dir)
     {
@@ -78,7 +60,7 @@ public class SC_MarkDisk : MonoBehaviour
         {
             // Get the position and rotation
             Vector3 position = hit.point + hit.normal * 0.1f;
-            Quaternion rotation = Quaternion.LookRotation(hit.normal);
+            Quaternion rotation = Quaternion.LookRotation(hit.normal, move_dir);
 
             GameObject mark_canvas = new GameObject($"Mark {stored_mark.element.name} canvas");
             mark_canvas.transform.position = position;
@@ -127,6 +109,23 @@ public class SC_MarkDisk : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Player" || activated) return;
+
+        Vector3 dir_to_surface = collision.GetContact(0).normal;
+
+        if (CheckNearbySurface(-dir_to_surface))
+        {
+            ParticleSystem parts = ob_disk.GetComponentInChildren<ParticleSystem>();
+            parts.Stop();
+            parts.transform.parent = null;
+
+            activated = true;
+            Destroy(gameObject);
+        }
     }
 
     private void OnDrawGizmos()

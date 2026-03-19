@@ -56,6 +56,8 @@ public class SC_CameraRotation : MonoBehaviour
     }
     void Start()
     {
+        mainCamera = GetComponent<Camera>();
+
         camera_handle = parent.GetChild(0);
 
         playerMovement = parent.GetComponent<SC_PlayerMovement>();
@@ -165,23 +167,28 @@ public class SC_CameraRotation : MonoBehaviour
     public void ChangeFov(float new_fov, float duration)
     {
         if (routine_fov != null) StopCoroutine(routine_fov);
+        Debug.Log($"Changing fov to {new_fov} for {duration}s");
         routine_fov = StartCoroutine(ChangeFovRoutine(new_fov, duration));
     }
     private IEnumerator ChangeFovRoutine(float new_fov, float duration)
     {
         float timer = 0;
+        float start_fov = mainCamera.fieldOfView;
 
         while (timer < duration)
         {
             timer += Time.deltaTime;
             float t = timer / duration;
 
-            mainCamera.fieldOfView = Mathf.Lerp(base_fov, new_fov, t);
+            Debug.Log($"Camera fov: {mainCamera.fieldOfView}");
+            mainCamera.fieldOfView = Mathf.Lerp(start_fov, new_fov, t);
 
             yield return null;
         }
 
         mainCamera.fieldOfView = new_fov;
+
+        //routine_fov = null;
     }
     public void OffsetCamera(Vector3 direction, float distance, Quaternion rotation, float duration)
     {

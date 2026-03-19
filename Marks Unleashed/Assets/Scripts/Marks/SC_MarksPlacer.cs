@@ -504,6 +504,7 @@ public class SC_MarksPlacer : MonoBehaviour
             float x = Mathf.Cos(angle) * marks_radius;
             float y = Mathf.Sin(angle) * marks_radius;
 
+            Debug.Log($"Index {i}");
             Vector3 local_dir = (marks_list_images[current_mark].transform.localPosition - marks_list_images[i].transform.localPosition).normalized;
             Quaternion target_rot = Quaternion.LookRotation(local_dir);
             if (i == current_mark)
@@ -561,7 +562,7 @@ public class SC_MarksPlacer : MonoBehaviour
             if (!launch_mode)
             {
                 launching_disk = true;
-                cameraRotation.ChangeFov(70, 1.5f);
+                cameraRotation.ChangeFov(90, 1.5f);
             }
             else
             {
