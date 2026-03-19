@@ -31,6 +31,7 @@ public class SC_Rope : MonoBehaviour
     [UnityEngine.Range(0, 1)] public float ropeDamping = 0.9f;
     public float collision_radius = 1f;
     public float maxSwingSpeed = 5f;
+    public Vector3 gravity = new Vector3(0, -2, 0);
 
 
     [Header("References")]
@@ -129,7 +130,7 @@ public class SC_Rope : MonoBehaviour
             point.previousPosition = point.position;
             point.position += vel; // Moves the point based on the inertia stored
 
-            point.position += new Vector3(0,-2,0) * (Time.fixedDeltaTime);
+            point.position += gravity * (Time.fixedDeltaTime);
         }
     }
     private void ApplyConstraints()

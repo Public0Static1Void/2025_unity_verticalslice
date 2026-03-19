@@ -148,7 +148,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
         equipped_mark = marks[current_mark].element;
 
-        RefreshMarksList(0);
+        RefreshMarksList();
 
         // Load the element hands
         for (int i = 0; i < marks_list.Count; i++)
@@ -206,6 +206,8 @@ public class SC_MarksPlacer : MonoBehaviour
 
     public void UnlockMark(ElementTypes type)
     {
+        // Don't add an unlocked mark
+        if (unlocked_marks.Contains(marks[(int)type].element.el_type)) return;
         unlocked_marks.Add(marks[(int)type].element.el_type);
         marks_list_images[(int)type].gameObject.SetActive(true);
     }
@@ -270,6 +272,8 @@ public class SC_MarksPlacer : MonoBehaviour
     /// </summary>
     private void ActivateMark()
     {
+        SetArrowPos();
+
         if (placed_marks.Count <= 0) return;
 
         StartCoroutine(ActivateMarkAnimation());
@@ -295,8 +299,6 @@ public class SC_MarksPlacer : MonoBehaviour
 
         placed_marks[activate_index].GetComponent<SC_Mark>().ActivateMark();
         placed_marks.RemoveAt(0);
-
-        SetArrowPos();
 
         UpdateActivateMarksUI();
     }
@@ -455,64 +457,58 @@ public class SC_MarksPlacer : MonoBehaviour
     /// <param name="direction">Direction of the scroll (1 or -1)</param>
     private void ScrollMarksList(int direction)
     {
-        if (marks_list.Count <= 1) return;
+        if (unlocked_marks.Count <= 1) return;
 
-        current_mark += direction;
-        if (current_mark > unlocked_marks.Count - 1) current_mark = unlocked_marks.Count - 1;
-        else if (current_mark < 0) current_mark = 0;
+        current_mark = Mathf.Clamp(current_mark + direction, 0, unlocked_marks.Count - 1);
 
-        RefreshMarksList(direction);
+        RefreshMarksList();
     }
 
     /// <summary>
     /// Refreshes the order for the scroll on the marks in-game menu
     /// </summary>
-    private void RefreshMarksList(int dir)
+    private void RefreshMarksList()
     {
-        /*
-        int count = unlocked_marks.Count;
-        if (count == 0) return;
-
-        for (int i = 0; i < count; i++)
-        {
-            // Place it around the parent
-            float angle = i * Mathf.PI * 2 / count; /// Get the angle where the mark will be
-            float x = Mathf.Cos(angle) * 1;
-            float y = Mathf.Sin(angle) * 1;
-
-            marks_list_images[(int)unlocked_marks[i]].rectTransform.anchoredPosition = new Vector2(x, y);
-            marks_list_images[(int)unlocked_marks[i]].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
-        }
-        */
+        current_mark = Mathf.Clamp(current_mark, 0, Mathf.Max(0, marks_list_images.Count - 1));
 
         int rune_count = unlocked_marks.Count;
         if (rune_count == 0) return;
 
-        //float angle = (180 / rune_count) * current_mark;
-        //marks_canvas.transform.localRotation = Quaternion.Euler(0, 0, angle);
-
         StopCoroutine("UpdateMarkUIPosition");
-        float step = Mathf.PI / (rune_count - 1);
+
+        // Handle single mark edge case
+        float step = rune_count > 1 ? Mathf.PI / (rune_count - 1) : 0f;
+
         for (int i = 0; i < rune_count; i++)
         {
-            if (i >= marks_list_images.Count) break;
-
             int indx = (int)unlocked_marks[i];
 
-            float angle = (i - current_mark) * step + Mathf.PI / 2;
+            // Validate indexs
+            if (i >= marks_list_images.Count || indx >= marks_list_images.Count) break;
+            if (current_mark >= rune_count) break;
 
+            float angle = (i - current_mark) * step + Mathf.PI / 2f;
             float x = Mathf.Cos(angle) * marks_radius;
             float y = Mathf.Sin(angle) * marks_radius;
 
-            Debug.Log($"Index {i}");
-            Vector3 local_dir = (marks_list_images[current_mark].transform.localPosition - marks_list_images[i].transform.localPosition).normalized;
-            Quaternion target_rot = Quaternion.LookRotation(local_dir);
+            // Makes the selected rune look at the camera
+            Quaternion target_rot;
             if (i == current_mark)
             {
-                Vector3 dir_to_camera = (Camera.main.transform.position - marks_list_images[i].transform.position).normalized;
+                Vector3 dir_to_camera = (Camera.main.transform.position
+                    - marks_list_images[i].transform.position).normalized;
                 target_rot = Quaternion.LookRotation(dir_to_camera);
             }
+            else
+            {
+                Vector3 local_dir = (marks_list_images[current_mark].transform.localPosition
+                    - marks_list_images[i].transform.localPosition).normalized;
+                target_rot = local_dir != Vector3.zero
+                    ? Quaternion.LookRotation(local_dir)
+                    : Quaternion.identity;
+            }
 
+            // Set the rune position
             StartCoroutine(UpdateMarkUIPosition(
                 marks_list_images[indx].transform,
                 marks_list_images[indx].transform.localPosition,
@@ -520,16 +516,12 @@ public class SC_MarksPlacer : MonoBehaviour
                 marks_list_images[indx].transform.localRotation,
                 target_rot
             ));
-            //marks_list_images[indx].rectTransform.anchoredPosition = new Vector2(x, y);
-            //marks_list_images[indx].rectTransform.sizeDelta = Vector2.one * (i == current_mark ? 0.6f : 0.5f);
         }
 
         int index = (int)unlocked_marks[current_mark];
-
         Element element = marks[index].element;
         equipped_mark = element;
         mark_placeholder_image.sprite = element.im_mark_sprite;
-
         EnableElementHand(index);
     }
 

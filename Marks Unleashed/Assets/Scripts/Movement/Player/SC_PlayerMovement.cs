@@ -32,6 +32,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public bool moving = false;
 
     [Header("Grab")]
+    public float ropeJumpStrength = 5;
     public bool grabbing = false;
     public RopePoint grabPoint;
     public SC_Rope grabbedRope;
@@ -220,7 +221,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (grabbing)
             {
                 rb.useGravity = true;
-                rb.linearVelocity = (Camera.main.transform.forward + Vector3.up) * (vel.magnitude * 0.2f);
+                rb.linearVelocity = (Camera.main.transform.forward + Vector3.up) * (vel.magnitude * ropeJumpStrength);
                 grabPoint = null;
             }
 

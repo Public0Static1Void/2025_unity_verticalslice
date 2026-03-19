@@ -493,81 +493,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e700d2a6ce64d4b44b5da4af35da154c, type: 3}
   m_PrefabInstance: {fileID: 292453905}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &294094667
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 294094668}
-  - component: {fileID: 294094670}
-  - component: {fileID: 294094669}
-  m_Layer: 5
-  m_Name: Image
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &294094668
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 294094667}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 1369047212}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &294094669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 294094667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.4392157}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4d2643c2b8f9abe49bced53233e70cdd, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &294094670
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 294094667}
-  m_CullTransparentMesh: 1
 --- !u!1 &360307987
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,7 +765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentCount: 10
-  segmentLength: 0.5
+  segmentLength: 1
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -848,6 +773,7 @@ MonoBehaviour:
   ropeDamping: 0.9
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -9, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -863,9 +789,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &485561454
 Transform:
   m_ObjectHideFlags: 0
@@ -1170,21 +1096,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 930804239}
     - target: {fileID: 6081543257605256690, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
-      propertyPath: ui_elements_speed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6081543257605256690, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: txt_value_sensivity
       value: 
       objectReference: {fileID: 930804238}
     - target: {fileID: 6081543257605256690, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
-      propertyPath: ui_elements_to_move.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6081543257605256690, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: 'ui_elements_to_move.Array.data[0]'
       value: 
-      objectReference: {fileID: 294094668}
+      objectReference: {fileID: 919776856}
     - target: {fileID: 6081543257605256690, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: 'ui_elements_to_move.Array.data[1]'
       value: 
@@ -1897,7 +1815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentCount: 10
-  segmentLength: 0.5
+  segmentLength: 1
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -1905,6 +1823,7 @@ MonoBehaviour:
   ropeDamping: 0.9
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -2, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1920,9 +1839,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &644892483
 Transform:
   m_ObjectHideFlags: 0
@@ -2393,12 +2312,13 @@ MonoBehaviour:
   segmentCount: 10
   segmentLength: 1
   calculationNum: 5
-  moveForce: 5
+  moveForce: 4
   slide_speed: 2
   slide_acceleration: 0.1
-  ropeDamping: 0.9
+  ropeDamping: 0.85
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -2, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2414,9 +2334,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &846641765
 Transform:
   m_ObjectHideFlags: 0
@@ -2426,7 +2346,7 @@ Transform:
   m_GameObject: {fileID: 846641762}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.17, y: 2, z: 10}
+  m_LocalPosition: {x: 4.17, y: 4, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2698,6 +2618,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &919776856 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3085025071705259790, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+  m_PrefabInstance: {fileID: 930804237}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &930804237
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2821,10 +2746,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7757026811434063123, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 1872436042995272834, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 294094668}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
 --- !u!114 &930804238 stripped
@@ -3838,7 +3760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentCount: 10
-  segmentLength: 0.5
+  segmentLength: 1
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -3846,6 +3768,7 @@ MonoBehaviour:
   ropeDamping: 0.9
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -9, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -3861,9 +3784,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &1281064537
 GameObject:
   m_ObjectHideFlags: 0
@@ -4262,11 +4185,6 @@ Transform:
 --- !u!223 &1369047211 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 6624642731619923303, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
-  m_PrefabInstance: {fileID: 930804237}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1369047212 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1872436042995272834, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
   m_PrefabInstance: {fileID: 930804237}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1413521084
@@ -4785,7 +4703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentCount: 10
-  segmentLength: 0.5
+  segmentLength: 1
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -4793,6 +4711,7 @@ MonoBehaviour:
   ropeDamping: 0.9
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -2, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -4808,9 +4727,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1612780766
 Transform:
   m_ObjectHideFlags: 0
@@ -5108,6 +5027,7 @@ MonoBehaviour:
   ropeDamping: 0.9
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -5, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5123,9 +5043,9 @@ MonoBehaviour:
   current_distance: 0
   start_slide_speed: 0
   max_slide_speed: 8
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1696609646
 Transform:
   m_ObjectHideFlags: 0
@@ -5427,6 +5347,7 @@ MonoBehaviour:
   ropeDamping: 0.9
   collision_radius: 0.2
   maxSwingSpeed: 5
+  gravity: {x: 0, y: -2, z: 0}
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5442,9 +5363,9 @@ MonoBehaviour:
   current_distance: 0.1521088
   start_slide_speed: 2
   max_slide_speed: 12
-  climbOffset: 0.5
+  climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
-  swingOffset: 0.5
+  swingOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1773415979
 Transform:
   m_ObjectHideFlags: 0

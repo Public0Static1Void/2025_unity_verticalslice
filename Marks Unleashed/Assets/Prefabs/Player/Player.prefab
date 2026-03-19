@@ -194,6 +194,7 @@ MonoBehaviour:
   turn_speed: 10
   parent_turn_speed: 25
   fov_multiplier: 0.25
+  base_fov: 0
   mainCamera: {fileID: 7534136154024164982}
   parent: {fileID: 8976910792773025556}
   input: {x: 0, y: 0}
@@ -202,8 +203,10 @@ MonoBehaviour:
   slider_sensivity: {fileID: 0}
   txt_value_sensivity: {fileID: 0}
   shake_force: 3
-  ui_elements_speed: 1
-  ui_elements_to_move: []
+  ui_elements_speed: 10
+  ui_elements_to_move:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &5114043827531764904
 GameObject:
   m_ObjectHideFlags: 0
