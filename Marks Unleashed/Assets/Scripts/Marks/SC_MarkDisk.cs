@@ -113,7 +113,12 @@ public class SC_MarkDisk : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "Player" || activated) return;
+        if (activated) return;
+
+        if (collision.gameObject.name == "Player")
+        {
+            collision.gameObject.GetComponent<SC_PlayerLife>().Damage(1);
+        }
 
         Vector3 dir_to_surface = collision.GetContact(0).normal;
 

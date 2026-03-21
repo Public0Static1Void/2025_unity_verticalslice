@@ -23,7 +23,7 @@ public class SC_Mark_Fire : SC_Mark
             if (coll.name == name) continue;
 
             SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
-            if (lf != null)
+            if (lf != null && element != null)
             {
                 lf.BurnDamage(element.strength, element.strength * 2);
             }

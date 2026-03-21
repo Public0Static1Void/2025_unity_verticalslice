@@ -195,6 +195,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
                                 Mathf.Max(0.35f, normalizedYSpeed)
                                 );
         SC_CameraRotation.instance.ShakeCamera(force, 0.25f);
+        SC_CameraRotation.instance.ImpulseUIElements(Vector2.up, 30, 1);
 
         // The player is falling and collided with the ground
         if (rb.linearVelocity.y < 0)
@@ -227,6 +228,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             SC_SoundManager.instance.InstantiateSound(clip_jump, transform.position);
+            SC_CameraRotation.instance.ImpulseUIElements(Vector2.down, 25, 0.5f);
             jumping = true;
             
             grabbing = false;

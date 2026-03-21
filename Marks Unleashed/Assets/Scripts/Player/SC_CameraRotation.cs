@@ -44,6 +44,7 @@ public class SC_CameraRotation : MonoBehaviour
     [Header("UI Elements")]
     public float ui_elements_speed = 1;
     public List<RectTransform> ui_elements_to_move;
+    private Vector2[] ui_elements_start_pos;
 
     private Coroutine routine_shake, routine_offset, routine_fov;
 
@@ -75,6 +76,12 @@ public class SC_CameraRotation : MonoBehaviour
 
         pos_start_local = transform.localPosition;
         rot_offset_current = Quaternion.identity;
+
+        ui_elements_start_pos = new Vector2[ui_elements_to_move.Count];
+        for (int i = 0; i < ui_elements_to_move.Count; i++)
+        {
+            ui_elements_start_pos[i] = ui_elements_to_move[i].anchoredPosition;
+        }
     }
 
     private void FixedUpdate()
@@ -107,6 +114,14 @@ public class SC_CameraRotation : MonoBehaviour
         MoveUIElements();
     }
 
+    
+
+    public void CameraTurn(InputAction.CallbackContext con)
+    {
+        input = con.ReadValue<Vector2>();
+    }
+
+    #region UIEffects
     private void MoveUIElements()
     {
         for (int i = 0; i < ui_elements_to_move.Count; i++)
@@ -120,12 +135,48 @@ public class SC_CameraRotation : MonoBehaviour
         }
     }
 
-    public void CameraTurn(InputAction.CallbackContext con)
+    public void ImpulseUIElements(Vector2 dir, float distance, float time)
     {
-        input = con.ReadValue<Vector2>();
+        StartCoroutine(ImpulseUIElementsRoutine(dir, distance, time / 2));
     }
+    private IEnumerator ImpulseUIElementsRoutine(Vector2 dir, float distance, float time)
+    {
+        float timer = 0;
+        // Lerp to the extrem
+        while (timer < time * 0.5f)
+        {
+            float t = timer / time;
+            t = Mathf.SmoothStep(0, 1, t);
 
+            for (int i = 0; i < ui_elements_to_move.Count; i++)
+            {
+                Vector2 pos = ui_elements_to_move[i].anchoredPosition;
+                Vector2 inp = input.normalized;
+                ui_elements_to_move[i].anchoredPosition = Vector2.Lerp(ui_elements_start_pos[i], ui_elements_start_pos[i] + (dir * distance), t);
+            }
 
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        timer = 0;
+        // Lerp to the extrem
+        while (timer < time * 1.5f)
+        {
+            float t = timer / time;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            for (int i = 0; i < ui_elements_to_move.Count; i++)
+            {
+                Vector2 pos = ui_elements_to_move[i].anchoredPosition;
+                Vector2 inp = input.normalized;
+                ui_elements_to_move[i].anchoredPosition = Vector2.Lerp(ui_elements_start_pos[i] + (dir * distance), ui_elements_start_pos[i], t);
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+    #endregion
 
     #region CameraShake
     public void ShakeCamera(float force, float duration, float delay = 0)
