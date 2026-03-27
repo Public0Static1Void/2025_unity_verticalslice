@@ -40,7 +40,7 @@ public class SC_MarksPlacer : MonoBehaviour
     private List<GameObject> marks_list = new List<GameObject>();
     private List<ElementTypes> unlocked_marks = new List<ElementTypes>();
     private List<SC_Mark> marks = new List<SC_Mark>();
-    private List<UnityEngine.UI.Image> marks_list_images = new List<UnityEngine.UI.Image>();
+    private List<Transform> marks_list_images = new List<Transform>();
     public float marks_radius = 10;
 
     private bool open_menu = false;
@@ -124,8 +124,31 @@ public class SC_MarksPlacer : MonoBehaviour
             mark = SC_ElementManager.instance.marks[i];
             Debug.Log($"Im: {mark.element.im_mark_sprite}");
 
-            UnityEngine.UI.Image im = ob.AddComponent<UnityEngine.UI.Image>();
-            im.sprite = mark.element.im_mark_sprite;
+            GameObject mark_disk = Instantiate(mark.disk, ob.transform, true);
+            mark_disk.transform.position = Vector3.zero;
+            mark_disk.transform.localPosition = Vector3.zero;
+            mark_disk.transform.localScale = Vector3.one * 0.25f;
+            mark_disk.transform.rotation = new Quaternion(0, 0, 0, 0);
+            mark_disk.transform.localRotation = new Quaternion(0, 0, 0, 0);
+
+            int child_count = mark_disk.transform.childCount;
+            for (int j = 0; j < child_count; j++)
+            {
+                mark_disk.transform.GetChild(j).gameObject.layer = marks_canvas.layer;
+                mark_disk.transform.GetChild(j).rotation = new Quaternion(0, 0, 0, 0);
+                mark_disk.transform.GetChild(j).localRotation = new Quaternion(0, 0, 0, 0);
+                Debug.Log(mark_disk.transform.GetChild(j).name);
+            }
+            
+
+            ParticleSystem disk_parts = mark_disk.GetComponentInChildren<ParticleSystem>();
+            var emission = disk_parts.emission;
+            emission.rateOverTime = 0;
+            emission.rateOverDistance = 1;
+            emission.burstCount = 0;
+
+            //UnityEngine.UI.Image im = ob.AddComponent<UnityEngine.UI.Image>();
+            //im.sprite = mark.element.im_mark_sprite;
 
             float t = (float)i / (4 - 1);
             float anngle = t * Mathf.PI;
@@ -133,17 +156,22 @@ public class SC_MarksPlacer : MonoBehaviour
             float x = Mathf.Cos(anngle + 45) * marks_radius;
             float y = Mathf.Sin(anngle + 45) * marks_radius;
 
+            if (i == 0)
+            {
+                x = 0;
+                y = 0;
+                mark_disk.transform.LookAt(Camera.main.transform);
+            }
+
             ob.transform.localPosition = new Vector3(x, y, 0);
 
-
-
-            RectTransform rect = ob.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = new Vector2(x, y);
+            //RectTransform rect = ob.GetComponent<RectTransform>();
+            //rect.sizeDelta = new Vector2(0.5f, 0.5f);
+            //rect.anchoredPosition = new Vector2(x, y);
 
             marks_list.Add(ob);
             marks.Add(mark);
-            marks_list_images.Add(im);
+            marks_list_images.Add(ob.transform);
         }
 
         equipped_mark = marks[current_mark].element;
@@ -252,14 +280,19 @@ public class SC_MarksPlacer : MonoBehaviour
                 im_activation_order[i].sprite = spr;
         }  
     }
-    private IEnumerator UpdateMarkUIPosition(Transform tr, Vector2 start_pos, Vector2 end_pos, Quaternion start_rot, Quaternion end_rot)
+    private IEnumerator UpdateMarkUIPosition(Transform tr, Vector2 start_pos, Vector2 end_pos, Quaternion start_rot, Quaternion end_rot, Vector3 start_size, Vector3 end_size)
     {
-        float t = 0;
-        while (t < 1)
+        float timer = 0;
+        float duration = 0.15f;
+        while (timer < duration)
         {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
             tr.localPosition = Vector2.Lerp(start_pos, end_pos, t);
-            tr.rotation = Quaternion.Lerp(start_rot, end_rot, t);
-            t += Time.deltaTime * 10;
+            tr.localRotation = Quaternion.Lerp(start_rot, end_rot, t);
+            tr.localScale = Vector3.Lerp(start_size, end_size, t);
+
+            timer += Time.deltaTime;
             yield return null;
         }
 
@@ -329,7 +362,7 @@ public class SC_MarksPlacer : MonoBehaviour
         SC_Mark mark_info = SC_ElementManager.instance.marks[index];
 
         GameObject mark_disk = new GameObject($"Mark {mark_info.element.name} disk");
-        mark_disk.transform.position = transform.position + transform.forward * 2;
+        mark_disk.transform.position = marks_canvas.transform.position;
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
         disk.InitDisk(this, mark_info, Camera.main.transform.forward, 75 * timer);
@@ -493,11 +526,17 @@ public class SC_MarksPlacer : MonoBehaviour
 
             // Makes the selected rune look at the camera
             Quaternion target_rot;
+            Vector3 new_scale = Vector3.one * 0.75f;
             if (i == current_mark)
             {
-                Vector3 dir_to_camera = (Camera.main.transform.position
-                    - marks_list_images[i].transform.position).normalized;
+                x = 0;
+                y = 0;
+
+                Vector3 dir_to_camera = ((marks_canvas.transform.position - marks_canvas.transform.forward * 2)
+                    - marks_list_images[i].position).normalized;
                 target_rot = Quaternion.LookRotation(dir_to_camera);
+
+                new_scale = Vector3.one * 3;
             }
             else
             {
@@ -514,7 +553,9 @@ public class SC_MarksPlacer : MonoBehaviour
                 marks_list_images[indx].transform.localPosition,
                 new Vector2(x, y),
                 marks_list_images[indx].transform.localRotation,
-                target_rot
+                target_rot,
+                marks_list_images[indx].transform.localScale,
+                new_scale
             ));
         }
 
@@ -584,9 +625,11 @@ public class SC_MarksPlacer : MonoBehaviour
     #endregion
 
     // Gizmos
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(player.position, range_placing);
+
+        Gizmos.DrawWireSphere(marks_canvas.transform.position - marks_canvas.transform.forward * 2, 0.1f);
     }
 }

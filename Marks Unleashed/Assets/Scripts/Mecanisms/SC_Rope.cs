@@ -2,6 +2,7 @@
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem.Controls;
 //TO DO: Añadir impulso despues de saltar de la cuerda balanceable
 //Move Rope y Rope damping ayudan a que el balanceo se sienta mejor
@@ -18,6 +19,9 @@ public class RopePoint
         this.previousPosition = pos;
     }
 }
+[System.Serializable]
+public class RopeEvent : UnityEngine.Events.UnityEvent<SC_Rope> { }
+[RequireComponent(typeof(LineRenderer))]
 public class SC_Rope : MonoBehaviour
 {
     RopePoint[] points;
@@ -25,6 +29,7 @@ public class SC_Rope : MonoBehaviour
     [Header("Stats")]
     public int segmentCount = 5;
     public float segmentLength = 0.5f;
+    public float currentLength = 0;
     public int calculationNum = 5;
     public float moveForce = 4, slide_speed = 5;
     public float slide_acceleration = 5;
@@ -32,6 +37,7 @@ public class SC_Rope : MonoBehaviour
     public float collision_radius = 1f;
     public float maxSwingSpeed = 5f;
     public Vector3 gravity = new Vector3(0, -2, 0);
+    public bool stretched = false;
 
 
     [Header("References")]
@@ -57,6 +63,10 @@ public class SC_Rope : MonoBehaviour
     public Vector3 climbOffset = Vector3.zero;
     public float slideOffset = 0.5f;
     public Vector3 swingOffset = Vector3.zero;
+
+    [Header("Unity events")]
+    public RopeEvent event_stretched;
+
     private void Start()
     {
         slide_audiosource = SC_SoundManager.instance.InstantiateSound(clip_slide, transform.position, true).GetComponent<AudioSource>();
@@ -135,11 +145,8 @@ public class SC_Rope : MonoBehaviour
     }
     private void ApplyConstraints()
     {
-        if (anchor != null)
-            points[0].position = anchor.transform.position;
-        if (bottom_anchor != null)
-            points[points.Length -1].position = bottom_anchor.transform.position;
-
+        currentLength = 0;
+        stretched = true;
         for (int i = 0; i < points.Length - 1; i++)
         {
             Vector3 diff = points[i + 1].position - points[i].position;
@@ -148,6 +155,7 @@ public class SC_Rope : MonoBehaviour
 
             float error = dist - segmentLength; // Gets the difference between the desired distance and the real one
                                                 // If dist > segmentLength it will retract, and viceversa
+            if (error < 0.1f) stretched = false;
 
             Vector3 change = diff.normalized * error * 0.5f * 0.8f;
 
@@ -159,6 +167,19 @@ public class SC_Rope : MonoBehaviour
             {
                 points[i + 1].position -= change;
             }
+
+            currentLength += error;
+        }
+
+        if (anchor != null)
+            points[0].position = anchor.transform.position;
+        if (bottom_anchor != null)
+            points[points.Length - 1].position = bottom_anchor.transform.position;
+
+        // Call the stretched event
+        if (stretched)
+        {
+            event_stretched.Invoke(this);
         }
     }
 
@@ -173,7 +194,7 @@ public class SC_Rope : MonoBehaviour
             foreach (Collider coll in colls)
             {
                 // Check if the player has to be attached to the rope
-                if (coll.name == "Player" && !playerMovement.grounded && playerMovement.grabPoint == null && playerMovement.grabbedRope != this)
+                if ((slideable || scalable) && coll.name == "Player" && !playerMovement.grounded && playerMovement.grabPoint == null && playerMovement.grabbedRope != this)
                 {
                     HandlePlayerGrab(i, point);
                     continue;

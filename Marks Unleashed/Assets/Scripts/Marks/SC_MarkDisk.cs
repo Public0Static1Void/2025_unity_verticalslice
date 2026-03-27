@@ -62,6 +62,7 @@ public class SC_MarkDisk : MonoBehaviour
             Vector3 position = hit.point + hit.normal * 0.1f;
             Quaternion rotation = Quaternion.LookRotation(hit.normal, move_dir);
 
+
             GameObject mark_canvas = new GameObject($"Mark {stored_mark.element.name} canvas");
             mark_canvas.transform.position = position;
             mark_canvas.transform.rotation = rotation;
