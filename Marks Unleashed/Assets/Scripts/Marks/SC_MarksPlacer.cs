@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.XR;
@@ -151,10 +152,10 @@ public class SC_MarksPlacer : MonoBehaviour
             //im.sprite = mark.element.im_mark_sprite;
 
             float t = (float)i / (4 - 1);
-            float anngle = t * Mathf.PI;
-
-            float x = Mathf.Cos(anngle + 45) * marks_radius;
-            float y = Mathf.Sin(anngle + 45) * marks_radius;
+            float step = marks_count > 1 ? Mathf.PI / (marks_count - 1) : 0f;
+            float angle = (i - current_mark) * step + Mathf.PI / 2f;
+            float x = Mathf.Cos(angle) * marks_radius;
+            float y = Mathf.Sin(angle) * marks_radius;
 
             if (i == 0)
             {
@@ -199,27 +200,7 @@ public class SC_MarksPlacer : MonoBehaviour
             UnlockMark(marks[(int)ElementTypes.STONE].element.el_type);
             UnlockMark(marks[(int)ElementTypes.ICE].element.el_type);
         }
-        if (placing_mark)
-        {
-            //Horizontal del jugador
-            Vector3 new_pos;
-            if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
-            {
-                new_pos = hit.point;
 
-                mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal, transform.forward);
-                mark_placeholder_image.color = Color.white;
-            }
-            else
-            {
-                new_pos = player.position + Camera.main.transform.forward * range_placing;
-                mark_placeholder_image.color = Color.black;
-                mark_placeholder.transform.LookAt(Camera.main.transform);
-            }
-            // Moves the mark to the camera, overlapping with collisions
-            mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, new_pos, Time.deltaTime * 30);
-
-        }
         // Make the activatios order arrow look to the player
         if (placed_marks.Count > 0)
         {
@@ -238,6 +219,8 @@ public class SC_MarksPlacer : MonoBehaviour
         if (unlocked_marks.Contains(marks[(int)type].element.el_type)) return;
         unlocked_marks.Add(marks[(int)type].element.el_type);
         marks_list_images[(int)type].gameObject.SetActive(true);
+
+        RefreshMarksList();
     }
     public List<ElementTypes> GetUnlockedMarks()
     {
@@ -365,58 +348,12 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_disk.transform.position = marks_canvas.transform.position;
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
-        disk.InitDisk(this, mark_info, Camera.main.transform.forward, 75 * timer);
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward + transform.right * 0.05f, 75 * timer);
 
         SC_SoundManager.instance.InstantiateSound(clips_swhoosh[UnityEngine.Random.Range(0, clips_swhoosh.Count)], transform.position);
         cameraRotation.ShakeCamera(0.25f, 0.05f);
 
         placing_mark = false;
-        /*
-        // Create canvas parent
-        GameObject mark_canvas = new GameObject($"Mark {mark_info.element.name} canvas");
-        mark_canvas.transform.position = position;
-        mark_canvas.transform.rotation = rotation;
-
-        mark_canvas.transform.SetParent(hit_transform, true);
-
-        mark_canvas.transform.position -= mark_canvas.transform.forward * 200; // Adds offset from the ground
-        Canvas canvas = mark_canvas.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-
-        // Resize the canvas
-        RectTransform rt = canvas.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(0.5f, 0.5f);
-        rt.localScale = Vector3.one;
-
-        // Create the UnityEngine.UI.Image
-        GameObject inst = new GameObject($"Mark {mark_info.element.name} {placed_marks.Count}");
-
-        inst.transform.position = position;
-        inst.transform.rotation = rotation;
-
-        UnityEngine.UI.UnityEngine.UI.Image im = inst.AddComponent<UnityEngine.UI.UnityEngine.UI.Image>();
-        im.transform.SetParent(canvas.transform);
-
-        im.sprite = mark_info.element.im_mark_sprite;
-        im.rectTransform.anchoredPosition = Vector2.zero;
-        im.rectTransform.sizeDelta = Vector2.one * 0.5f;
-
-        // Adds the mark element component
-        inst.AddComponent(mark_info.GetType());
-
-        SC_Mark mark = inst.GetComponent(mark_info.GetType()) as SC_Mark;
-        mark.particles = mark_info.particles;
-        mark.element = mark_info.element;
-        mark.enable_collision_activation = true;
-        mark.clip_activation = mark_info.clip_activation;
-
-        BoxCollider coll = mark.gameObject.AddComponent<BoxCollider>();
-        coll.isTrigger = true;
-
-        SC_SoundManager.instance.InstantiateSound(clip_place_mark, position);
-
-        placed_marks.Add(mark);
-        */
     }
     /// <summary>
     /// Instantiates a mark on the looking surface and adds it to the placed marks list
@@ -427,16 +364,6 @@ public class SC_MarksPlacer : MonoBehaviour
 
         OpenMarkSelectionMenu();
         PlaceMark((int)unlocked_marks[current_mark], timer);
-        /*
-        if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
-        {
-            Vector3 position = hit.point + (hit.normal * 0.1f);
-
-            OpenMarkSelectionMenu();
-            // Places the mark on the look point
-            PlaceMark((int)unlocked_marks[current_mark], hit.transform, position, Quaternion.LookRotation(hit.normal, transform.forward));
-        }
-        */
     }
 
     #region SelectionMenu
@@ -595,7 +522,7 @@ public class SC_MarksPlacer : MonoBehaviour
             if (!launch_mode)
             {
                 launching_disk = true;
-                cameraRotation.ChangeFov(90, 1.5f);
+                cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1);
             }
             else
             {
@@ -606,7 +533,7 @@ public class SC_MarksPlacer : MonoBehaviour
         {
             if (!launch_mode)
             {
-                cameraRotation.ChangeFov(cameraRotation.base_fov, 0.25f);
+                cameraRotation.RestoreCameraOffset(0.5f);
 
                 launching_disk = false;
 

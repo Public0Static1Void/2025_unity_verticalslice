@@ -45,8 +45,8 @@ public class SC_ZoneAir : SC_Zone
             {
                 names_on_range[i] = colls[i].name;
 
-                // Don't check twice the same rigidbody
-                if (affected_names.Contains(colls[i].name)) continue;
+                // Don't check twice the same rigidbody or don't affect it's parent
+                if (affected_names.Contains(colls[i].name) || colls[i].name == transform.parent.name) continue;
 
                 // Save the rigidbody
                 Rigidbody rb = colls[i].GetComponent<Rigidbody>();

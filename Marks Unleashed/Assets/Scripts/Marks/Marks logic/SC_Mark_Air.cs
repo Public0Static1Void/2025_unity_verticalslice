@@ -23,6 +23,10 @@ public class SC_Mark_Air : SC_Mark
             GameObject ob_airZone = new GameObject("Air zone");
             ob_airZone.transform.position = transform.position;
             ob_airZone.transform.rotation = transform.rotation;
+            if (transform.parent.parent != null)
+            {
+                ob_airZone.transform.SetParent(transform.parent.parent, true);
+            }
 
             SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
             zone_air.InitAirZone(range, layer_interactable, GetElementStrength() * 200, particles);

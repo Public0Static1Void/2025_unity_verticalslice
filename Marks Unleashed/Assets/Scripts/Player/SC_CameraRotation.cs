@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -241,13 +242,67 @@ public class SC_CameraRotation : MonoBehaviour
 
         //routine_fov = null;
     }
-    public void OffsetCamera(Vector3 direction, float distance, Quaternion rotation, float duration)
+
+    public void RestoreCameraOffset(float duration)
+    {
+        if (routine_offset != null) StopCoroutine(routine_offset);
+        routine_offset = StartCoroutine(ReturnCameraOffsetRoutine(duration));
+    }
+    public void OffsetCamera(Vector3 direction, float distance, float duration)
+    {
+        if (routine_offset != null) return;
+        routine_offset = StartCoroutine(OffsetCameraRoutine(direction, distance, duration));
+    }
+    public void OffsetCameraAndReturn(Vector3 direction, float distance, Quaternion rotation, float duration)
     {
         if (routine_offset != null) return;
 
-        routine_offset = StartCoroutine(OffsetCameraRoutine(direction, distance, rotation, duration));
+        routine_offset = StartCoroutine(OffsetCameraAndReturnRoutine(direction, distance, rotation, duration));
     }
-    private IEnumerator OffsetCameraRoutine(Vector3 direction, float distance, Quaternion rotation, float duration)
+    private IEnumerator ReturnCameraOffsetRoutine(float duration)
+    {
+        float timer = 0;
+
+        Vector3 start_pos = pos_offset_current;
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            pos_offset_current = Vector3.Lerp(start_pos, Vector3.zero, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        pos_offset_current = Vector3.zero;
+
+        routine_offset = null;
+    }
+    private IEnumerator OffsetCameraRoutine(Vector3 direction, float distance, float duration)
+    {
+        float timer = 0;
+
+        Vector3 start_pos = Vector3.zero;
+        Vector3 target_pos = transform.InverseTransformDirection(direction) * distance;
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            pos_offset_current = Vector3.Lerp(start_pos, target_pos, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        pos_offset_current = target_pos;
+
+        routine_offset = null;
+    }
+    private IEnumerator OffsetCameraAndReturnRoutine(Vector3 direction, float distance, Quaternion rotation, float duration)
     {
         float timer = 0;
 

@@ -22,10 +22,12 @@ public abstract class SC_Zone : MonoBehaviour
     {
         range = new_range;
         particles = new_particles;
+        particles.transform.SetParent(transform, true);
     }
     protected virtual void OnDestroy()
     {
         if (particles == null) return;
+        particles.transform.SetParent(null, true);
         particles.GetComponent<ParticleSystem>().Stop();
         Transform tr = particles.transform.GetChild(0);
         if (tr != null)

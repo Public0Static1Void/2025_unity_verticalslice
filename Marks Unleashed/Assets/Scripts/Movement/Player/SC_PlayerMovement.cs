@@ -199,7 +199,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         // The player is falling and collided with the ground
         if (rb.linearVelocity.y < 0)
-            SC_CameraRotation.instance.OffsetCamera(Vector3.down, 0.3f, Quaternion.Euler(3, 0, 0), 0.75f);
+            SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down, 0.3f, Quaternion.Euler(3, 0, 0), 0.75f);
 
         StartCoroutine(DisableMovement(0.75f));
     }
