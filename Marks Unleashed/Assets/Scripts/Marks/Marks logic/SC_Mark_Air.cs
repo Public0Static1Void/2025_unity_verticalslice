@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SC_Mark_Air : SC_Mark
 {
-    public float range = 4;
+    public float range = 8;
 
     public override void ActivateMark()
     {
@@ -23,13 +23,13 @@ public class SC_Mark_Air : SC_Mark
             GameObject ob_airZone = new GameObject("Air zone");
             ob_airZone.transform.position = transform.position;
             ob_airZone.transform.rotation = transform.rotation;
-            if (transform.parent.parent != null)
+            if (transform.parent != null && transform.parent.parent != null)
             {
                 ob_airZone.transform.SetParent(transform.parent.parent, true);
             }
 
             SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
-            zone_air.InitAirZone(range, layer_interactable, GetElementStrength() * 200, particles);
+            zone_air.InitAirZone(range, 2, layer_interactable, GetElementStrength() * 100, particles, destroyable);
             break;
 
             /*

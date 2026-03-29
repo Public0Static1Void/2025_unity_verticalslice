@@ -5,6 +5,7 @@ public enum ElementTypes
 {
     WATER, FIRE, STONE, ELECTRICITY, GRAVITY, AIR, ICE, NONE_LAST
 }
+[System.Serializable]
 public class Element
 {
     public ElementTypes el_type;

@@ -17,11 +17,9 @@ public class SC_ZoneAir : SC_Zone
         affected_names = new List<string>();
     }
 
-
-
-    public void InitAirZone(float new_range, LayerMask layerMask, float new_force, GameObject new_particles)
+    public void InitAirZone(float new_range, float new_horizontal_range, LayerMask layerMask, float new_force, GameObject new_particles, bool can_destroy = false)
     {
-        base.InitZone(new_range, new_particles);
+        base.InitZone(new_range, new_horizontal_range, new_particles, can_destroy);
         layer_interactable = layerMask;
         force = new_force;
     }
@@ -34,50 +32,52 @@ public class SC_ZoneAir : SC_Zone
 
     private void CheckForNewObjects()
     {
-        // Search for new objects
-        string[] names_on_range = new string[0];
-
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         if (colls.Length > 0)
         {
-            names_on_range = new string[colls.Length];
             for (int i = 0; i < colls.Length; i++)
             {
-                names_on_range[i] = colls[i].name;
 
-                // Don't check twice the same rigidbody or don't affect it's parent
-                if (affected_names.Contains(colls[i].name) || colls[i].name == transform.parent.name) continue;
+                // Check if there is a direct line of vision between the object and the player
+                Vector3 origin = transform.position;
+                Vector3 direction = (colls[i].transform.position - origin).normalized;
+                float distance = Vector3.Distance(origin, colls[i].transform.position);
 
-                // Save the rigidbody
-                Rigidbody rb = colls[i].GetComponent<Rigidbody>();
-                if (rb != null)
+                if (Physics.Raycast(origin, direction, out RaycastHit hit, distance))
                 {
-                    // Adds a small start force
-                    //rb.AddForce(transform.forward * (force * 0.25f), ForceMode.Impulse);
+                    if (hit.collider != colls[i])
+                    {
+                        if (affected_names.Contains(colls[i].name))
+                        {
+                            affected_names.Remove(colls[i].name);
+                            for (int j = 0; j < affected_rb.Count; j++)
+                                if (affected_rb[j].name == colls[i].name)
+                                    affected_rb.RemoveAt(j);
+                        }
+                            
+                        continue;
+                    }
 
-                    affected_rb.Add(rb);
-                    affected_names.Add(colls[i].name);
+                    
+                    Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
+                    if (rb != null && !affected_names.Contains(colls[i].name))
+                    {
+                        affected_names.Add(colls[i].name);
+                        affected_rb.Add(rb);
+                    }
+
+                    Debug.DrawLine(origin, hit.point, Color.green);
                 }
-            }
-
-            
-        }
-        /// Removes the names that aren't on the range
-        for (int i = 0; i < affected_names.Count; i++)
-        {
-            bool name_on_list = false;
-            for (int j = 0; j < names_on_range.Length; j++)
-            {
-                if (affected_names[i] == names_on_range[j])
+                else
                 {
-                    name_on_list = true;
-                    break;
+                    affected_names.Remove(colls[i].name);
+                    for (int j = 0; j < affected_rb.Count; j++)
+                        if (affected_rb[j].name == colls[i].name)
+                            affected_rb.RemoveAt(j);
+
+                    Debug.DrawLine(origin, origin + direction * distance, Color.red);
+                    continue;
                 }
-            }
-            if (!name_on_list)
-            {
-                affected_names.RemoveAt(i);
-                affected_rb.RemoveAt(i);
             }
         }
     }

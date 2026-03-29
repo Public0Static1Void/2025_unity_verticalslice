@@ -24,12 +24,20 @@ public class SC_MarksSelector : MonoBehaviour
             selected_mark_zone = hit.collider.gameObject.GetComponent<SC_Zone>();
             if (selected_mark_zone != null)
             {
-                selected_mark_zone.HighlightZone();
-                if (mark_selector_indicator != null)
+                if (selected_mark_zone.destroyable)
                 {
-                    mark_selector_indicator.SetActive(true);
-                    mark_selector_indicator.transform.position = selected_mark_zone.transform.position + Vector3.up * 3;
-                    mark_selector_indicator.transform.LookAt(transform);
+                    selected_mark_zone.HighlightZone();
+                    if (mark_selector_indicator != null)
+                    {
+                        mark_selector_indicator.SetActive(true);
+                        mark_selector_indicator.transform.position = selected_mark_zone.transform.position + Vector3.up * 3;
+                        mark_selector_indicator.transform.LookAt(transform);
+                    }
+                }
+                else
+                {
+                    selected_mark_zone = null;
+                    mark_selector_indicator.SetActive(false);
                 }
             }
         }

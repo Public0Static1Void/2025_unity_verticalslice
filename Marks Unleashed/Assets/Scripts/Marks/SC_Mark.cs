@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,9 +13,10 @@ public class SC_Mark : MonoBehaviour
 
     public LayerMask layer_interactable = ~0;
 
-    public bool enable_collision_activation = false;
+    public bool enable_collision_activation = false, start_active = false;
 
     public bool regenerate = false;
+    public bool destroyable = true;
 
     private Rigidbody rb;
     private Image mark_image;
@@ -26,6 +28,8 @@ public class SC_Mark : MonoBehaviour
 
         rb.useGravity = false;
         rb.isKinematic = true;
+
+        if (start_active) ActivateMark();
     }
 
     public void Init(Element el, GameObject parts = null, AudioClip clip = null, GameObject rune_disk = null)
