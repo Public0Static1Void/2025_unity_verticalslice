@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System;
 
 public class SC_MarkDisk : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class SC_MarkDisk : MonoBehaviour
     private Vector3 previous_pos;
 
     private bool activated = false;
+
+    public event Action event_destroy;
 
     private void Awake()
     {

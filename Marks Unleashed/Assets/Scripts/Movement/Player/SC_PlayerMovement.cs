@@ -13,6 +13,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public float jumpForce;
     public float acceleration = 1.1f;
     public Vector3 vel = Vector3.zero;
+    public AnimationCurve curve_acceleration;
+    public float t_speed;
 
     [Header("Ground")]
     public bool grounded = false;
@@ -26,8 +28,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public bool jumping = false;
     [Range(0, 1)]
     public float air_control = 0.5f;
+    public float fall_multiplier = 1.1f;
     public Volume camera_volume;
     private MotionBlur camera_blur;
+    private float _timer_air = 0;
 
     public bool moving = false;
 
@@ -47,8 +51,14 @@ public class SC_PlayerMovement : SC_ObjectMovement
     [HideInInspector]
     public SC_PlayerLife playerLife;
 
+    [Header("Particles")]
+    public ParticleSystem parts_smoke;
+    public ParticleSystem parts_smoke_walk;
+
 
     private bool big_collision = false;
+
+    private SC_CameraRotation _cameraRotation;
 
 
     private void Awake()
@@ -58,8 +68,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private void Start()
     {
         can_move = true;
+
         rb = GetComponent<Rigidbody>();
         playerLife = GetComponent<SC_PlayerLife>();
+        _cameraRotation = SC_CameraRotation.instance;
 
         camera_volume.profile.TryGet<MotionBlur>(out camera_blur);
         if (camera_blur != null)
@@ -73,6 +85,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        audio_effects.Play();
+        audio_effects.volume = 1;
+        audio_effects.loop = true;
     }
 
     private void Update()
@@ -81,7 +97,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 
-        if (grounded && rb.linearVelocity.magnitude > 10)
+        if (grounded && rb.linearVelocity.magnitude >= 15)
             big_collision = true;
         else
             big_collision = false;
@@ -91,6 +107,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         if (grabbing && grabPoint != null)
         {
+            _timer_air = 0;
             if (!grabbedRope.slideable && !grabbedRope.scalable)
                 rb.MovePosition(grabPoint.position);
         }
@@ -109,16 +126,17 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (moveDir.magnitude > 0.1f)
             {
                 Vector3 diff = desiredVel - horizontalVel;
-                Vector3 accel = diff.normalized * acceleration;
-
+                Vector3 accel = diff * acceleration;
                 /// Get the speed by input
                 float input_speed = GetSpeedByInput();
                 /// Set the horizontal speed based on the acceleration and air control
-                horizontalVel += accel * input_speed * (!grounded! ? air_control : 1);
+                horizontalVel += accel * input_speed * (!grounded ? air_control : 1);
             }
 
             vel.x = horizontalVel.x;
             vel.z = horizontalVel.z;
+            if (vel.y < 0 && vel.y > -5)
+                vel.y *= fall_multiplier;
 
             vel.x = Mathf.Clamp(vel.x, -15, 15);
             vel.z = Mathf.Clamp(vel.z, -15, 15);
@@ -127,41 +145,43 @@ public class SC_PlayerMovement : SC_ObjectMovement
             vel = ApplyGroundFriction(vel);
             vel = ConstrainVelocity(vel);
 
+            HandleCameraDirection(input);
+
             rb.linearVelocity = vel;
 
-            if (!grounded && distance_from_ground >= 1.2f)
+            if (rb.linearVelocity.magnitude > 5)
             {
-                float current_speed = rb.linearVelocity.magnitude / 15;
-                if (current_speed > 0.65f && can_move)
-                    playerLife.SetVignetteValue(Mathf.Min(current_speed, 0.2f), Color.black);
-                if (!audio_effects.isPlaying)
+                playerLife.SetVignetteValue(0.25f, Color.black);
+            }
+
+            if (!grounded)
+            {
+                _timer_air += Time.deltaTime;
+                if (_timer_air > 3)
+                    _timer_air = 3;
+                float t = _timer_air / 3;
+                t = Mathf.SmoothStep(0, 1, t);
+                audio_effects.volume = t;
+
+                if (!audio_effects.isPlaying || audio_effects.clip != clip_air)
                 {
                     audio_effects.clip = clip_air;
-                    audio_effects.loop = true;
-                    audio_effects.Play();
                 }
-
-                audio_effects.volume = Mathf.Min(Mathf.Abs(rb.linearVelocity.y * 0.075f), 1);
-
             }
-            else if (grounded)
+            else
             {
+                _timer_air = 0;
+
                 camera_blur.intensity.value = 0;
 
-                // The player just collisioned with the ground
-                if (audio_effects.clip == clip_air && audio_effects.isPlaying)
-                {
-                    audio_effects.Stop();
-                    if (can_move)
-                        playerLife.SetVignetteValue(0, Color.black);
-                    if (big_collision)
-                    {
-                        audio_effects.clip = clip_ground_hit;
-                        audio_effects.loop = false;
-                        audio_effects.Play();
+                if (can_move)
+                    playerLife.SetVignetteValue(0, Color.black);
 
-                        HandleBigCollision();
-                    }
+                // The player just collisioned with the ground
+                if (audio_effects.isPlaying)
+                {
+                    audio_effects.volume = 0;
+                    audio_effects.Pause();
 
                     grabPoint = null;
                     grabbedRope = null;
@@ -169,9 +189,37 @@ public class SC_PlayerMovement : SC_ObjectMovement
             }
         }
 
+        // Handle the walk particles
+        if (grounded && !parts_smoke_walk.isPlaying)
+            parts_smoke_walk.Play();
+        else if (!grounded)
+            parts_smoke_walk.Stop();
+        // Handles what happen when there's a big collision
+        if (big_collision)
+        {
+            SC_SoundManager.instance.InstantiateSound(clip_ground_hit, transform.position);
+
+            HandleBigCollision();
+        }
+
         HandleCameraBlur();
     }
 
+    private void HandleCameraDirection(Vector2 dir)
+    {
+        if (!grounded) return;
+
+
+        if (dir == Vector2.zero)
+        {
+            _cameraRotation.RotateCamera(Quaternion.Euler(0, 0, 0), 1);
+        }
+        else if (dir.x != 0)
+        {
+            float dir_x = Mathf.Sign(dir.x);
+            _cameraRotation.RotateCamera(Quaternion.Euler(0, 5 * dir_x, 0), 1);
+        }
+    }
     private void HandleCameraBlur()
     {
         if (rb.linearVelocity.magnitude < 8)
@@ -199,8 +247,13 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         // The player is falling and collided with the ground
         if (rb.linearVelocity.y < 0)
-            SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down, 0.3f, Quaternion.Euler(3, 0, 0), 0.75f);
+        {
+            SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down, 0.75f, Quaternion.Euler(3, 0, 0), 1);
+            // Play smoke particles
+            parts_smoke.Play();
+        }
 
+        // Disables the player movement
         StartCoroutine(DisableMovement(0.75f));
     }
 

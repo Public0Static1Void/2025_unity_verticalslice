@@ -243,6 +243,12 @@ public class SC_CameraRotation : MonoBehaviour
         //routine_fov = null;
     }
 
+    public void RotateCamera(Quaternion rot, float duration)
+    {
+        if (routine_offset != null) return;
+        if (Quaternion.Angle(rot_offset_current, rot) < 1) return;
+        routine_offset = StartCoroutine(RotateCameraRoutine(rot, duration));
+    }
     public void RestoreCameraOffset(float duration)
     {
         if (routine_offset != null) StopCoroutine(routine_offset);
@@ -258,6 +264,25 @@ public class SC_CameraRotation : MonoBehaviour
         if (routine_offset != null) return;
 
         routine_offset = StartCoroutine(OffsetCameraAndReturnRoutine(direction, distance, rotation, duration));
+    }
+    private IEnumerator RotateCameraRoutine(Quaternion rotation, float duration)
+    {
+        float timer = 0;
+        Quaternion rot_start = rot_offset_current;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            rot_offset_current = Quaternion.Lerp(rot_start, rotation, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        rot_offset_current = rotation;
+
+        routine_offset = null;
     }
     private IEnumerator ReturnCameraOffsetRoutine(float duration)
     {
@@ -308,15 +333,15 @@ public class SC_CameraRotation : MonoBehaviour
 
         duration /= 2;
 
-        Vector3 start_pos = pos_start_local;
-        Vector3 target_pos = pos_start_local + (direction * distance);
+        Vector3 start_pos = Vector3.zero;
+        Vector3 target_pos = (transform.InverseTransformDirection(direction) * distance);
 
         while (timer < duration)
         {
             float t = timer / duration;
             t = Mathf.SmoothStep(0, 1, t);
 
-            pos_offset_current = Vector3.Lerp(start_pos, target_pos, t) - pos_start_local;
+            pos_offset_current = Vector3.Lerp(start_pos, target_pos, t);
             rot_offset_current = Quaternion.Lerp(Quaternion.identity, rotation, t);
 
             timer += Time.deltaTime;
@@ -329,7 +354,7 @@ public class SC_CameraRotation : MonoBehaviour
             float t = timer / duration;
             t = Mathf.SmoothStep(0, 1, t);
 
-            pos_offset_current = Vector3.Lerp(target_pos, start_pos, t) - pos_start_local;
+            pos_offset_current = Vector3.Lerp(target_pos, start_pos, t);
             rot_offset_current = Quaternion.Lerp(rotation, Quaternion.identity, t);
 
             timer += Time.deltaTime;

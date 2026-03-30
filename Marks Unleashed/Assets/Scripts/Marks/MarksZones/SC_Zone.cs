@@ -18,6 +18,8 @@ public abstract class SC_Zone : MonoBehaviour
         zone_collider.radius = range;
 
         gameObject.layer = LayerMask.NameToLayer("Mark");
+
+        SC_MarksPlacer.Instance.event_destroy_runes += DestroyZone;
     }
 
     public virtual void InitZone(float new_range, float new_horizontal_range, GameObject new_particles, bool can_destroy = false)
@@ -27,6 +29,11 @@ public abstract class SC_Zone : MonoBehaviour
         particles = new_particles;
         destroyable = can_destroy;
         particles.transform.SetParent(transform, true);
+    }
+
+    public void DestroyZone()
+    {
+        Destroy(gameObject);
     }
     protected virtual void OnDestroy()
     {

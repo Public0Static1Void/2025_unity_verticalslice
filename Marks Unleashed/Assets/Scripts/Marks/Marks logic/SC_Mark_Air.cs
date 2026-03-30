@@ -30,6 +30,7 @@ public class SC_Mark_Air : SC_Mark
 
             SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
             zone_air.InitAirZone(range, 2, layer_interactable, GetElementStrength() * 100, particles, destroyable);
+
             break;
 
             /*

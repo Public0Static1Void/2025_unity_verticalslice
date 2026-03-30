@@ -12,12 +12,14 @@ using UnityEngine.XR;
 public class SC_MarksPlacer : MonoBehaviour
 {
     public static SC_MarksPlacer Instance { get; private set; }
+
     [Header("References")]
     public GameObject ob_mark_disk;
     public GameObject mark_placeholder;
     public UnityEngine.UI.Image mark_placeholder_image;
     public Transform player;
     public LayerMask layer_placeable;
+    public SkinnedMeshRenderer meshRend_arm;
 
     public Transform element_hands_parent;
 
@@ -69,6 +71,10 @@ public class SC_MarksPlacer : MonoBehaviour
     private bool launching_disk = false;
     private bool launch_mode = false;
 
+    private MaterialPropertyBlock _mpb;
+
+    public event Action event_destroy_runes;
+
 
     private void Awake()
     {
@@ -106,6 +112,8 @@ public class SC_MarksPlacer : MonoBehaviour
         transform_arrow = Instantiate(arrow_gameObject).transform;
         transform_arrow.localScale = Vector3.one * 0.01f;
         transform_arrow.gameObject.SetActive(false);
+
+        _mpb = new MaterialPropertyBlock();
     }
 
     private IEnumerator InitMarksUI()
@@ -213,6 +221,19 @@ public class SC_MarksPlacer : MonoBehaviour
         }
     }
 
+    public void RemoveMarks()
+    {
+        unlocked_marks.Clear();
+        foreach(SC_Mark mark in placed_marks)
+        {
+            Destroy(mark.gameObject);
+        }
+        placed_marks.Clear();
+
+        event_destroy_runes?.Invoke();
+
+        RefreshMarksList();
+    }
     public void UnlockMark(ElementTypes type)
     {
         // Don't add an unlocked mark
@@ -348,7 +369,7 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_disk.transform.position = marks_canvas.transform.position;
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
-        disk.InitDisk(this, mark_info, Camera.main.transform.forward + transform.right * 0.05f, 75 * timer);
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward + transform.right * 0.075f, 75 * timer);
 
         SC_SoundManager.instance.InstantiateSound(clips_swhoosh[UnityEngine.Random.Range(0, clips_swhoosh.Count)], transform.position);
         cameraRotation.ShakeCamera(0.25f, 0.05f);
@@ -464,6 +485,13 @@ public class SC_MarksPlacer : MonoBehaviour
                 target_rot = Quaternion.LookRotation(dir_to_camera);
 
                 new_scale = Vector3.one * 3;
+
+                // Use indx instead of i to get the correct remapped mark
+                MeshRenderer meshr_disk = marks_list_images[indx].gameObject.GetComponentInChildren<MeshRenderer>();
+
+                // Use the material instance, not shared
+                Color col = GetOutlineColor(meshr_disk);
+                SetOutlineColor(col);
             }
             else
             {
@@ -491,6 +519,29 @@ public class SC_MarksPlacer : MonoBehaviour
         equipped_mark = element;
         mark_placeholder_image.sprite = element.im_mark_sprite;
         EnableElementHand(index);
+
+        
+    }
+    private Color GetOutlineColor(Renderer renderer)
+    {
+        // Always use material instance, never sharedMaterial
+        Material mat = renderer.material;
+
+        if (mat == null) return Color.black;
+
+        if (mat.HasProperty("_Outline_Color"))
+            return mat.GetColor("_Outline_Color");
+
+        if (mat.HasProperty("_BaseColor"))
+            return mat.GetColor("_BaseColor");
+
+        return Color.black;
+    }
+    public void SetOutlineColor(Color color)
+    {
+        meshRend_arm.GetPropertyBlock(_mpb);
+        _mpb.SetColor("_Outline_Color", color);
+        meshRend_arm.SetPropertyBlock(_mpb);
     }
 
     #endregion
@@ -533,7 +584,7 @@ public class SC_MarksPlacer : MonoBehaviour
         {
             if (!launch_mode)
             {
-                cameraRotation.RestoreCameraOffset(0.5f);
+                cameraRotation.OffsetCameraAndReturn(Camera.main.transform.forward, 1, Quaternion.identity, 0.5f);
 
                 launching_disk = false;
 
