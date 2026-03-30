@@ -33,7 +33,11 @@ public abstract class SC_Zone : MonoBehaviour
 
     public void DestroyZone()
     {
-        Destroy(gameObject);
+        try
+        {
+            if (gameObject != null)
+                Destroy(gameObject);
+        } catch { }
     }
     protected virtual void OnDestroy()
     {
@@ -51,7 +55,7 @@ public abstract class SC_Zone : MonoBehaviour
 
     public void HighlightZone()
     {
-        Debug.Log($"Looking at: {name}");
+        //Debug.Log($"Looking at: {name}");
     }
 
     private void OnDrawGizmosSelected()

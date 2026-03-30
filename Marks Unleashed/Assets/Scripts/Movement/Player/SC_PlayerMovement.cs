@@ -217,7 +217,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
         else if (dir.x != 0)
         {
             float dir_x = Mathf.Sign(dir.x);
-            _cameraRotation.RotateCamera(Quaternion.Euler(0, 5 * dir_x, 0), 1);
+            _cameraRotation.RotateCamera(Quaternion.Euler(0, 5 * dir_x, 0), 0.5f);
         }
     }
     private void HandleCameraBlur()

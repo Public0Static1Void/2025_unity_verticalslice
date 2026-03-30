@@ -640,7 +640,7 @@ GameObject:
   - component: {fileID: 485561452}
   m_Layer: 0
   m_Name: Rope (6)
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -766,6 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentCount: 10
   segmentLength: 1
+  currentLength: 0
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -774,6 +775,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -9, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -792,6 +795,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &485561454
 Transform:
   m_ObjectHideFlags: 0
@@ -966,6 +972,10 @@ PrefabInstance:
     - target: {fileID: 1363060882769673840, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536250707576338277, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: air_control
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1536250707576338277, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: grabbedRope
@@ -1690,7 +1700,7 @@ GameObject:
   - component: {fileID: 644892481}
   m_Layer: 0
   m_Name: Rope (4)
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1816,6 +1826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentCount: 10
   segmentLength: 1
+  currentLength: 0
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -1824,6 +1835,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -2, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1842,6 +1855,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &644892483
 Transform:
   m_ObjectHideFlags: 0
@@ -2185,7 +2201,7 @@ GameObject:
   - component: {fileID: 846641763}
   m_Layer: 0
   m_Name: Rope (1)
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2311,6 +2327,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentCount: 10
   segmentLength: 1
+  currentLength: 0
   calculationNum: 5
   moveForce: 4
   slide_speed: 2
@@ -2319,6 +2336,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -2, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2337,6 +2356,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &846641765
 Transform:
   m_ObjectHideFlags: 0
@@ -2414,6 +2436,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e54930c3a637b1f4bb9f30d74ec52240, type: 3}
   - {fileID: 21300000, guid: 8191af7ce9eb58f40a3dcf4ed244dc4f, type: 3}
   - {fileID: 21300000, guid: f2c131dace0849948b5a412e5d09b22a, type: 3}
+  elements: []
   part_marks:
   - {fileID: 7038164720765716695, guid: 4883ff9d2fecc7549b8feb6824bc2088, type: 3}
   - {fileID: 6841039883908395380, guid: bd13a93ca70eb98488b11a76b96eb8b2, type: 3}
@@ -3044,7 +3067,7 @@ GameObject:
   - component: {fileID: 1004939537}
   - component: {fileID: 1004939536}
   - component: {fileID: 1004939535}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3620,7 +3643,7 @@ GameObject:
   - component: {fileID: 1263276526}
   m_Layer: 0
   m_Name: Rope
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3761,6 +3784,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentCount: 10
   segmentLength: 1
+  currentLength: 0
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -3769,6 +3793,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -9, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -3787,6 +3813,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1281064537
 GameObject:
   m_ObjectHideFlags: 0
@@ -4578,7 +4607,7 @@ GameObject:
   - component: {fileID: 1612780764}
   m_Layer: 0
   m_Name: Rope (3)
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4704,6 +4733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentCount: 10
   segmentLength: 1
+  currentLength: 0
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -4712,6 +4742,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -2, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -4730,6 +4762,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1612780766
 Transform:
   m_ObjectHideFlags: 0
@@ -4894,7 +4929,7 @@ GameObject:
   - component: {fileID: 1696609644}
   m_Layer: 0
   m_Name: Rope (5)
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5020,6 +5055,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentCount: 10
   segmentLength: 0.5
+  currentLength: 0
   calculationNum: 5
   moveForce: 5
   slide_speed: 2
@@ -5028,6 +5064,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -5, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5046,6 +5084,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1696609646
 Transform:
   m_ObjectHideFlags: 0
@@ -5214,7 +5255,7 @@ GameObject:
   - component: {fileID: 1773415977}
   m_Layer: 0
   m_Name: Rope (2)
-  m_TagString: Untagged
+  m_TagString: Rope
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5339,7 +5380,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentCount: 10
-  segmentLength: 0.5
+  segmentLength: 1
+  currentLength: 0
   calculationNum: 5
   moveForce: 5
   slide_speed: 0
@@ -5348,6 +5390,8 @@ MonoBehaviour:
   collision_radius: 0.2
   maxSwingSpeed: 5
   gravity: {x: 0, y: -2, z: 0}
+  stretched: 0
+  can_move: 1
   layer_collision:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5366,6 +5410,9 @@ MonoBehaviour:
   climbOffset: {x: 0, y: 0, z: 0}
   slideOffset: 0.5
   swingOffset: {x: 0, y: 0, z: 0}
+  event_stretched:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1773415979
 Transform:
   m_ObjectHideFlags: 0
@@ -5375,7 +5422,7 @@ Transform:
   m_GameObject: {fileID: 1773415976}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2.47, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

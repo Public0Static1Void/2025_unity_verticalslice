@@ -249,6 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotDuration: 0.5
   rotAngle: -90
+  can_move: 1
 --- !u!65 &4210717753034003340
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -259,10 +260,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32776
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32759
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0

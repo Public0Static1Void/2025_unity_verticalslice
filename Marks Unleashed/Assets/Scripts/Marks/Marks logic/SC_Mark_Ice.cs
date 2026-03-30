@@ -27,9 +27,14 @@ public class SC_Mark_Ice : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range);
         foreach (Collider coll in colls)
         {
+            Debug.Log(coll.name);
+            if (coll.name.Contains("Rope"))
+                coll.transform.parent.GetComponent<SC_Rope>().FixRope(range / 2);
+
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                
                 switch (coll.name)
                 {
                     case "Player":
@@ -37,7 +42,6 @@ public class SC_Mark_Ice : SC_Mark
                         SC_PlayerMovement.instance.can_move = false;
                         SC_CameraRotation.instance.ShakeCamera(0.5f, 0.5f);
                         break;
-                    
                 }
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;

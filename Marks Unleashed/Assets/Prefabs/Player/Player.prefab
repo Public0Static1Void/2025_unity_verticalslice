@@ -1097,6 +1097,13 @@ MonoBehaviour:
   jumpForce: 150
   acceleration: 1.1
   vel: {x: 0, y: 0, z: 0}
+  curve_acceleration:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  t_speed: 0
   grounded: 0
   ground_friction: 0.9
   ground_offset: 0.2
@@ -1105,6 +1112,7 @@ MonoBehaviour:
   clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
   jumping: 0
   air_control: 0.2
+  fall_multiplier: 1.1
   camera_volume: {fileID: 8198841637628476776}
   moving: 0
   ropeJumpStrength: 5
@@ -1241,6 +1249,7 @@ MonoBehaviour:
     m_Bits: 1024
   selected_mark_zone: {fileID: 0}
   mark_selector_indicator: {fileID: 4412467590885669045, guid: 22fd6c7a4b4039d4eab896b77ea5fb14, type: 3}
+  clip_remove_runes: {fileID: 8300000, guid: 0da305d5d4f09c04396cee9ec89199ab, type: 3}
 --- !u!114 &4485371566872726750
 MonoBehaviour:
   m_ObjectHideFlags: 0

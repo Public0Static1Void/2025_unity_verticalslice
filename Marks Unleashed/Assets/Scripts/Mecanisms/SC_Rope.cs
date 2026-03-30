@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Collections;
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -38,6 +39,7 @@ public class SC_Rope : MonoBehaviour
     public float maxSwingSpeed = 5f;
     public Vector3 gravity = new Vector3(0, -2, 0);
     public bool stretched = false;
+    public bool can_move = true;
 
 
     [Header("References")]
@@ -67,6 +69,8 @@ public class SC_Rope : MonoBehaviour
     [Header("Unity events")]
     public RopeEvent event_stretched;
 
+    private GameObject _collider;
+
     private void Start()
     {
         slide_audiosource = SC_SoundManager.instance.InstantiateSound(clip_slide, transform.position, true).GetComponent<AudioSource>();
@@ -84,6 +88,12 @@ public class SC_Rope : MonoBehaviour
 
         start_slide_speed = slide_speed;
         max_slide_speed = start_slide_speed + 10;
+
+        _collider = new GameObject("Collider Rope");
+        _collider.transform.SetParent(transform);
+        _collider.tag = gameObject.tag;
+        SphereCollider sphere_collider = _collider.AddComponent<SphereCollider>();
+        sphere_collider.radius = 0.1f;
     }
 
     private void FixedUpdate()
@@ -99,7 +109,7 @@ public class SC_Rope : MonoBehaviour
             {
                 ClimbRope(-playerMovement.input.y);
             }
-            else
+            else if (can_move)
             {
                 AddImpulse(playerMovement.input.y);
             }
@@ -117,6 +127,8 @@ public class SC_Rope : MonoBehaviour
             CheckCollisions();
             ApplyConstraints();
         }
+
+        _collider.transform.position = points[points.Length - 1].position;
     }
     private void LateUpdate()
     {
@@ -129,6 +141,7 @@ public class SC_Rope : MonoBehaviour
     private void ApplyGravity()
     {
         // Simulate gravity
+        if (!can_move) return;
 
         for (int i = anchor != null ? 1 : 0; i < points.Length - (bottom_anchor != null ? 1 : 0); i++)
         {
@@ -199,8 +212,10 @@ public class SC_Rope : MonoBehaviour
                     HandlePlayerGrab(i, point);
                     continue;
                 }
-                if (coll.name == "Player" && playerMovement.grabbing)
+                if (coll.name == "Player" && playerMovement.grabbing || coll.name == "Collider Rope" || coll.name == "Ice zone")
                     continue;
+                if (!can_move) continue; /// Don't check when the rope is fixed
+
                 Vector3 closest = coll.ClosestPoint(point.position);
 
                 Vector3 repel_dir = (point.position - closest); // Gets the repel direction
@@ -450,6 +465,17 @@ public class SC_Rope : MonoBehaviour
             accumulated += Vector3.Distance(points[i].position, points[i + 1].position);
         }
         return accumulated;
+    }
+
+    public void FixRope(float seconds)
+    {
+        StartCoroutine(FixRopeRoutine(seconds));
+    }
+    private IEnumerator FixRopeRoutine(float seconds)
+    {
+        can_move = false;
+        yield return new WaitForSeconds(seconds);
+        can_move = true;
     }
 
     private void OnDrawGizmos()

@@ -10,6 +10,8 @@ public class SC_MarksSelector : MonoBehaviour
 
     public GameObject mark_selector_indicator;
 
+    public AudioClip clip_remove_runes;
+
     void Start()
     {
         mark_selector_indicator = Instantiate(mark_selector_indicator, transform.position, Quaternion.identity);
@@ -50,9 +52,10 @@ public class SC_MarksSelector : MonoBehaviour
 
     public void ProcessDeleteZoneInput(InputAction.CallbackContext con)
     {
-        if (con.performed && selected_mark_zone != null)
+        if (con.performed && selected_mark_zone != null && SC_MarksPlacer.Instance.placed_marks.Count <= 0)
         {
-            Destroy(selected_mark_zone.gameObject);
+            SC_MarksPlacer.Instance.RemoveMarks();
+            SC_SoundManager.instance.InstantiateSound(clip_remove_runes, transform.position);
         }
     }
 }

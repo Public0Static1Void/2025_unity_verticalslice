@@ -539,6 +539,7 @@ public class SC_MarksPlacer : MonoBehaviour
     }
     public void SetOutlineColor(Color color)
     {
+        if (meshRend_arm == null) return;
         meshRend_arm.GetPropertyBlock(_mpb);
         _mpb.SetColor("_Outline_Color", color);
         meshRend_arm.SetPropertyBlock(_mpb);
