@@ -574,7 +574,8 @@ public class SC_MarksPlacer : MonoBehaviour
             if (!launch_mode)
             {
                 launching_disk = true;
-                cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1);
+                cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1, true);
+                cameraRotation.ShakeCameraProgressive(0.05f, 0.2f, 1.5f);
             }
             else
             {
@@ -585,7 +586,8 @@ public class SC_MarksPlacer : MonoBehaviour
         {
             if (!launch_mode)
             {
-                cameraRotation.OffsetCameraAndReturn(Camera.main.transform.forward, 1, Quaternion.identity, 0.5f);
+                cameraRotation.OffsetCameraAndReturn(Camera.main.transform.forward, -0.5f, Quaternion.identity, 0.5f, true, true);
+                
 
                 launching_disk = false;
 

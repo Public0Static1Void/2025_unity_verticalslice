@@ -338,7 +338,8 @@ public class SC_Rope : MonoBehaviour
             }
         }
 
-        float segmentLength = Vector3.Distance(points[grabbed_index].position, points[grabbed_index + 1].position);
+        int next_index = (grabbed_index + 1) % points.Length;
+        float segmentLength = Vector3.Distance(points[grabbed_index].position, points[next_index].position);
         t += (Time.fixedDeltaTime * dir * speed) / segmentLength;
 
         if (t >= 1)

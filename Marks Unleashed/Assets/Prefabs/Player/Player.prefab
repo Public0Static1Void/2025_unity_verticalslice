@@ -192,8 +192,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turn_speed: 10
-  parent_turn_speed: 25
+  parent_turn_speed: 30
   fov_multiplier: 0.15
+  bob_speed: 10
+  bob_amount: 0.05
+  sway: 1
   base_fov: 0
   mainCamera: {fileID: 7534136154024164982}
   parent: {fileID: 8976910792773025556}
@@ -1111,8 +1114,8 @@ MonoBehaviour:
   clip_ground_hit: {fileID: 8300000, guid: bef328481e3152b459a8910718e605ec, type: 3}
   clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
   jumping: 0
-  air_control: 0.2
-  fall_multiplier: 1.1
+  air_control: 0.05
+  fall_multiplier: 1.5
   camera_volume: {fileID: 8198841637628476776}
   moving: 0
   ropeJumpStrength: 5
@@ -1438,6 +1441,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8976910792773025556}
     m_Modifications:
+    - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
+      propertyPath: EmissionModule.rateOverDistance.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4937517580802246540, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
       propertyPath: m_Name
       value: SmokeParticles
@@ -1666,16 +1681,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
       propertyPath: InitialModule.startSpeed.minMaxState
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
       propertyPath: EmissionModule.rateOverDistance.scalar
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
       propertyPath: EmissionModule.rateOverDistance.minScalar
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3792283434110389775, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
+      propertyPath: EmissionModule.rateOverDistance.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4937517580802246540, guid: 7ac7970fe120f3646b28a319a31be5e2, type: 3}
       propertyPath: m_Name
@@ -2280,17 +2303,17 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7840485213282213839, guid: c34bf3fc052a0904f8b2adaeef63f573, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3981779438062191030}
+      addedObject: {fileID: 5615963886842089488}
     - targetCorrespondingSourceObject: {fileID: 7840485213282213839, guid: c34bf3fc052a0904f8b2adaeef63f573, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8724897635961415590}
+      addedObject: {fileID: 1186988198950939524}
   m_SourcePrefab: {fileID: 100100000, guid: c34bf3fc052a0904f8b2adaeef63f573, type: 3}
 --- !u!1 &3858812695685622632 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7840485213282213839, guid: c34bf3fc052a0904f8b2adaeef63f573, type: 3}
   m_PrefabInstance: {fileID: 6432194087125284007}
   m_PrefabAsset: {fileID: 0}
---- !u!199 &3981779438062191030
+--- !u!199 &5615963886842089488
 ParticleSystemRenderer:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -2367,7 +2390,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!198 &8724897635961415590
+--- !u!198 &1186988198950939524
 ParticleSystem:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

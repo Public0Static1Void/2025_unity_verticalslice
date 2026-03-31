@@ -60,6 +60,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     private SC_CameraRotation _cameraRotation;
 
+    private bool _vignette_active = false;
 
     private void Awake()
     {
@@ -135,7 +136,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             vel.x = horizontalVel.x;
             vel.z = horizontalVel.z;
-            if (vel.y < 0 && vel.y > -5)
+            if (vel.y < 0 && vel.y > -2.5f)
                 vel.y *= fall_multiplier;
 
             vel.x = Mathf.Clamp(vel.x, -15, 15);
@@ -149,23 +150,28 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             rb.linearVelocity = vel;
 
-            if (rb.linearVelocity.magnitude > 5)
+            if (rb.linearVelocity.magnitude > 5 && !_vignette_active)
             {
                 playerLife.SetVignetteValue(0.25f, Color.black);
+                _vignette_active = true;
             }
 
             if (!grounded)
             {
-                _timer_air += Time.deltaTime;
-                if (_timer_air > 3)
-                    _timer_air = 3;
-                float t = _timer_air / 3;
-                t = Mathf.SmoothStep(0, 1, t);
-                audio_effects.volume = t;
-
-                if (!audio_effects.isPlaying || audio_effects.clip != clip_air)
+                if (Mathf.Abs(rb.linearVelocity.y) > 2)
                 {
-                    audio_effects.clip = clip_air;
+                    _timer_air += Time.deltaTime;
+                    if (_timer_air > 3)
+                        _timer_air = 3;
+                    float t = _timer_air / 3;
+                    t = Mathf.SmoothStep(0, 1, t);
+                    audio_effects.volume = t;
+
+                    if (!audio_effects.isPlaying || audio_effects.clip != clip_air)
+                    {
+                        audio_effects.clip = clip_air;
+                        audio_effects.Play();
+                    }
                 }
             }
             else
@@ -174,14 +180,17 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
                 camera_blur.intensity.value = 0;
 
-                if (can_move)
+                if (can_move && _vignette_active)
+                {
                     playerLife.SetVignetteValue(0, Color.black);
+                    _vignette_active = false;
+                }
 
                 // The player just collisioned with the ground
                 if (audio_effects.isPlaying)
                 {
                     audio_effects.volume = 0;
-                    audio_effects.Pause();
+                    //audio_effects.Pause();
 
                     grabPoint = null;
                     grabbedRope = null;
@@ -191,9 +200,14 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         // Handle the walk particles
         if (grounded && !parts_smoke_walk.isPlaying)
+        {
             parts_smoke_walk.Play();
-        else if (!grounded)
+        }
+        else if (!grounded || !moving)
+        {
             parts_smoke_walk.Stop();
+        }
+            
         // Handles what happen when there's a big collision
         if (big_collision)
         {
@@ -217,7 +231,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
         else if (dir.x != 0)
         {
             float dir_x = Mathf.Sign(dir.x);
-            _cameraRotation.RotateCamera(Quaternion.Euler(0, 5 * dir_x, 0), 0.5f);
+            _cameraRotation.RotateCamera(Quaternion.Euler(0, 2.5f * dir_x, 0), 0.25f);
         }
     }
     private void HandleCameraBlur()
@@ -248,8 +262,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
         // The player is falling and collided with the ground
         if (rb.linearVelocity.y < 0)
         {
-            SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down, 0.75f, Quaternion.Euler(3, 0, 0), 1);
+            SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down, 0.75f, Quaternion.Euler(3, 0, 0), 1, true);
             // Play smoke particles
+            var main = parts_smoke.main;
+            main.startDelay = 0.1f;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.5f, 1);
             parts_smoke.Play();
         }
 
@@ -283,6 +300,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
             SC_SoundManager.instance.InstantiateSound(clip_jump, transform.position);
             SC_CameraRotation.instance.ImpulseUIElements(Vector2.down, 25, 0.5f);
             jumping = true;
+
+            var main = parts_smoke.main;
+            main.startDelay = 0;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.25f, 0.5f);
+            parts_smoke.Play();
             
             grabbing = false;
         }

@@ -8,7 +8,7 @@ public class SC_Mark : MonoBehaviour
 {
     public ElementTypes type = ElementTypes.NONE_LAST;
     public Element element;
-    public GameObject particles, disk;
+    public GameObject particles, disk, parts_landing;
     public AudioClip clip_activation;
 
     public LayerMask layer_interactable = ~0;
@@ -32,11 +32,12 @@ public class SC_Mark : MonoBehaviour
         if (start_active) ActivateMark();
     }
 
-    public void Init(Element el, GameObject parts = null, AudioClip clip = null, GameObject rune_disk = null)
+    public void Init(Element el, GameObject parts = null, GameObject part_landing = null, AudioClip clip = null, GameObject rune_disk = null)
     {
         element = el;
         type = el.el_type;
         particles = parts;
+        parts_landing = part_landing;
         disk = rune_disk;
         clip_activation = clip;
     }

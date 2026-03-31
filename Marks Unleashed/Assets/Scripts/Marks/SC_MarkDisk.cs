@@ -106,6 +106,10 @@ public class SC_MarkDisk : MonoBehaviour
             BoxCollider coll = mark.gameObject.AddComponent<BoxCollider>();
             coll.isTrigger = true;
 
+            // Activate the landing particles
+            GameObject particles_landing = Instantiate(stored_mark.parts_landing, inst.transform.position, inst.transform.rotation);
+            Destroy(particles_landing, 5);
+
             marksPlacer.placed_marks.Add(mark);
             marksPlacer.SetArrowPos();
             marksPlacer.UpdateActivateMarksUI();
@@ -131,6 +135,8 @@ public class SC_MarkDisk : MonoBehaviour
             ParticleSystem parts = ob_disk.GetComponentInChildren<ParticleSystem>();
             parts.Stop();
             parts.transform.parent = null;
+
+            
 
             activated = true;
             Destroy(gameObject);

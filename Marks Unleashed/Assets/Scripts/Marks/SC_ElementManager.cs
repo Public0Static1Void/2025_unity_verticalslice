@@ -20,6 +20,9 @@ public class SC_ElementManager : MonoBehaviour
     [Header("Particles")]
     public List<GameObject> part_marks = new List<GameObject>();
 
+    [Header("Landing particles")]
+    public List<GameObject> part_landing_marks = new List<GameObject>();
+
     [Header("Rune disks")]
     public List<GameObject> disk_marks = new List<GameObject>();
 
@@ -98,7 +101,7 @@ public class SC_ElementManager : MonoBehaviour
 
         for (int i = 0; i < marks.Count; i++) /// Asign the correct element stats
         {
-            marks[i].Init(elements[i], part_marks[i], marks_clips[i], disk_marks[i]);
+            marks[i].Init(elements[i], part_marks[i], part_landing_marks[i], marks_clips[i], disk_marks[i]);
         }
     }
 

@@ -16,6 +16,8 @@ public class SC_CameraRotation : MonoBehaviour
     public float turn_speed = 10;
     public float parent_turn_speed = 8;
     [Range(0, 1)] public float fov_multiplier = 0.5f;
+    public float bob_speed = 1, bob_amount = 1;
+    public float sway = 1;
 
     [HideInInspector] public float base_fov;
 
@@ -40,6 +42,8 @@ public class SC_CameraRotation : MonoBehaviour
     private Vector3 pos_start_local;
     private Vector3 pos_offset_current, pos_shake_current;
     private Quaternion rot_offset_current;
+
+    private Vector3 pos_bob;
     
 
     [Header("UI Elements")]
@@ -99,7 +103,7 @@ public class SC_CameraRotation : MonoBehaviour
         if (parent == null || camera_handle == null) return;
 
         x += input.x * turn_speed * Time.deltaTime;
-        y += input.y * turn_speed * Time.deltaTime;
+        y += input.y * turn_speed * Time.deltaTime * 2;
 
         if (x >= 360) x = 0;
 
@@ -107,15 +111,33 @@ public class SC_CameraRotation : MonoBehaviour
 
         // Parent and camera rotation
         parent.rotation = Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed);
-        transform.rotation = Quaternion.Euler(-y, x, 0) * rot_offset_current;
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(-y, x, 0) * rot_offset_current, Time.deltaTime * turn_speed);
+
+        HandleBobEffect();
 
         // Add the current offset and shake
-        transform.localPosition = pos_start_local + pos_offset_current + pos_shake_current;
+        transform.localPosition = pos_start_local + pos_offset_current + pos_shake_current + pos_bob;
 
         MoveUIElements();
     }
 
-    
+    private void HandleBobEffect()
+    {
+        if (playerMovement.moving)
+        {
+            float bob = Mathf.Sin(Time.time * bob_speed) * bob_amount;
+            pos_bob = new Vector3(0, bob, 0);
+        }
+        else
+        {
+            pos_bob = Vector3.Lerp(pos_bob, Vector3.zero, Time.deltaTime * bob_speed);
+        }
+    }
+    private void HandleSway()
+    {
+        float swayX = -input.x * sway;
+        float swayY = -input.y * sway;
+    }
 
     public void CameraTurn(InputAction.CallbackContext con)
     {
@@ -187,6 +209,12 @@ public class SC_CameraRotation : MonoBehaviour
 
         routine_shake = StartCoroutine(ShakeCameraRoutine(force, duration, delay));
     }
+    public void ShakeCameraProgressive(float min_force, float max_force, float duration, float delay = 0)
+    {
+        // Checks if there is an active camera shake
+        if (routine_shake != null) return;
+        routine_shake = StartCoroutine(ShakeCameraProgressiveRoutine(min_force, max_force, duration, delay));
+    }
     private IEnumerator ShakeCameraRoutine(float force, float duration, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -199,6 +227,33 @@ public class SC_CameraRotation : MonoBehaviour
         {
             float t = timer / duration;
             float apply_force = Mathf.Lerp(force, 0, t);
+
+            float noiseX = Mathf.PerlinNoise(seed, timer * 30);
+            float noiseY = Mathf.PerlinNoise(timer * 30, seed);
+
+            timer += Time.deltaTime;
+
+            pos_shake_current = new Vector3(noiseX, noiseY, 0) * apply_force;
+            yield return null;
+        }
+
+        pos_shake_current = Vector3.zero;
+
+        routine_shake = null;
+    }
+    private IEnumerator ShakeCameraProgressiveRoutine(float min_force, float max_force, float duration, float delay = 0)
+    {
+        yield return new WaitForSeconds(delay);
+
+        float timer = 0;
+
+        float seed = UnityEngine.Random.Range(0, 100);
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            float apply_force = Mathf.Lerp(min_force, max_force, t);
+            apply_force = Mathf.Lerp(apply_force, 0, t);
 
             float noiseX = Mathf.PerlinNoise(seed, timer * 30);
             float noiseY = Mathf.PerlinNoise(timer * 30, seed);
@@ -254,16 +309,22 @@ public class SC_CameraRotation : MonoBehaviour
         if (routine_offset != null) StopCoroutine(routine_offset);
         routine_offset = StartCoroutine(ReturnCameraOffsetRoutine(duration));
     }
-    public void OffsetCamera(Vector3 direction, float distance, float duration)
+    public void OffsetCamera(Vector3 direction, float distance, float duration, bool priority = false)
     {
-        if (routine_offset != null) return;
+        if (!priority && routine_offset != null)
+            return;
+        else if (routine_offset != null)
+            StopCoroutine(routine_offset);
         routine_offset = StartCoroutine(OffsetCameraRoutine(direction, distance, duration));
     }
-    public void OffsetCameraAndReturn(Vector3 direction, float distance, Quaternion rotation, float duration)
+    public void OffsetCameraAndReturn(Vector3 direction, float distance, Quaternion rotation, float duration, bool priority = false, bool fast = false)
     {
-        if (routine_offset != null) return;
+        if (!priority && routine_offset != null)
+            return;
+        else if (routine_offset != null)
+            StopCoroutine(routine_offset);
 
-        routine_offset = StartCoroutine(OffsetCameraAndReturnRoutine(direction, distance, rotation, duration));
+        routine_offset = StartCoroutine(OffsetCameraAndReturnRoutine(direction, distance, rotation, duration, fast));
     }
     private IEnumerator RotateCameraRoutine(Quaternion rotation, float duration)
     {
@@ -327,11 +388,15 @@ public class SC_CameraRotation : MonoBehaviour
 
         routine_offset = null;
     }
-    private IEnumerator OffsetCameraAndReturnRoutine(Vector3 direction, float distance, Quaternion rotation, float duration)
+    private IEnumerator OffsetCameraAndReturnRoutine(Vector3 direction, float distance, Quaternion rotation, float duration, bool fast = false)
     {
         float timer = 0;
 
-        duration /= 2;
+        float start_duration = duration;
+        if (!fast)
+            duration /= 2;
+        else
+            duration *= 0.25f;
 
         Vector3 start_pos = Vector3.zero;
         Vector3 target_pos = (transform.InverseTransformDirection(direction) * distance);
@@ -347,6 +412,9 @@ public class SC_CameraRotation : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
+
+        if (fast)
+            duration = start_duration * 0.75f;
 
         timer = 0;
         while (timer < duration)
