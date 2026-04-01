@@ -24,6 +24,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     [Header("Air")]
     public AudioClip clip_air, clip_ground_hit, clip_jump;
+    public AudioClip clip_ground_hit_slow;
     // Jump
     public bool jumping = false;
     [Range(0, 1)]
@@ -94,6 +95,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     private void Update()
     {
+        bool start_grounded = grounded;
         grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, transform.localScale.y + ground_offset);
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
@@ -102,6 +104,17 @@ public class SC_PlayerMovement : SC_ObjectMovement
             big_collision = true;
         else
             big_collision = false;
+
+        // Check if the player touched the ground in this frame
+        if (!start_grounded && grounded)
+        {
+            _cameraRotation.ShakeUIElements(10 * Mathf.Abs(rb.linearVelocity.y), 0.25f);
+            SC_SoundManager.instance.InstantiateSound(clip_ground_hit_slow, transform.position);
+            var emission = parts_smoke.emission;
+            var burst = emission.GetBurst(0);
+            burst.count = 2;
+            parts_smoke.Play();
+        }
     }
 
     private void FixedUpdate()
@@ -165,7 +178,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
                         _timer_air = 3;
                     float t = _timer_air / 3;
                     t = Mathf.SmoothStep(0, 1, t);
-                    audio_effects.volume = t;
+                    audio_effects.volume = t * 2;
 
                     if (!audio_effects.isPlaying || audio_effects.clip != clip_air)
                     {
@@ -267,6 +280,9 @@ public class SC_PlayerMovement : SC_ObjectMovement
             var main = parts_smoke.main;
             main.startDelay = 0.1f;
             main.startSize = new ParticleSystem.MinMaxCurve(0.5f, 1);
+            var emission = parts_smoke.emission;
+            var burst = emission.GetBurst(0);
+            burst.count = 30;
             parts_smoke.Play();
         }
 
@@ -298,12 +314,15 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             SC_SoundManager.instance.InstantiateSound(clip_jump, transform.position);
-            SC_CameraRotation.instance.ImpulseUIElements(Vector2.down, 25, 0.5f);
+            _cameraRotation.ImpulseUIElements(Vector2.down, 20, 0.5f, true);
             jumping = true;
 
             var main = parts_smoke.main;
             main.startDelay = 0;
             main.startSize = new ParticleSystem.MinMaxCurve(0.25f, 0.5f);
+            var emission = parts_smoke.emission;
+            var burst = emission.GetBurst(0);
+            burst.count = 10;
             parts_smoke.Play();
             
             grabbing = false;

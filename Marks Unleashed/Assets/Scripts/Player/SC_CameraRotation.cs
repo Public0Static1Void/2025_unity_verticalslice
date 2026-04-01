@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class SC_CameraRotation : MonoBehaviour
 {
@@ -158,15 +159,47 @@ public class SC_CameraRotation : MonoBehaviour
         }
     }
 
-    public void ImpulseUIElements(Vector2 dir, float distance, float time)
+    public void ShakeUIElements(float force, float duration)
     {
-        StartCoroutine(ImpulseUIElementsRoutine(dir, distance, time / 2));
+        StartCoroutine(ShakeUIElementsRoutine(force, duration));
     }
-    private IEnumerator ImpulseUIElementsRoutine(Vector2 dir, float distance, float time)
+    public void ImpulseUIElements(Vector2 dir, float distance, float time, bool fast = false)
+    {
+        StartCoroutine(ImpulseUIElementsRoutine(dir, distance, time / 2, fast));
+    }
+    private IEnumerator ShakeUIElementsRoutine(float force, float duration)
     {
         float timer = 0;
+        float seed = UnityEngine.Random.Range(0, 100);
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            float apply_force = Mathf.Lerp(force, 0, t);
+
+            float randX = Mathf.PerlinNoise(timer * 30, seed) * 2 - 1;
+            float randY = Mathf.PerlinNoise(seed, timer * 30) * 2 - 1;
+
+            for (int i = 0; i < ui_elements_to_move.Count; i++)
+            {
+                Vector2 pos = ui_elements_to_move[i].anchoredPosition;
+                Vector2 inp = input.normalized;
+                ui_elements_to_move[i].anchoredPosition = Vector2.Lerp(ui_elements_start_pos[i], new Vector2(randX, randY) * apply_force, t);
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+    private IEnumerator ImpulseUIElementsRoutine(Vector2 dir, float distance, float time, bool fast = false)
+    {
+        float timer = 0;
+        float start_time = time;
+        if (fast)
+            time = start_time * 0.25f;
+        else
+            time = time * 0.5f;
         // Lerp to the extrem
-        while (timer < time * 0.5f)
+        while (timer < time)
         {
             float t = timer / time;
             t = Mathf.SmoothStep(0, 1, t);
@@ -182,8 +215,12 @@ public class SC_CameraRotation : MonoBehaviour
             yield return null;
         }
         timer = 0;
+        if (fast)
+            time = start_time * 0.75f;
+        else
+            time = start_time * 0.5f;
         // Lerp to the extrem
-        while (timer < time * 1.5f)
+        while (timer < time)
         {
             float t = timer / time;
             t = Mathf.SmoothStep(0, 1, t);

@@ -108,7 +108,7 @@ public class SC_MarkDisk : MonoBehaviour
 
             // Activate the landing particles
             GameObject particles_landing = Instantiate(stored_mark.parts_landing, inst.transform.position, inst.transform.rotation);
-            Destroy(particles_landing, 5);
+            particles_landing.transform.SetParent(mark.transform, true);
 
             marksPlacer.placed_marks.Add(mark);
             marksPlacer.SetArrowPos();

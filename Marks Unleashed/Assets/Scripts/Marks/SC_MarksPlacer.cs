@@ -232,6 +232,8 @@ public class SC_MarksPlacer : MonoBehaviour
 
         event_destroy_runes?.Invoke();
 
+        current_mark = 0;
+
         RefreshMarksList();
     }
     public void UnlockMark(ElementTypes type)
@@ -576,6 +578,7 @@ public class SC_MarksPlacer : MonoBehaviour
                 launching_disk = true;
                 cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1, true);
                 cameraRotation.ShakeCameraProgressive(0.05f, 0.2f, 1.5f);
+                cameraRotation.ShakeUIElements(10, 1.5f);
             }
             else
             {

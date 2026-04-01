@@ -37,6 +37,7 @@ public class SC_ZoneIce : SC_Zone
         clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
 
         range = 6;
+        range_horizontal = range;
     }
     private void Update()
     {
@@ -72,8 +73,6 @@ public class SC_ZoneIce : SC_Zone
                     affected_names.Add(colls[i].name);
                 }
             }
-
-
         }
         /// Removes the names that aren't on the range
         for (int i = 0; i < affected_names.Count; i++)
