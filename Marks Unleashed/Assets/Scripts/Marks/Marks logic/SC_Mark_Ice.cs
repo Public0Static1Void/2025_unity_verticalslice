@@ -17,7 +17,7 @@ public class SC_Mark_Ice : SC_Mark
         // Spawn the ice zone
         GameObject iceZone = new GameObject("Ice zone");
         SC_ZoneIce zone = iceZone.AddComponent<SC_ZoneIce>();
-        zone.range = range;
+        zone.InitIceZone(range, layer_interactable);
         iceZone.transform.position = transform.position;
 
         Destroy(iceZone, range);

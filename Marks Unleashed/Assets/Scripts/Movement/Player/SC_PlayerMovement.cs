@@ -21,6 +21,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     [Range(0, 1)]
     public float ground_friction = 0.9f;
     public float ground_offset = 0.25f;
+    [HideInInspector] public float _ground_start_friction = 0;
 
     [Header("Air")]
     public AudioClip clip_air, clip_ground_hit, clip_jump;
@@ -91,6 +92,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
         audio_effects.Play();
         audio_effects.volume = 1;
         audio_effects.loop = true;
+
+        _ground_start_friction = ground_friction;
     }
 
     private void Update()
@@ -112,7 +115,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
             SC_SoundManager.instance.InstantiateSound(clip_ground_hit_slow, transform.position);
             var emission = parts_smoke.emission;
             var burst = emission.GetBurst(0);
-            burst.count = 2;
+            burst.count = 10;
+            emission.SetBurst(0, burst);
             parts_smoke.Play();
         }
     }
@@ -283,6 +287,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             var emission = parts_smoke.emission;
             var burst = emission.GetBurst(0);
             burst.count = 30;
+            emission.SetBurst(0, burst);
             parts_smoke.Play();
         }
 
@@ -323,8 +328,9 @@ public class SC_PlayerMovement : SC_ObjectMovement
             var emission = parts_smoke.emission;
             var burst = emission.GetBurst(0);
             burst.count = 10;
+            emission.SetBurst(0, burst);
             parts_smoke.Play();
-            
+
             grabbing = false;
         }
     }
