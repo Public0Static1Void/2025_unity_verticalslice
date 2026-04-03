@@ -94,6 +94,8 @@ public class SC_Rope : MonoBehaviour
         _collider.tag = gameObject.tag;
         SphereCollider sphere_collider = _collider.AddComponent<SphereCollider>();
         sphere_collider.radius = 0.1f;
+
+        ropeRenderer = GetComponent<LineRenderer>();
     }
 
     private void FixedUpdate()
