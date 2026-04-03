@@ -255,7 +255,7 @@ public class SC_Rope : MonoBehaviour
         playerMovement.grabbedRope = this;
         playerMovement.grabPoint = points[grabbed_index];
 
-        points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.5f;
+        points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.1f;
     }
 
     private void DrawRope()

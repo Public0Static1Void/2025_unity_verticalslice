@@ -14,6 +14,8 @@ public class SC_Door : SC_Interactable
     private int max_connections = 0;
     public int required_connections = 1;
 
+    public bool start_opened = false;
+
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -23,6 +25,9 @@ public class SC_Door : SC_Interactable
         coll = GetComponent<Collider>();
 
         max_connections = required_connections;
+
+        if (start_opened)
+            Activate();
     }
     public override void Activate()
     {
