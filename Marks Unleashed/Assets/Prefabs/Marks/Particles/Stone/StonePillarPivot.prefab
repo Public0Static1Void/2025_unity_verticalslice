@@ -201,7 +201,7 @@ Transform:
   m_GameObject: {fileID: 5282153666895378513}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.58, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -251,6 +251,7 @@ MonoBehaviour:
   rotDuration: 0.5
   rotAngle: -90
   can_move: 1
+  throwForce: 250
 --- !u!65 &4210717753034003340
 BoxCollider:
   m_ObjectHideFlags: 0
