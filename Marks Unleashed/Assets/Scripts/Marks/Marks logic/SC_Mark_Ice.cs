@@ -45,7 +45,8 @@ public class SC_Mark_Ice : SC_Mark
                 }
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
-
+                else if (coll.name.Contains("MovingPlatform"))
+                    coll.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
                 SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb.linearVelocity));
             }
 
@@ -74,6 +75,8 @@ public class SC_Mark_Ice : SC_Mark
                 rb.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = true;
                 rb.isKinematic = true;
             }
+            else if (rb.name.Contains("MovingPlatform"))
+                rb.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
         }
     }
 

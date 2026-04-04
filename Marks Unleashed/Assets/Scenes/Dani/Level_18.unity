@@ -3058,7 +3058,6 @@ GameObject:
   - component: {fileID: 1050598412}
   - component: {fileID: 1050598411}
   - component: {fileID: 1050598410}
-  - component: {fileID: 1050598415}
   - component: {fileID: 1050598414}
   m_Layer: 0
   m_Name: Cube
@@ -3170,6 +3169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   start_active: 1
   return_to_position: 1
+  can_move: 1
   duration: 5
   move: 1
   rotate: 0
@@ -3177,33 +3177,6 @@ MonoBehaviour:
   rot_end: {x: 0, y: 0, z: 0}
   delay: 0
   im_timer: {fileID: 0}
---- !u!54 &1050598415
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1050598409}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!1 &1092714310
 GameObject:
   m_ObjectHideFlags: 0

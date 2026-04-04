@@ -64,6 +64,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     private bool _vignette_active = false;
 
+    // Ground attachment
+    private Transform currentGround;
+    private Vector3 lastGroundPos;
+    private Quaternion lastGroundRot;
+
     private void Awake()
     {
         instance = this;
@@ -100,6 +105,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         bool start_grounded = grounded;
         grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, transform.localScale.y + ground_offset);
+
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 
@@ -234,8 +240,43 @@ public class SC_PlayerMovement : SC_ObjectMovement
         }
 
         HandleCameraBlur();
+        HandleGroundAttachment();
     }
 
+    private void HandleGroundAttachment()
+    {
+        if (currentGround != null && grounded)
+        {
+            Rigidbody groundRb = currentGround.GetComponent<Rigidbody>();
+
+            Vector3 groundDelta = Vector3.zero;
+
+            if (groundRb != null)
+            {
+                // Correct for Rigidbody-driven movement
+                groundDelta = groundRb.linearVelocity * Time.fixedDeltaTime * 0.6f;
+            }
+            else
+            {
+                // Fallback for transform-driven movement
+                groundDelta = currentGround.position - lastGroundPos;
+            }
+
+            // Rotation (still valid for both cases)
+            Quaternion rotDelta = currentGround.rotation * Quaternion.Inverse(lastGroundRot);
+
+            Vector3 dir = rb.position - currentGround.position;
+            dir = rotDelta * dir;
+
+            Vector3 targetPos = currentGround.position + dir;
+
+            rb.MovePosition(rb.position + groundDelta + (targetPos - rb.position));
+
+            // Save for next frame
+            lastGroundPos = currentGround.position;
+            lastGroundRot = currentGround.rotation;
+        }
+    }
     private void HandleCameraDirection(Vector2 dir)
     {
         if (!grounded) return;
@@ -303,8 +344,28 @@ public class SC_PlayerMovement : SC_ObjectMovement
     }
 
     #region Physics functions
-    
-    
+
+    private void OnCollisionStay(Collision collision)
+    {
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            // Check if it's below the player
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
+            {
+                currentGround = collision.transform;
+                lastGroundPos = currentGround.position;
+                lastGroundRot = currentGround.rotation;
+                return;
+            }
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.transform == currentGround)
+            currentGround = null;
+    }
+
     public void Jump()
     {
         if ((grounded && can_move) || (!grounded && grabbing))
