@@ -5,13 +5,15 @@ using System.Collections;
 public class SC_Test_Mark_Stone : MonoBehaviour
 {
     public float rotDuration = 0.5f; //Cuanto tiempo tarda en hacer el giro (seg? min?)
-    public float rotAngle = -90f; 
+    public float rotAngle = -90f;
 
+    private Rigidbody _playerRb;
     private Rigidbody _rb;
     private Quaternion _startRot;
     private Quaternion _targetRot;
 
     public bool can_move = true;
+    public float throwForce = 10;
 
     private void Awake()
     {
@@ -44,57 +46,13 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         _rb.MoveRotation(_targetRot);
+
+        Debug.Log("Adding Force on Player");
+        _playerRb.AddForce(-transform.up * throwForce, ForceMode.Impulse);
     }
-    /*Para Ice (rigidbodies y interactables) 
-     * Collider[] colls = Physics.OverlapSphere(transform.position, range);
-        foreach (Collider coll in colls)
-        {
-            if (coll.name == name) continue;
 
-            rigidbody rb = coll.GetComponent<rigidbody>();
-
-        }*/
-
-    //Crear SC ZoneFreeze
-
-    //Update funcional de MarksPlacer:
-    /*
-     *     private void Update()
+    private void OnCollisionEnter(Collision collision)
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            UnlockMark(marks[(int)ElementTypes.WATER].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.ELECTRICITY].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.GRAVITY].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.AIR].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.FIRE].element.el_type);
-            UnlockMark(marks[(int)ElementTypes.STONE].element.el_type);
-        }
-        if (placing_mark)
-        {
-            //Horizontal del jugador
-            Vector3 new_pos;
-            if (Physics.Raycast(player.position, Camera.main.transform.forward, out RaycastHit hit, range_placing, layer_placeable, QueryTriggerInteraction.Ignore))
-            {
-                new_pos = hit.point;
-                mark_placeholder.transform.rotation = Quaternion.LookRotation(hit.normal);
-                mark_placeholder_image.color = Color.white;
-            }
-            else
-            {
-                new_pos = player.position + Camera.main.transform.forward * range_placing;
-                mark_placeholder_image.color = Color.black;
-                mark_placeholder.transform.LookAt(Camera.main.transform);
-            }
-            // Moves the mark to the camera, overlapping with collisions
-            mark_placeholder.transform.position = Vector3.Lerp(mark_placeholder.transform.position, new_pos, Time.deltaTime * 30);
-
-        }
-        // Make the activatios order arrow look to the player
-        if (placed_marks.Count > 0)
-        {
-            transform_arrow.LookAt(transform);
-        }
+        _playerRb = collision.gameObject.GetComponent<Rigidbody>();
     }
-     */
 }
