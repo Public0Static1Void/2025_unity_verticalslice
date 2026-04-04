@@ -405,8 +405,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     }
     Vector3 ConstrainVelocity(Vector3 vel)
     {
-        vel.x = Mathf.Clamp(vel.x, -25, 25);
-        vel.z = Mathf.Clamp(vel.z, -25, 25);
+        vel.x = Mathf.Clamp(vel.x, -50, 50);
+        vel.z = Mathf.Clamp(vel.z, -50, 50);
         vel.y = Mathf.Clamp(vel.y, -50, 25);
 
         return vel;
