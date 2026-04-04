@@ -46,9 +46,10 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         _rb.MoveRotation(_targetRot);
-
-        Debug.Log("Adding Force on Player");
-        _playerRb.AddForce(-transform.up * throwForce, ForceMode.Impulse);
+        if (_playerRb != null)
+        {
+            _playerRb.AddForce(-transform.up * throwForce, ForceMode.Impulse);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
