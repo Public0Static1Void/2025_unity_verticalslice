@@ -45,6 +45,7 @@ public class SC_Mark_Ice : SC_Mark
                 }
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
+
                 SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb.linearVelocity));
             }
 

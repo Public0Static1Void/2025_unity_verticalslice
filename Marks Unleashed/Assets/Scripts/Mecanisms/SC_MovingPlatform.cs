@@ -1,9 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class SC_MovingPlatform : SC_Interactable
 {
-    public bool start_active = false;
+    public bool start_active = false, return_to_position = false;
+    public float duration = 1;
     public bool move = false, rotate = true;
     private Vector3 pos_start;
     public Vector3 pos_end;
@@ -19,9 +21,16 @@ public class SC_MovingPlatform : SC_Interactable
 
     public UnityEngine.UI.Image im_timer;
 
+    private Rigidbody _rb;
+
+    private Coroutine _routine_kinematic;
+    private string _object_on_top = "";
+
 
     private void Start()
     {
+        _rb = GetComponent<Rigidbody>();
+
         pos_start = transform.position;
         rot_start = transform.rotation;
 
@@ -90,26 +99,31 @@ public class SC_MovingPlatform : SC_Interactable
 
         float time = 0f;
 
-        while (time < 1f)
+        while (time < duration)
         {
-            time += Time.deltaTime * 0.75f;
-            float t = Mathf.SmoothStep(0f, 1f, time);
+            if (!_rb.isKinematic)
+            {
+                time += Time.deltaTime;
 
-            if (move)
-                transform.position = Vector3.Lerp(startPos, endPos, t);
+                float t = time / duration;
+                t = Mathf.SmoothStep(0f, 1f, t);
 
-            if (rotate)
-                transform.rotation = Quaternion.Lerp(startRot, endRot, t);
+                if (move)
+                    _rb.MovePosition(Vector3.Lerp(startPos, endPos, t));
+                if (rotate)
+                    _rb.MoveRotation(Quaternion.Lerp(startRot, endRot, t));
+            }
 
             yield return null;
         }
 
-        transform.position = endPos;
-        transform.rotation = endRot;
-
-        
+        _rb.position = endPos;
+        _rb.rotation = endRot;
 
         active = false;
+
+        if (return_to_position)
+            Deactivate();
     }
     private IEnumerator ReturnRoutine()
     {
@@ -123,15 +137,18 @@ public class SC_MovingPlatform : SC_Interactable
 
         float time = 0f;
 
-        while (time < 1f)
+        while (time < duration)
         {
-            time += Time.deltaTime * 0.75f;
+            if (!_rb.isKinematic)
+                time += Time.deltaTime;
+
+            float t = time / duration;
+            t = Mathf.SmoothStep(0, 1, t);
 
             if (move)
-                transform.position = Vector3.Lerp(startPos, endPos, time);
-
+                transform.position = Vector3.Lerp(startPos, endPos, t);
             if (rotate)
-                transform.rotation = Quaternion.Lerp(startRot, endRot, time);
+                transform.rotation = Quaternion.Lerp(startRot, endRot, t);
 
             yield return null;
         }
@@ -140,6 +157,30 @@ public class SC_MovingPlatform : SC_Interactable
         transform.rotation = endRot;
 
         active = false;
+
+        if (return_to_position)
+            Activate();
+    }
+
+    private IEnumerator ActivateKinematic(float duration)
+    {
+        _rb.isKinematic = true;
+        yield return new WaitForSeconds(duration);
+        _rb.isKinematic = false;
+        _routine_kinematic = null;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_routine_kinematic == null && _object_on_top != collision.gameObject.name)
+        {
+            _routine_kinematic = StartCoroutine(ActivateKinematic(0.5f));
+            _object_on_top = collision.gameObject.name;
+        }
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        //_object_on_top = "";
     }
 
     private void OnDrawGizmos()
