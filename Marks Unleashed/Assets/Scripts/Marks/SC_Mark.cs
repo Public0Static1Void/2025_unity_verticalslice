@@ -80,16 +80,20 @@ public class SC_Mark : MonoBehaviour
             }
             mark_image = GetComponentInChildren<Image>();
         }
-        float alpha = mark_image.color.a;
-        while (alpha > 0)
+        if (mark_image != null)
         {
-            alpha -= Time.deltaTime * 4;
+            float alpha = mark_image.color.a;
+            while (alpha > 0)
+            {
+                alpha -= Time.deltaTime * 4;
 
-            Color col = mark_image.color;
-            mark_image.color = new Color(col.r, col.g, col.b, alpha);
+                Color col = mark_image.color;
+                mark_image.color = new Color(col.r, col.g, col.b, alpha);
 
-            yield return null;
+                yield return null;
+            }
         }
+        
 
         if (regenerate)
         {

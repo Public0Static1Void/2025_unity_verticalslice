@@ -1,5 +1,83 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3758198961116397163
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3432942695246509231}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4.38272
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 48115472ed214c94a902f29994d48079, type: 2}
+    - target: {fileID: 919132149155446097, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+      propertyPath: m_Name
+      value: Disco Marcas1 (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+--- !u!4 &3723763817309067648 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a1e96e51cf2f4dd44b92d191bd1312c1, type: 3}
+  m_PrefabInstance: {fileID: 3758198961116397163}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5156266880366715461
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58,8 +136,12 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 3985219343a7d6f4f84483c2b9f68f4b, type: 3}
     m_RemovedComponents:
     - {fileID: 4909950365678269183, guid: 5d0dc1741a9a17a4db837d48dc909ee1, type: 3}
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7589567799871927654, guid: 5d0dc1741a9a17a4db837d48dc909ee1, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7506091390513583850, guid: 5d0dc1741a9a17a4db837d48dc909ee1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3723763817309067648}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6684462692884258602, guid: 5d0dc1741a9a17a4db837d48dc909ee1, type: 3}
       insertIndex: -1
@@ -83,12 +165,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  element:
+    el_type: 0
+    strength: 1
+    name: 
+    el_reactions: 
+    el_wak: 
+    im_mark_sprite: {fileID: 0}
   particles: {fileID: 6841039883908395380, guid: bd13a93ca70eb98488b11a76b96eb8b2, type: 3}
   disk: {fileID: 669963811699705811, guid: 8dd24cd51415f814792280e150b965cd, type: 3}
+  parts_landing: {fileID: 0}
   clip_activation: {fileID: 0}
   layer_interactable:
     serializedVersion: 2
     m_Bits: 4294967295
   enable_collision_activation: 1
+  start_active: 0
   regenerate: 1
+  destroyable: 1
   range: 6
+--- !u!4 &3432942695246509231 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7506091390513583850, guid: 5d0dc1741a9a17a4db837d48dc909ee1, type: 3}
+  m_PrefabInstance: {fileID: 5156266880366715461}
+  m_PrefabAsset: {fileID: 0}
