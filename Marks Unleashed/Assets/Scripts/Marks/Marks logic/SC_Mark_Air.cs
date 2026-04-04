@@ -3,7 +3,7 @@ using UnityEngine;
 public class SC_Mark_Air : SC_Mark
 {
     public float range = 10;
-    public float strength = 100;
+    public float initial_strength = 100, strength = 100;
 
     public override void ActivateMark()
     {
@@ -32,21 +32,13 @@ public class SC_Mark_Air : SC_Mark
             SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
             zone_air.InitAirZone(range, range / 2, layer_interactable, GetElementStrength() * strength, particles, destroyable);
 
-            break;
 
-            /*
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null && !rb.isKinematic)
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-                rb.AddForce(transform.forward * GetElementStrenght() * 150, ForceMode.Impulse);
+                rb.AddForce(transform.forward * GetElementStrength() * strength, ForceMode.Impulse);
             }
-            SC_LifeSystem life = coll.GetComponent<SC_LifeSystem>();
-            if (life != null)
-            {
-                life.ApplyElement(element);
-            }
-            */
         }
 
         DesactivateMark();
