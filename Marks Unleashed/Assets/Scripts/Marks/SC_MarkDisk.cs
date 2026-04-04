@@ -68,6 +68,16 @@ public class SC_MarkDisk : MonoBehaviour
 
             GameObject mark_canvas = new GameObject($"Mark {stored_mark.element.name} canvas");
             mark_canvas.transform.position = position;
+
+            Vector3 rot = rotation.eulerAngles;
+
+            float snap = 45f;
+
+            rot.x = Mathf.Round(rot.x / snap) * snap;
+            rot.y = Mathf.Round(rot.y / snap) * snap;
+            rot.z = Mathf.Round(rot.z / snap) * snap;
+
+            Quaternion snappedRot = Quaternion.Euler(rot);
             mark_canvas.transform.rotation = rotation;
 
             mark_canvas.transform.SetParent(hit.transform, true);
