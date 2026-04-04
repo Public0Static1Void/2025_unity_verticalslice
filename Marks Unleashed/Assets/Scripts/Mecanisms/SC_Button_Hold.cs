@@ -7,7 +7,7 @@ public class SC_Button_Hold : SC_Button
 
     private bool activated = false;
 
-    private GameObject activation_for = null;
+    public GameObject activation_for = null;
 
     private float activate_timer = 0;
     private const float activation_cooldown = 1;
@@ -37,6 +37,13 @@ public class SC_Button_Hold : SC_Button
 
     private void FixedUpdate()
     {
+        if (activated && activation_for == null)
+        {
+            DeactivateMecanisms();
+            activated = false;
+            return;
+        }
+
         Collider[] colls = Physics.OverlapSphere(transform.position, detection_range);
 
         if (colls.Length == 0)

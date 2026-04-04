@@ -83,7 +83,7 @@ public class SC_Mark_Ice : SC_Mark
             if (rb.CompareTag("MovingPlatform"))
                 rb.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
         }
-        if (ob.CompareTag("MovingPlatform"))
+        if (ob != null && ob.CompareTag("MovingPlatform"))
             ob.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
     }
 
