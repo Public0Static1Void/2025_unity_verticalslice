@@ -51,7 +51,7 @@ public class SC_Mark_Ice : SC_Mark
             if (coll.CompareTag("MovingPlatform"))
                 coll.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
 
-            SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb.linearVelocity, coll.gameObject));
+            SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject));
         }
 
         DesactivateMark();
@@ -59,8 +59,11 @@ public class SC_Mark_Ice : SC_Mark
 
     private IEnumerator FreezeVelocity(Rigidbody rb, Vector3 start_vel, GameObject ob)
     {
-        rb.linearVelocity = Vector3.zero;
-        rb.isKinematic = true;
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
         yield return new WaitForSeconds(range / 2);
         if (rb != null)
         {

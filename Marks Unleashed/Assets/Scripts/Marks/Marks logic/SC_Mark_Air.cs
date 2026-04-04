@@ -36,7 +36,7 @@ public class SC_Mark_Air : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null && !rb.isKinematic)
             {
-                rb.AddForce(transform.forward * GetElementStrength() * strength, ForceMode.Impulse);
+                rb.AddForce(transform.forward * GetElementStrength() * initial_strength, ForceMode.Impulse);
             }
         }
 
