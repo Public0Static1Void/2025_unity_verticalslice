@@ -112,7 +112,7 @@ public class SC_CameraRotation : MonoBehaviour
 
         // Parent and camera rotation
         parent.rotation = Quaternion.Lerp(parent.rotation, Quaternion.Euler(0, x, 0), Time.deltaTime * parent_turn_speed);
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(-y, x, 0) * rot_offset_current, Time.deltaTime * turn_speed);
+        transform.rotation = Quaternion.Euler(-y, x, 0);
 
         HandleBobEffect();
 
