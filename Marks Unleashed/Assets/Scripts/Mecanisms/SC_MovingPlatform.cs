@@ -20,13 +20,7 @@ public class SC_MovingPlatform : SC_Interactable
 
     public UnityEngine.UI.Image im_timer;
 
-
-    private Coroutine _routine_kinematic;
-    private string _object_on_top = "";
-
-    public Vector3 Velocity { get; private set; }
-
-    private Vector3 lastPosition;
+    public bool use_basic_mesh = false;
 
     private void Start()
     {
@@ -179,6 +173,10 @@ public class SC_MovingPlatform : SC_Interactable
         Bounds b = mf.sharedMesh.bounds;
         Matrix4x4 oldMatrix = Gizmos.matrix;
 
+        bool isDefaultCube = b.size == Vector3.one && b.center == Vector3.zero;
+
+        Vector3 drawSize = isDefaultCube ? transform.localScale : Vector3.Scale(b.size, transform.lossyScale);
+
         Vector3 rot_start_pos = mesh.bounds.center;
 
         if (move)
@@ -192,7 +190,7 @@ public class SC_MovingPlatform : SC_Interactable
                 );
 
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawWireCube(Vector3.zero, b.size);
+                Gizmos.DrawWireCube(Vector3.zero, drawSize);
 
                 Gizmos.matrix = oldMatrix;
             }
@@ -211,7 +209,7 @@ public class SC_MovingPlatform : SC_Interactable
 
             Gizmos.color = Color.yellow;
 
-            Gizmos.DrawWireCube(Vector3.zero, b.size);
+            Gizmos.DrawWireCube(Vector3.zero, drawSize);
 
             // Restore matrix
             Gizmos.matrix = oldMatrix;

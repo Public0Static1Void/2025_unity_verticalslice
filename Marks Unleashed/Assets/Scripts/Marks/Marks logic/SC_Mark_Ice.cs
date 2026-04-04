@@ -34,7 +34,6 @@ public class SC_Mark_Ice : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                
                 switch (coll.name)
                 {
                     case "Player":
@@ -45,17 +44,20 @@ public class SC_Mark_Ice : SC_Mark
                 }
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
-                else if (coll.name.Contains("MovingPlatform"))
-                    coll.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
-                SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb.linearVelocity));
+                
+                
             }
 
+            if (coll.CompareTag("MovingPlatform"))
+                coll.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
+
+            SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb.linearVelocity, coll.gameObject));
         }
 
         DesactivateMark();
     }
 
-    private IEnumerator FreezeVelocity(Rigidbody rb, Vector3 start_vel)
+    private IEnumerator FreezeVelocity(Rigidbody rb, Vector3 start_vel, GameObject ob)
     {
         rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;
@@ -75,9 +77,11 @@ public class SC_Mark_Ice : SC_Mark
                 rb.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = true;
                 rb.isKinematic = true;
             }
-            else if (rb.name.Contains("MovingPlatform"))
-                rb.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
+            if (rb.CompareTag("MovingPlatform"))
+                rb.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
         }
+        if (ob.CompareTag("MovingPlatform"))
+            ob.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
     }
 
     private void OnDrawGizmos()
