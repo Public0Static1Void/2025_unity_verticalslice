@@ -27,7 +27,7 @@ public class SC_Mark_Ice : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range);
         foreach (Collider coll in colls)
         {
-            Debug.Log(coll.name);
+            
             if (coll.name.Contains("Rope"))
                 coll.transform.parent.GetComponent<SC_Rope>().FixRope(range / 2);
 
@@ -48,6 +48,7 @@ public class SC_Mark_Ice : SC_Mark
                 
             }
 
+            Debug.Log($"{coll.name}: {coll.CompareTag("MovingPlatform")}");
             if (coll.CompareTag("MovingPlatform"))
                 coll.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
 

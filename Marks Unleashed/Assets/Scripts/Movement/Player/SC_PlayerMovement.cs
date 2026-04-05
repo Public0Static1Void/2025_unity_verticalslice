@@ -22,7 +22,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public float ground_friction = 0.9f;
     public float ground_offset = 0.25f;
     [HideInInspector] public float _ground_start_friction = 0;
-    public float coyote_time = 0.25f;
+    public float coyote_time = 1;
     private float _timer_coyote = 0;
 
     [Header("Air")]
@@ -107,13 +107,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         bool start_grounded = grounded;
         grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, transform.localScale.y + ground_offset);
-        if (!grounded)
-        {
-            if (_timer_coyote < coyote_time)
-            {
-                _timer_coyote += Time.deltaTime;
-            }
-        }
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 
