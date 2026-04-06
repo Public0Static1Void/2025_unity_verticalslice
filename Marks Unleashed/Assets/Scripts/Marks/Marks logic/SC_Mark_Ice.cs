@@ -27,7 +27,6 @@ public class SC_Mark_Ice : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range);
         foreach (Collider coll in colls)
         {
-            
             if (coll.name.Contains("Rope"))
                 coll.transform.parent.GetComponent<SC_Rope>().FixRope(range / 2);
 
