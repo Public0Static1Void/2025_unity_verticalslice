@@ -20,8 +20,6 @@ public class SC_MovingPlatform : SC_Interactable
 
     public UnityEngine.UI.Image im_timer;
 
-    public bool use_basic_mesh = false;
-
     private void Start()
     {
         pos_start = transform.position;
@@ -85,10 +83,8 @@ public class SC_MovingPlatform : SC_Interactable
     {
         active = true;
 
-        Vector3 startPos = transform.position;
         Vector3 endPos = pos_start + transform.TransformDirection(pos_end);
 
-        Quaternion startRot = transform.rotation;
         Quaternion endRot = Quaternion.Euler(rot_end);
 
         float time = 0f;
@@ -103,16 +99,18 @@ public class SC_MovingPlatform : SC_Interactable
                 t = Mathf.SmoothStep(0f, 1f, t);
 
                 if (move)
-                    transform.position = Vector3.Lerp(startPos, endPos, t);
+                    transform.position = Vector3.Lerp(pos_start, endPos, t);
                 if (rotate)
-                    transform.rotation = Quaternion.Lerp(startRot, endRot, t);
+                    transform.rotation = Quaternion.Lerp(rot_start, endRot, t);
             }
 
             yield return null;
         }
 
-        transform.position = endPos;
-        transform.rotation = endRot;
+        if (move)
+            transform.position = endPos;
+        if (rotate)
+            transform.rotation = endRot;
 
         active = false;
 
@@ -141,16 +139,18 @@ public class SC_MovingPlatform : SC_Interactable
                 t = Mathf.SmoothStep(0f, 1f, t);
 
                 if (move)
-                    transform.position = Vector3.Lerp(startPos, endPos, t);
+                    transform.position = Vector3.Lerp(startPos, pos_start, t);
                 if (rotate)
-                    transform.rotation = Quaternion.Lerp(startRot, endRot, t);
+                    transform.rotation = Quaternion.Lerp(startRot, rot_start, t);
             }
 
             yield return null;
         }
 
-        transform.position = endPos;
-        transform.rotation = endRot;
+        if (move)
+            transform.position = pos_start;
+        if (rotate)
+            transform.rotation = rot_start;
 
         active = false;
 

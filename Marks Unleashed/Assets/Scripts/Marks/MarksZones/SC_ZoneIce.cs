@@ -103,7 +103,7 @@ public class SC_ZoneIce : SC_Zone
             {
                 if (affected_rb[i] == null) continue;
                 affected_rb[i].gameObject.GetComponent<Collider>().material = null;
-                if (attached_audio[i] != null)
+                if (i < attached_audio.Count && attached_audio[i] != null)
                     Destroy(attached_audio[i]);
             }
         }

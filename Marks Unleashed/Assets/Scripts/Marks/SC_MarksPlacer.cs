@@ -75,7 +75,6 @@ public class SC_MarksPlacer : MonoBehaviour
 
     public event Action event_destroy_runes;
 
-
     private void Awake()
     {
         if (Instance == null)
@@ -181,6 +180,8 @@ public class SC_MarksPlacer : MonoBehaviour
             marks_list.Add(ob);
             marks.Add(mark);
             marks_list_images.Add(ob.transform);
+
+            //cameraRotation.AddUIElementToMove(ob.GetComponent<RectTransform>());
         }
 
         equipped_mark = marks[current_mark].element;
@@ -239,6 +240,8 @@ public class SC_MarksPlacer : MonoBehaviour
     public void UnlockMark(ElementTypes type)
     {
         // Don't add an unlocked mark
+        if ((int)type >= marks.Count) return;
+
         if (unlocked_marks.Contains(marks[(int)type].element.el_type)) return;
         unlocked_marks.Add(marks[(int)type].element.el_type);
         marks_list_images[(int)type].gameObject.SetActive(true);
@@ -419,6 +422,8 @@ public class SC_MarksPlacer : MonoBehaviour
             EnableElementHand(-1);
             placing_mark = false;
         }
+
+        RefreshMarksList();
     }
 
     /// <summary>
@@ -612,7 +617,6 @@ public class SC_MarksPlacer : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(player.position, range_placing);
 
         Gizmos.DrawWireSphere(marks_canvas.transform.position - marks_canvas.transform.forward * 2, 0.1f);
     }

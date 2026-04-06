@@ -13,6 +13,7 @@ public class SC_ElementManager : MonoBehaviour
     public List<Object> marks_objects = new List<Object>();
 
     public List<AudioClip> marks_clips = new List<AudioClip>();
+    public List<AudioClip> marks_clips_landing = new List<AudioClip>();
 
     public List<Sprite> im_marks = new List<Sprite>();
     public Element[] elements;
@@ -101,7 +102,7 @@ public class SC_ElementManager : MonoBehaviour
 
         for (int i = 0; i < marks.Count; i++) /// Asign the correct element stats
         {
-            marks[i].Init(elements[i], part_marks[i], part_landing_marks[i], marks_clips[i], disk_marks[i]);
+            marks[i].Init(elements[i], part_marks[i], part_landing_marks[i], marks_clips[i], marks_clips_landing[i], disk_marks[i]);
         }
     }
 

@@ -8,7 +8,7 @@ public class SC_DeathZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(load_scene);
+            SC_GameManager.instance.LoadSceneAsync(load_scene);
         }
         else
         {

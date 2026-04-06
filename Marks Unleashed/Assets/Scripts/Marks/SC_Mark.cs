@@ -9,7 +9,7 @@ public class SC_Mark : MonoBehaviour
     public ElementTypes type = ElementTypes.NONE_LAST;
     public Element element;
     public GameObject particles, disk, parts_landing;
-    public AudioClip clip_activation;
+    public AudioClip clip_activation, clip_landing;
 
     public LayerMask layer_interactable = ~0;
 
@@ -32,7 +32,7 @@ public class SC_Mark : MonoBehaviour
         if (start_active) ActivateMark();
     }
 
-    public void Init(Element el, GameObject parts = null, GameObject part_landing = null, AudioClip clip = null, GameObject rune_disk = null)
+    public void Init(Element el, GameObject parts = null, GameObject part_landing = null, AudioClip clip = null, AudioClip clipLanding = null, GameObject rune_disk = null)
     {
         element = el;
         type = el.el_type;
@@ -40,6 +40,7 @@ public class SC_Mark : MonoBehaviour
         parts_landing = part_landing;
         disk = rune_disk;
         clip_activation = clip;
+        clip_landing = clipLanding;
     }
     public void EnableCollision()
     {
@@ -115,15 +116,18 @@ public class SC_Mark : MonoBehaviour
             }
             mark_image = GetComponentInChildren<Image>();
         }
-        float alpha = mark_image.color.a;
-        while (alpha < 1)
+        if (mark_image != null)
         {
-            alpha += Time.deltaTime * 8;
+            float alpha = mark_image.color.a;
+            while (alpha < 1)
+            {
+                alpha += Time.deltaTime * 8;
 
-            Color col = mark_image.color;
-            mark_image.color = new Color(col.r, col.g, col.b, alpha);
+                Color col = mark_image.color;
+                mark_image.color = new Color(col.r, col.g, col.b, alpha);
 
-            yield return null;
+                yield return null;
+            }
         }
     }
 

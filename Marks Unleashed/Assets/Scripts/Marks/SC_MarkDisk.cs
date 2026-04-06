@@ -124,6 +124,10 @@ public class SC_MarkDisk : MonoBehaviour
             marksPlacer.SetArrowPos();
             marksPlacer.UpdateActivateMarksUI();
 
+
+            // Play the landing sound
+            SC_SoundManager.instance.InstantiateSound(stored_mark.clip_landing, transform.position);
+
             return true;
         }
         return false;

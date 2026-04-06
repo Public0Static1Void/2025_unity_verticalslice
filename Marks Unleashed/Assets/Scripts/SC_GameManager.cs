@@ -185,10 +185,16 @@ public class SC_GameManager : MonoBehaviour
         Color col = ob_loading_screen.color;
         ob_loading_screen.color = new Color(col.r, col.g, col.b, a);
 
-        foreach (var img in GetChildsComponents<Image>(ob_loading_screen.transform))
+
+        Image[] images = ob_loading_screen.GetComponentsInChildren<Image>(true);
+
+        foreach (var img in images)
         {
             if (img != null)
-                img.color = new Color(img.color.r, img.color.g, img.color.b, a);
+            {
+                Color c = img.color;
+                img.color = new Color(c.r, c.g, c.b, a);
+            }
         }
 
         foreach (var txt in GetChildsComponents<TMP_Text>(ob_loading_screen.transform))

@@ -50,6 +50,8 @@ public class SC_Test_Mark_Stone : MonoBehaviour
         {
             _playerRb.AddForce(-transform.up * throwForce, ForceMode.Impulse);
         }
+
+        _rb.linearVelocity = Vector3.zero;
     }
 
     private void OnCollisionEnter(Collision collision)

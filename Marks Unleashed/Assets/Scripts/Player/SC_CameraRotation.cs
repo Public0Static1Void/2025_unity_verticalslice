@@ -134,11 +134,6 @@ public class SC_CameraRotation : MonoBehaviour
             pos_bob = Vector3.Lerp(pos_bob, Vector3.zero, Time.deltaTime * bob_speed);
         }
     }
-    private void HandleSway()
-    {
-        float swayX = -input.x * sway;
-        float swayY = -input.y * sway;
-    }
 
     public void CameraTurn(InputAction.CallbackContext con)
     {
@@ -146,6 +141,10 @@ public class SC_CameraRotation : MonoBehaviour
     }
 
     #region UIEffects
+    public void AddUIElementToMove(RectTransform rect)
+    {
+        ui_elements_to_move.Add(rect);
+    }
     private void MoveUIElements()
     {
         for (int i = 0; i < ui_elements_to_move.Count; i++)

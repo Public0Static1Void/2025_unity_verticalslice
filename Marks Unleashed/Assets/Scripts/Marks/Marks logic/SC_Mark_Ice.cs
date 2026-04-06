@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SC_Mark_Ice : SC_Mark
 {
-    public float range = 6;
+    public float range = 8;
 
     public override void ActivateMark()
     {
@@ -50,7 +50,12 @@ public class SC_Mark_Ice : SC_Mark
 
             Debug.Log($"{coll.name}: {coll.CompareTag("MovingPlatform")}");
             if (coll.CompareTag("MovingPlatform"))
-                coll.gameObject.GetComponent<SC_MovingPlatform>().can_move = false;
+            {
+                SC_MovingPlatform movingPlatform = coll.gameObject.GetComponent<SC_MovingPlatform>();
+                if (movingPlatform != null)
+                    movingPlatform.can_move = false;
+            }
+                
 
             SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject));
         }
@@ -85,7 +90,11 @@ public class SC_Mark_Ice : SC_Mark
                 rb.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
         }
         if (ob != null && ob.CompareTag("MovingPlatform"))
-            ob.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
+        {
+            SC_MovingPlatform movingPlatform = ob.GetComponent<SC_MovingPlatform>();
+            if (movingPlatform != null)
+                movingPlatform.can_move = true;
+        }
     }
 
     private void OnDrawGizmos()

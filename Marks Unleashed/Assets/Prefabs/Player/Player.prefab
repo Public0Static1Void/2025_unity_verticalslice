@@ -67,7 +67,7 @@ Transform:
   m_GameObject: {fileID: 3205841446253009519}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.47000027, z: -0.08}
+  m_LocalPosition: {x: 0, y: 1, z: -0.08}
   m_LocalScale: {x: 3.2804008, y: 3.2804, z: 3.2804008}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -222,13 +222,14 @@ GameObject:
   - component: {fileID: 8202908438247765317}
   - component: {fileID: 8120552432164864539}
   - component: {fileID: 6783234909952165738}
+  - component: {fileID: 3114551608192725730}
   m_Layer: 6
   m_Name: Marks canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3385456652427929298
 RectTransform:
   m_ObjectHideFlags: 0
@@ -236,8 +237,8 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5114043827531764904}
-  m_LocalRotation: {x: 0.16839859, y: -0.15409473, z: 0.005644266, w: 0.9735835}
-  m_LocalPosition: {x: 0, y: 0, z: 2.31}
+  m_LocalRotation: {x: 0.16839865, y: -0.1540948, z: 0.0056442763, w: 0.9735836}
+  m_LocalPosition: {x: 0, y: 0, z: 2.3100023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -245,7 +246,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 19.247, y: -18.409, z: -2.483}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.07, y: -0.264}
+  m_AnchoredPosition: {x: -1.0699991, y: 0.50608474}
   m_SizeDelta: {x: 2, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8202908438247765317
@@ -311,6 +312,25 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &3114551608192725730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5114043827531764904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc007c92c1a05444b519add09e4f4db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 5174274437327528411}
+  follow_speed: 10
+  offset: {x: 0, y: 0, z: 3}
+  dist: 2
+  cam: {fileID: 7534136154024164982}
+  minY: 0.2
+  maxY: 1.2
 --- !u!1 &5633602147038208925
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,8 +712,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5174274437327528411}
-  - {fileID: 3368454928321425439}
   - {fileID: 3385456652427929298}
+  - {fileID: 3368454928321425439}
   - {fileID: 5236203006655784492}
   - {fileID: 2178089751570445785}
   - {fileID: 4754359685497916501}
@@ -1038,7 +1058,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1061,7 +1081,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1110,6 +1130,8 @@ MonoBehaviour:
   grounded: 0
   ground_friction: 0.9
   ground_offset: 0.2
+  _ground_start_friction: 0
+  coyote_time: 1
   clip_air: {fileID: 8300000, guid: 463cbd631bb5e054fbbeb0fe5a6bc199, type: 3}
   clip_ground_hit: {fileID: 8300000, guid: bef328481e3152b459a8910718e605ec, type: 3}
   clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
