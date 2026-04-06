@@ -15,6 +15,12 @@ public class SC_MovingPlatform : SC_Interactable
     private bool active = false;
 
     private MeshRenderer mesh = null;
+    private MaterialPropertyBlock _mpb;
+    private Color _col_start, _col_start_2;
+
+    [Header("Color")]
+    public Color col_freeze_1;
+    public Color col_freeze_2;
 
     public float delay = 0;
 
@@ -25,8 +31,19 @@ public class SC_MovingPlatform : SC_Interactable
         pos_start = transform.position;
         rot_start = transform.rotation;
 
+        mesh = GetComponent<MeshRenderer>();
+
+        if (mesh != null)
+        {
+            _col_start = GetMaterialColor(mesh);
+            _col_start_2 = GetMaterialColor2(mesh);
+        }
+            
+
         if (start_active)
             Activate();
+
+        _mpb = new MaterialPropertyBlock();
     }
 
     public override void Activate()
@@ -158,6 +175,57 @@ public class SC_MovingPlatform : SC_Interactable
             Activate();
     }
 
+    #region MatColor
+    // Change material color
+    public void ChangeMatColor(Color new_col1, Color new_col2, string action = "")
+    {
+        if (mesh == null) return;
+        if (action == "Freeze")
+        {
+            new_col1 = col_freeze_1;
+            new_col2 = col_freeze_2;
+        }
+        SetOutlineColor(new_col1, new_col2);
+    }
+    public void RestoreMtColor()
+    {
+        if (mesh == null) return;
+        SetOutlineColor(_col_start, _col_start_2);
+    }
+
+    private Color GetMaterialColor(Renderer renderer)
+    {
+        // Always use material instance, never sharedMaterial
+        Material mat = renderer.material;
+
+        if (mat == null) return Color.black;
+
+        if (mat.HasProperty("_BaseColor"))
+            return mat.GetColor("_BaseColor");
+
+        return Color.black;
+    }
+    private Color GetMaterialColor2(Renderer renderer)
+    {
+        // Always use material instance, never sharedMaterial
+        Material mat = renderer.material;
+
+        if (mat == null) return Color.black;
+
+        if (mat.HasProperty("_1st_ShadeColor"))
+            return mat.GetColor("_1st_ShadeColor");
+
+        return Color.black;
+    }
+    public void SetOutlineColor(Color color1, Color color2)
+    {
+        if (mesh == null) return;
+        mesh.GetPropertyBlock(_mpb);
+        _mpb.SetColor("_BaseColor", color1);
+        _mpb.SetColor("_1st_ShadeColor", color2);
+        mesh.SetPropertyBlock(_mpb);
+    }
+    #endregion
 
     private void OnDrawGizmos()
     {

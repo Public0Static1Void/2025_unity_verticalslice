@@ -222,9 +222,12 @@ public class SC_MarksPlacer : MonoBehaviour
         }
     }
 
-    public void RemoveMarks()
+    public void ClearUnlockedRunes()
     {
         unlocked_marks.Clear();
+    }
+    public void RemoveMarks()
+    {
         foreach(SC_Mark mark in placed_marks)
         {
             Destroy(mark.gameObject);
@@ -341,6 +344,8 @@ public class SC_MarksPlacer : MonoBehaviour
 
         placed_marks[activate_index].GetComponent<SC_Mark>().ActivateMark();
         placed_marks.RemoveAt(0);
+
+        SetArrowPos();
 
         UpdateActivateMarksUI();
     }

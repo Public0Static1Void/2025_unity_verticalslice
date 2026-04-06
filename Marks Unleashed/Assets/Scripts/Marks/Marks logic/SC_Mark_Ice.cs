@@ -31,15 +31,22 @@ public class SC_Mark_Ice : SC_Mark
             if (coll.name.Contains("Rope"))
                 coll.transform.parent.GetComponent<SC_Rope>().FixRope(range / 2);
 
+            float freeze_time = range * 0.5f;
+
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 switch (coll.name)
                 {
                     case "Player":
+                        // Don't affect the player if it's near
+                        if (Vector3.Distance(transform.position, coll.transform.position) > range / 2) continue;
+
                         SC_PlayerMovement.instance.playerLife.SetVignetteValue(0.5f, Color.blue);
                         SC_PlayerMovement.instance.can_move = false;
                         SC_CameraRotation.instance.ShakeCamera(0.5f, 0.5f);
+
+                        freeze_time = range * 0.25f;
                         break;
                 }
                 if (coll.name.Contains("StonePillarPivot"))
@@ -53,24 +60,26 @@ public class SC_Mark_Ice : SC_Mark
             {
                 SC_MovingPlatform movingPlatform = coll.gameObject.GetComponent<SC_MovingPlatform>();
                 if (movingPlatform != null)
+                {
+                    movingPlatform.ChangeMatColor(Color.blue, Color.blue, "Freeze");
                     movingPlatform.can_move = false;
+                }
             }
-                
-
-            SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject));
+            
+            SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject, freeze_time));
         }
 
         DesactivateMark();
     }
 
-    private IEnumerator FreezeVelocity(Rigidbody rb, Vector3 start_vel, GameObject ob)
+    private IEnumerator FreezeVelocity(Rigidbody rb, Vector3 start_vel, GameObject ob, float duration)
     {
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
             rb.isKinematic = true;
         }
-        yield return new WaitForSeconds(range / 2);
+        yield return new WaitForSeconds(duration);
         if (rb != null)
         {
             rb.isKinematic = false;
@@ -85,15 +94,16 @@ public class SC_Mark_Ice : SC_Mark
             {
                 rb.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = true;
                 rb.isKinematic = true;
-            }
-            if (rb.CompareTag("MovingPlatform"))
-                rb.gameObject.GetComponent<SC_MovingPlatform>().can_move = true;
+            }  
         }
         if (ob != null && ob.CompareTag("MovingPlatform"))
         {
             SC_MovingPlatform movingPlatform = ob.GetComponent<SC_MovingPlatform>();
             if (movingPlatform != null)
+            {
                 movingPlatform.can_move = true;
+                movingPlatform.RestoreMtColor();
+            }
         }
     }
 
