@@ -82,7 +82,7 @@ public class SC_MarkDisk : MonoBehaviour
 
             mark_canvas.transform.SetParent(hit.transform, true);
 
-            mark_canvas.transform.position -= mark_canvas.transform.forward * 200; // Adds offset from the ground
+            mark_canvas.transform.position -= hit.normal * 2; // Adds offset from the ground
             Canvas canvas = mark_canvas.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
 
@@ -98,7 +98,7 @@ public class SC_MarkDisk : MonoBehaviour
             inst.transform.rotation = rotation;
 
             UnityEngine.UI.Image im = inst.AddComponent<UnityEngine.UI.Image>();
-            im.transform.SetParent(canvas.transform);
+            im.transform.SetParent(canvas.transform, true);
 
             im.sprite = stored_mark.element.im_mark_sprite;
             im.rectTransform.anchoredPosition = Vector2.zero;
@@ -117,8 +117,11 @@ public class SC_MarkDisk : MonoBehaviour
             coll.isTrigger = true;
 
             // Activate the landing particles
-            GameObject particles_landing = Instantiate(stored_mark.parts_landing, inst.transform.position, inst.transform.rotation);
-            particles_landing.transform.SetParent(mark.transform, true);
+            GameObject particles_landing = Instantiate(stored_mark.parts_landing, Vector3.zero, Quaternion.identity);
+            particles_landing.transform.position = Vector3.zero;
+            particles_landing.transform.rotation = Quaternion.identity;
+            particles_landing.transform.SetParent(mark.transform, false);
+
 
             marksPlacer.placed_marks.Add(mark);
             marksPlacer.SetArrowPos();

@@ -180,6 +180,8 @@ public class SC_CameraRotation : MonoBehaviour
 
             for (int i = 0; i < ui_elements_to_move.Count; i++)
             {
+                if (ui_elements_to_move[i] == null) continue;
+
                 Vector2 pos = ui_elements_to_move[i].anchoredPosition;
                 Vector2 inp = input.normalized;
                 ui_elements_to_move[i].anchoredPosition = Vector2.Lerp(ui_elements_start_pos[i], new Vector2(randX, randY) * apply_force, t);
