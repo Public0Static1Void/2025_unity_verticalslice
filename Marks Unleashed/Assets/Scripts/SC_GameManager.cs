@@ -154,7 +154,7 @@ public class SC_GameManager : MonoBehaviour
 
     public void LoadSceneAsync(string sceneName)
     {
-        unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
+        //unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
         StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
     }
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
