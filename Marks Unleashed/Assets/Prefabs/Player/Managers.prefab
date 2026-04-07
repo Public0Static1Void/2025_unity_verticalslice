@@ -287,6 +287,55 @@ MonoBehaviour:
   ob_loading_screen: {fileID: 0}
   im_loading_bar: {fileID: 0}
   main_canvas: {fileID: 0}
+  first_play: 1
+--- !u!1 &8769552748183335931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6282348421479242094}
+  - component: {fileID: 5005809507078262022}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6282348421479242094
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8769552748183335931}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5402395247808693815}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5005809507078262022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8769552748183335931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58c56cdb970dd9547bf1ccc628a6ebbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  load_scene1: Level_Tierra
+  load_scene2: Level_Ice_Tutorial
+  load_scene3: Level_Ice_2
+  load_scene4: Level_Air
 --- !u!1 &8839595943932268646
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,5 +370,6 @@ Transform:
   - {fileID: 8299076789876623451}
   - {fileID: 4320456806417561191}
   - {fileID: 6815875322432974303}
+  - {fileID: 6282348421479242094}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
