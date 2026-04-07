@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SC_Mark_Air : SC_Mark
 {
-    public float range = 10;
+    public float range = 15;
     public float initial_strength = 100, strength = 100;
 
     public override void ActivateMark()

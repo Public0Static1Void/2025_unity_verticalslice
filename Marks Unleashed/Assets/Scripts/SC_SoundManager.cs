@@ -18,6 +18,10 @@ public class SC_SoundManager : MonoBehaviour
         main_audiosource.Play();
     }
 
+    public GameObject InstantiateSound(AudioClip clip)
+    {
+        return InstantiateSound(clip, SC_PlayerMovement.instance.transform.position);
+    }
     public GameObject InstantiateSound(AudioClip clip, Vector3 position, bool loop = false)
     {
         if (clip == null) return null;
