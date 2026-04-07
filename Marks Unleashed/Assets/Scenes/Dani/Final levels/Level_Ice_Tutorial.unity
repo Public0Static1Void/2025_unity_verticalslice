@@ -240,6 +240,10 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2091923436}
+    - target: {fileID: 1033837160868351009, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1872436042995272834, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -380,6 +384,11 @@ MonoBehaviour:
 --- !u!224 &99936214 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3085025071705259790, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+  m_PrefabInstance: {fileID: 99936208}
+  m_PrefabAsset: {fileID: 0}
+--- !u!328 &99936215 stripped
+VideoPlayer:
+  m_CorrespondingSourceObject: {fileID: 1527911861081616920, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
   m_PrefabInstance: {fileID: 99936208}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &99936217 stripped
@@ -610,6 +619,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 146763916}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &180831616 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1033837160868351009, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+  m_PrefabInstance: {fileID: 99936208}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &207387754 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1129188533509463844, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
@@ -6008,6 +6022,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7465754468492313712, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
+      propertyPath: video_ice
+      value: 
+      objectReference: {fileID: 99936215}
+    - target: {fileID: 7465754468492313712, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
+      propertyPath: im_ice_tut
+      value: 
+      objectReference: {fileID: 180831616}
+    - target: {fileID: 7465754468492313712, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: main_canvas
       value: 
       objectReference: {fileID: 99936218}
@@ -9508,6 +9530,10 @@ PrefabInstance:
     - target: {fileID: 1536250707576338277, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4485371566872726750, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: first_rune
+      value: Hielo
       objectReference: {fileID: 0}
     - target: {fileID: 4485371566872726750, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: ui_order_parent

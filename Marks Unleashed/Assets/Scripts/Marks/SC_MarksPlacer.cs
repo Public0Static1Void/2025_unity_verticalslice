@@ -8,6 +8,8 @@ public class SC_MarksPlacer : MonoBehaviour
 {
     public static SC_MarksPlacer Instance { get; private set; }
 
+    public string first_rune = "Tierra";
+
     [Header("References")]
     public GameObject ob_mark_disk;
     public GameObject mark_placeholder;
@@ -401,6 +403,7 @@ public class SC_MarksPlacer : MonoBehaviour
         if (unlocked_marks.Count <= 0) return;
         if (SC_GameManager.instance.first_play)
         {
+            SC_GameManager.instance.ShowTutorial(first_rune, 1);
             SC_GameManager.instance.ShowText("Hold left click to shoot");
             SC_GameManager.instance.first_play = false;
         }
