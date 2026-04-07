@@ -1008,18 +1008,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 4883419843801603469}
-        m_TargetAssemblyTypeName: SC_MarksSelector, Assembly-CSharp
-        m_MethodName: ProcessDeleteZoneInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_ActionId: f072a834-f95a-4e64-a5da-14d77a1b7cb8
     m_ActionName: 'Player/Right click[/Mouse/rightButton]'
   - m_PersistentCalls:
@@ -1038,6 +1026,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 04d4bedf-f7d8-49f2-8c2f-9ae545bc87c9
     m_ActionName: 'Player/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4883419843801603469}
+        m_TargetAssemblyTypeName: SC_MarksSelector, Assembly-CSharp
+        m_MethodName: ProcessDeleteZoneInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 46b008de-0f11-40e4-a587-97b5add36422
+    m_ActionName: 'Player/R[/Keyboard/r]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player

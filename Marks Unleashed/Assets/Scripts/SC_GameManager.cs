@@ -23,6 +23,8 @@ public class SC_GameManager : MonoBehaviour
 
     private List<ElementTypes> unlocked_elements = new List<ElementTypes>();
 
+    public bool first_play = true;
+
     void Awake()
     {
         if (instance != null)

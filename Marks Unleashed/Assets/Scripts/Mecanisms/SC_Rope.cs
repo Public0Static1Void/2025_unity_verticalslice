@@ -209,7 +209,7 @@ public class SC_Rope : MonoBehaviour
             foreach (Collider coll in colls)
             {
                 // Check if the player has to be attached to the rope
-                if ((slideable || scalable) && coll.name == "Player" && !playerMovement.grounded && playerMovement.grabPoint == null && playerMovement.grabbedRope != this)
+                if ((slideable || scalable || can_move) && coll.name == "Player" && !playerMovement.grounded && playerMovement.grabPoint == null && playerMovement.grabbedRope != this)
                 {
                     HandlePlayerGrab(i, point);
                     continue;

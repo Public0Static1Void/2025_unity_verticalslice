@@ -404,6 +404,12 @@ public class SC_MarksPlacer : MonoBehaviour
     private void OpenMarkSelectionMenu()
     {
         if (unlocked_marks.Count <= 0) return;
+        if (SC_GameManager.instance.first_play)
+        {
+            SC_GameManager.instance.ShowText("Hold left click to shoot");
+            SC_GameManager.instance.first_play = false;
+        }
+            
 
         open_menu = !open_menu;
         marks_canvas.SetActive(open_menu);

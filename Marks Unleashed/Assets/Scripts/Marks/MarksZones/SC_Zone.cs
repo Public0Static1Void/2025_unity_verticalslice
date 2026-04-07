@@ -27,6 +27,8 @@ public abstract class SC_Zone : MonoBehaviour
         affected_rb = new List<Rigidbody>();
         affected_names = new List<string>();
 
+        SC_MarksPlacer.Instance.event_destroy_runes += DestroyZone;
+
         just_spawned = true;
         StartCoroutine(inv_time());
     }
@@ -147,7 +149,6 @@ public abstract class SC_Zone : MonoBehaviour
 
     public void DestroyZone()
     {
-        if (just_spawned) return;
         try
         {
             Debug.Log("Destroying zone");
