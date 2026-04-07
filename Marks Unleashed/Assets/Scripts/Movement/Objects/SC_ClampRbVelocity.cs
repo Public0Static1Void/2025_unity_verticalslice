@@ -4,6 +4,7 @@ using UnityEngine;
 public class SC_ClampRbVelocity : MonoBehaviour
 {
     public Vector3 velocity_limit;
+    [Range(0, 1)]public float dampen = 0.99f;
 
     private Rigidbody _rb;
 
@@ -15,6 +16,7 @@ public class SC_ClampRbVelocity : MonoBehaviour
     void FixedUpdate()
     {
         _rb.linearVelocity = ClampVelocity(_rb.linearVelocity);
+        _rb.linearVelocity *= dampen;
     }
 
     private Vector3 ClampVelocity(Vector3 vel)
