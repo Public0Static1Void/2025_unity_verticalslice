@@ -29,7 +29,7 @@ public class SC_Mark_Air : SC_Mark
 
         // Creates an air zone
         GameObject ob_airZone = new GameObject("Air zone");
-        ob_airZone.transform.position = transform.position;
+        ob_airZone.transform.position = transform.position + transform.forward * 2;
         ob_airZone.transform.rotation = transform.rotation;
         if (transform.parent != null && transform.parent.parent != null)
         {

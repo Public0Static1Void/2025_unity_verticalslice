@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,18 +17,23 @@ public abstract class SC_Zone : MonoBehaviour
     protected List<string> affected_names;
     protected List<Rigidbody> affected_rb;
 
+    public bool just_spawned = true;
+
     protected virtual void Start()
     {
-        zone_collider = gameObject.AddComponent<SphereCollider>();
-        zone_collider.isTrigger = true;
-        zone_collider.radius = range;
 
         gameObject.layer = LayerMask.NameToLayer("Mark");
 
-        SC_MarksPlacer.Instance.event_destroy_runes += DestroyZone;
-
         affected_rb = new List<Rigidbody>();
         affected_names = new List<string>();
+
+        just_spawned = true;
+        StartCoroutine(inv_time());
+    }
+    private IEnumerator inv_time()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        just_spawned = false;
     }
 
     public virtual void InitZone(float new_range, float new_horizontal_range, GameObject new_particles, bool can_destroy = false)
@@ -70,6 +76,8 @@ public abstract class SC_Zone : MonoBehaviour
                         RemoveName(colls[i].name);
                         continue;
                     }
+                    if (hit.collider.transform == transform.parent)
+                        continue;
 
                     Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
                     if (rb != null && !affected_names.Contains(colls[i].name))
@@ -139,8 +147,10 @@ public abstract class SC_Zone : MonoBehaviour
 
     public void DestroyZone()
     {
+        if (just_spawned) return;
         try
         {
+            Debug.Log("Destroying zone");
             if (gameObject != null)
                 Destroy(gameObject);
         } catch { }
@@ -157,6 +167,8 @@ public abstract class SC_Zone : MonoBehaviour
         }
         Destroy(particles, 10);
         Debug.Log($"Destroyed: {name}");
+        Debug.Log($"Destroyed object: {name}", this);
+        Debug.Log(StackTraceUtility.ExtractStackTrace());
     }
 
     public void HighlightZone()

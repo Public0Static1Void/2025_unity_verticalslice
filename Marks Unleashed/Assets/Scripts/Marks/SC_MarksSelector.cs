@@ -26,7 +26,7 @@ public class SC_MarksSelector : MonoBehaviour
             selected_mark_zone = hit.collider.gameObject.GetComponent<SC_Zone>();
             if (selected_mark_zone != null)
             {
-                if (selected_mark_zone.destroyable)
+                if (selected_mark_zone.destroyable && !selected_mark_zone.just_spawned)
                 {
                     selected_mark_zone.HighlightZone();
                     if (mark_selector_indicator != null)
@@ -52,7 +52,7 @@ public class SC_MarksSelector : MonoBehaviour
 
     public void ProcessDeleteZoneInput(InputAction.CallbackContext con)
     {
-        if (con.performed && selected_mark_zone != null && SC_MarksPlacer.Instance.placed_marks.Count <= 0)
+        if (con.performed && selected_mark_zone != null && SC_MarksPlacer.Instance.placed_marks.Count <= 0 && !selected_mark_zone.just_spawned)
         {
             SC_MarksPlacer.Instance.RemoveMarks();
             SC_SoundManager.instance.InstantiateSound(clip_remove_runes, transform.position);
