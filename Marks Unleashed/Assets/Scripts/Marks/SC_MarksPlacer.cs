@@ -372,8 +372,9 @@ public class SC_MarksPlacer : MonoBehaviour
         // Get the selected mark info
         SC_Mark mark_info = SC_ElementManager.instance.marks[index];
 
-        GameObject mark_disk = new GameObject($"Mark {mark_info.element.name} disk");
+        GameObject mark_disk = new GameObject($"Mark {mark_info.element.name} disk {UnityEngine.Random.Range(10, 999)}");
         mark_disk.transform.position = cameraRotation.transform.position + cameraRotation.transform.forward * 2;
+        mark_disk.layer = LayerMask.NameToLayer("RuneDisk");
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
         disk.InitDisk(this, mark_info, Camera.main.transform.forward, disk_launch_force * timer);

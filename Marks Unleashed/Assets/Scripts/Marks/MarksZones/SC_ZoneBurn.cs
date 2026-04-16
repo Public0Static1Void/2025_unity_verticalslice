@@ -31,7 +31,7 @@ public class SC_ZoneBurn : SC_Zone
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void StartBurn(int damage_per_second, float apply_range)
+    public void StartBurn(float damage_per_second, float apply_range)
     {
         range = apply_range;
         StartCoroutine(DamagePerSecond(damage_per_second));
@@ -66,9 +66,14 @@ public class SC_ZoneBurn : SC_Zone
         current_life -= Time.deltaTime;
 
         // Check if there is combustible nearby
-        if (current_life < max_life && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 0.5f, combustible_mask))
+        if (current_life < max_life && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.25f, balloon_mask))
         {
             current_life += Time.deltaTime * 2;
+            Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.25f, Color.green);
+        }
+        else
+        {
+            Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.25f, Color.red);
         }
         // Destroy the fire if there isn't any combustible nearby
         if (current_life <= 0)
@@ -92,11 +97,11 @@ public class SC_ZoneBurn : SC_Zone
         }
     }
 
-    IEnumerator DamagePerSecond(int damage_per_second)
+    IEnumerator DamagePerSecond(float damage_per_second)
     {
         while (gameObject.activeSelf)
         {
-            Collider[] colls = Physics.OverlapSphere(transform.position, range);
+            Collider[] colls = Physics.OverlapSphere(transform.position, range * 0.25f);
             foreach (Collider coll in colls)
             {
                 SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();

@@ -22,10 +22,20 @@ public class SC_Mark_Fire : SC_Mark
         {
             if (coll.name == name) continue;
 
-            SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
-            if (lf != null && element != null)
+            if (Vector3.Distance(transform.position, coll.transform.position) < range / 2)
             {
-                lf.BurnDamage(element.strength, element.strength * 2);
+                SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
+                if (lf != null && element != null)
+                {
+                    lf.BurnDamage(element.strength * 0.25f, element.strength * 2);
+                }
+            }
+
+            if (coll.CompareTag("Arrow"))
+            {
+                SC_Arrow arrow = coll.GetComponent<SC_Arrow>();
+                if (arrow != null)
+                    arrow.SetElement(ElementTypes.FIRE);
             }
         }
 
@@ -33,14 +43,9 @@ public class SC_Mark_Fire : SC_Mark
         colls = Physics.OverlapSphere(transform.position, range, burnable_layer);
         foreach (Collider coll in colls)
         {
-            // Add a burn zone that will elevate burnable objects
-            GameObject burnZone = new GameObject("BurnZone");
-            burnZone.transform.position = transform.position;
-            burnZone.transform.rotation = Quaternion.LookRotation(transform.up);
-
-            SC_ZoneBurn zone = burnZone.AddComponent<SC_ZoneBurn>();
-            zone.particles = particles;
-            zone.StartBurn(element.strength, range);            
+            SC_ZoneBurnable zb = coll.GetComponent<SC_ZoneBurnable>();
+            if (zb != null && element != null)
+                zb.Ignite(coll.transform.position + coll.transform.up, range, element.strength, particles);
         }
 
         DesactivateMark();

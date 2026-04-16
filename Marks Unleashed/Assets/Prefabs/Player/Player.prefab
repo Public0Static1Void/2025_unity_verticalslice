@@ -1128,18 +1128,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1131227705100964302}
-        m_TargetAssemblyTypeName: SC_Grab, Assembly-CSharp
-        m_MethodName: GrabInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_ActionId: bdcf931c-76aa-4342-b91d-763ed669f8a8
     m_ActionName: 'Player/Left click[/Mouse/leftButton]'
   - m_PersistentCalls:
@@ -1202,6 +1190,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 46b008de-0f11-40e4-a587-97b5add36422
     m_ActionName: 'Player/R[/Keyboard/r]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1131227705100964302}
+        m_TargetAssemblyTypeName: SC_Grab, Assembly-CSharp
+        m_MethodName: GrabInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: bee902fc-475e-41d0-a530-226575fb300b
+    m_ActionName: 'Player/Grab[/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
@@ -1422,6 +1426,7 @@ MonoBehaviour:
   reload_scene: Playground
   applied_elements_parent: {fileID: 0}
   camera_volume: {fileID: 8198841637628476776}
+  target_color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &4883419843801603469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1452,6 +1457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381f7b0173fe46a4fa23e720674cdc29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  first_rune: Aire
   ob_mark_disk: {fileID: 0}
   mark_placeholder: {fileID: 3445976794858428793, guid: c335fbbf95b2bb84587aa5e27438b62c, type: 3}
   mark_placeholder_image: {fileID: 0}

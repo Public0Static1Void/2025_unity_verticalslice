@@ -126,6 +126,13 @@ public class SC_GameManager : MonoBehaviour
         return vector;
     }
 
+    public static bool AreColorsSimilar(Color a, Color b, float threshold)
+    {
+        return Mathf.Abs(a.r - b.r) < threshold &&
+               Mathf.Abs(a.g - b.g) < threshold &&
+               Mathf.Abs(a.b - b.b) < threshold &&
+               Mathf.Abs(a.a - b.a) < threshold;
+    }
 
     public void ShowText(string text)
     {

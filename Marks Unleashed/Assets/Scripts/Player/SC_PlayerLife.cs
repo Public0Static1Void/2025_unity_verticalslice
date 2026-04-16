@@ -29,7 +29,7 @@ public class SC_PlayerLife : SC_LifeSystem
     private Coroutine routine_color = null;
 
     private float target_intensity = 0;
-    private Color target_color = Color.white;
+    public Color target_color = Color.white;
 
 
     private void Start()
@@ -51,8 +51,17 @@ public class SC_PlayerLife : SC_LifeSystem
             Damage(1);
 
         // Lerp the camera vignette values
-        camera_vignette.intensity.value = Mathf.Lerp(camera_vignette.intensity.value, target_intensity, Time.deltaTime * 10);
-        camera_vignette.color.value = Color.Lerp(camera_vignette.color.value, target_color, Time.deltaTime * 10);
+        if (!SC_GameManager.AreColorsSimilar(camera_vignette.color.value, target_color, 0.0001f))
+        {
+            camera_vignette.intensity.value = Mathf.Lerp(camera_vignette.intensity.value, target_intensity, Time.deltaTime * 10);
+            camera_vignette.color.value = Color.Lerp(camera_vignette.color.value, target_color, Time.deltaTime * 10);
+        }
+        else
+        {
+            target_color = Color.white;
+            Debug.Log("Color restored");
+        }
+            
     }
 
     public override void UpdateAppliedElementsUI()
@@ -74,7 +83,7 @@ public class SC_PlayerLife : SC_LifeSystem
             applied_elements_images[i].sprite = sprite;
         }
     }
-    public override void Damage(int damage)
+    public override void Damage(float damage)
     {
         base.Damage(damage);
 
@@ -90,7 +99,11 @@ public class SC_PlayerLife : SC_LifeSystem
 
     private void RecoverHealth()
     {
-        if (recovering_health) return;
+        if (recovering_health)
+        {
+            StopCoroutine("RecoverHealthRoutine");
+            SetVignetteValue(max_life - life, vignette_color);
+        }
 
         recovering_health = true;
         StartCoroutine(RecoverHealthRoutine());
@@ -98,6 +111,8 @@ public class SC_PlayerLife : SC_LifeSystem
 
     private IEnumerator RecoverHealthRoutine()
     {
+        yield return new WaitForSeconds(10); // Wait two seconds to start healing
+
         float lifePerSecond = (max_life - life) / recover_time; // Get how many life to give for second
 
         float current_life = life;
@@ -108,12 +123,8 @@ public class SC_PlayerLife : SC_LifeSystem
             current_life += lifePerSecond * Time.deltaTime;
             life = Mathf.FloorToInt(current_life);
 
-            if (target_color == vignette_color)
-            {
-                target_intensity = max_life - current_life;
-                target_color = vignette_color;
-            }
-            
+            SetVignetteValue(max_life - current_life, vignette_color);
+
             timer += Time.deltaTime;
             yield return null;
         }
@@ -121,7 +132,7 @@ public class SC_PlayerLife : SC_LifeSystem
         recovering_health = false;
     }
 
-    public void SetVignetteValue(float newValue, Color newColor)
+    public void SetVignetteValue(float newValue, Color newColor, bool priority = false)
     {
         target_intensity = newValue;
         target_color = newColor;

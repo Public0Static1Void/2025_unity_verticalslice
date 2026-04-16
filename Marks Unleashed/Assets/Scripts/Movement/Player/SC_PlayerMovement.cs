@@ -174,10 +174,14 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             rb.linearVelocity = vel;
 
-            if (rb.linearVelocity.magnitude > 5 && !_vignette_active)
+            if (rb.linearVelocity.magnitude > 5)
             {
-                playerLife.SetVignetteValue(0.25f, Color.black);
-                _vignette_active = true;
+                if (!SC_GameManager.AreColorsSimilar(playerLife.vignette_color, playerLife.target_color, 0.01f))
+                {
+                    playerLife.SetVignetteValue(0.25f, Color.black);
+                    _vignette_active = true;
+                }
+                
             }
 
             if (!grounded)
