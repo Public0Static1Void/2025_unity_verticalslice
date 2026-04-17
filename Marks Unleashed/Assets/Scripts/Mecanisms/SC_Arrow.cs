@@ -21,22 +21,27 @@ public class SC_Arrow : MonoBehaviour
         _orient = GetComponent<SC_OrientToMovement>();
 
         _layer_burnable = 1 << LayerMask.NameToLayer("Combustible");
+
+        Destroy(transform.parent != null ? transform.parent.gameObject : gameObject, 10);
     }
 
     private void Update()
     {
-        Collider[] colls = Physics.OverlapSphere(transform.position, _range_burn, _layer_burnable);
-        if (colls.Length > 0)
+        if (type_element == ElementTypes.FIRE)
         {
-            foreach (Collider coll in colls)
+            Collider[] colls = Physics.OverlapSphere(transform.position, _range_burn, _layer_burnable);
+            if (colls.Length > 0)
             {
-                if (!_affected_names.Contains(coll.name))
+                foreach (Collider coll in colls)
                 {
-                    SC_ZoneBurnable zb = coll.GetComponent<SC_ZoneBurnable>();
-                    if (zb != null)
-                        zb.Ignite(transform.position, 6, 1);
+                    if (!_affected_names.Contains(coll.name))
+                    {
+                        SC_ZoneBurnable zb = coll.GetComponent<SC_ZoneBurnable>();
+                        if (zb != null)
+                            zb.Ignite(transform.position, 6, 1);
 
-                    _affected_names.Add(coll.name);
+                        _affected_names.Add(coll.name);
+                    }
                 }
             }
         }

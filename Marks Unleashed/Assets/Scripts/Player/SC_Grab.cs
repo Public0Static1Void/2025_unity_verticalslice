@@ -45,7 +45,7 @@ public class SC_Grab : MonoBehaviour
             Vector3 vel = dir * grabbed_speed - rb_grabbed.linearVelocity * grabbed_damping;
 
             rb_grabbed.AddForce(vel, ForceMode.Force);
-            rb_grabbed.MoveRotation(Quaternion.LookRotation(-transform.forward));
+            rb_grabbed.MoveRotation(Quaternion.LookRotation(transform.forward));
         }
     }
 
@@ -65,7 +65,9 @@ public class SC_Grab : MonoBehaviour
                 rb_grabbed.linearVelocity = Vector3.zero;
                 rb_grabbed.angularVelocity = Vector3.zero;
 
-                rb_grabbed.transform.LookAt(grab_point.transform.parent.position);
+                // Look away from the player
+                Vector3 look_dir = (rb_grabbed.transform.position - transform.position).normalized;
+                rb_grabbed.transform.rotation = Quaternion.LookRotation(look_dir);
             }
         }   
     }

@@ -42,6 +42,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: dad5c9c5b06aa624092720b62ae594cb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_4029dfc304c840aba026095156c7e193_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: f9a648a175c04f74e8999788edf64556, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -63,18 +67,19 @@ Material:
     - _Cull: 2
     - _DissolveAmount: 0
     - _DstBlend: 10
-    - _FadeDistance: 0.01
-    - _IntersectionDepth: 0.01
-    - _IntersectionPower: 1.17
+    - _ExpandAmount: -0.52
+    - _FadeDistance: 0.8
+    - _IntersectionDepth: 0
+    - _IntersectionPower: 25
     - _OcclusionStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RingEnd: 1.25
     - _RingStart: 0
-    - _RingWidth: 10.85
+    - _RingWidth: -24.82
     - _SrcBlend: 5
     - _Surface: 1
-    - _VariationForce: 3
+    - _VariationForce: 2
     - _VariationSpeed: 3
     - _ZTest: 8
     - _ZWrite: 1

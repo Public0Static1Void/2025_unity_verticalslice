@@ -66,14 +66,14 @@ public class SC_ZoneBurn : SC_Zone
         current_life -= Time.deltaTime;
 
         // Check if there is combustible nearby
-        if (current_life < max_life && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.25f, balloon_mask))
+        if (current_life < max_life && Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, 1.25f, balloon_mask))
         {
             current_life += Time.deltaTime * 2;
-            Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.25f, Color.green);
+            Debug.DrawLine(transform.position, transform.position + -transform.up * 1.25f, Color.green);
         }
         else
         {
-            Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.25f, Color.red);
+            Debug.DrawLine(transform.position, transform.position + -transform.up * 1.25f, Color.red);
         }
         // Destroy the fire if there isn't any combustible nearby
         if (current_life <= 0)
