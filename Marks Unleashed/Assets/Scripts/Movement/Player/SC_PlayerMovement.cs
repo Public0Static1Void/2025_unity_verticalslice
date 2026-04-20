@@ -380,6 +380,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             {
                 rb.useGravity = true;
                 rb.linearVelocity = (Camera.main.transform.forward + Vector3.up) * (vel.magnitude * ropeJumpStrength);
+                grabbedRope.OnUngrab();
                 grabPoint = null;
             }
 
