@@ -16,6 +16,8 @@ public class SC_MarkDisk : SC_OrientToMovement
 
     public event Action event_destroy;
 
+    public bool can_spawn = true;
+
     private void Awake()
     {
         rb = gameObject.AddComponent<Rigidbody>();
@@ -47,6 +49,8 @@ public class SC_MarkDisk : SC_OrientToMovement
 
     private bool CheckNearbySurface(Vector3 dir)
     {
+        if (!can_spawn) return false;
+
         if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1))
         {
             // Get the position and rotation
@@ -140,8 +144,6 @@ public class SC_MarkDisk : SC_OrientToMovement
             ParticleSystem parts = ob_disk.GetComponentInChildren<ParticleSystem>();
             parts.Stop();
             parts.transform.parent = null;
-
-            
 
             activated = true;
             Destroy(gameObject);

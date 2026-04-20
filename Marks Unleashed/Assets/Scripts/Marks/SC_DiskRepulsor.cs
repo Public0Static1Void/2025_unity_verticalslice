@@ -9,6 +9,8 @@ public class SC_DiskRepulsor : MonoBehaviour
     public LayerMask _layer_disk;
 
     private List<Rigidbody> _affected_rb;
+    private List<string> _names_in;
+    private List<SC_MarkDisk> _disks_in;
 
     private Material _mat;
 
@@ -18,7 +20,11 @@ public class SC_DiskRepulsor : MonoBehaviour
 
     private void Start()
     {
+        // Init the lists
         _affected_rb = new List<Rigidbody>();
+        _names_in = new List<string>();
+        _disks_in = new List<SC_MarkDisk>();
+
         _mat = GetComponent<MeshRenderer>().material;
 
         _colls = new Collider[10]; // Prepare to recieve a max of 10 colliders at a time
@@ -26,22 +32,64 @@ public class SC_DiskRepulsor : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _affected_rb.Clear();
         int count = Physics.OverlapSphereNonAlloc(transform.position, radius, _colls, _layer_disk);
         if (count > 0)
         {
-            foreach (Collider coll in _colls)
+            List<string> objects_in = new List<string>();
+
+            for (int i = 0; i < count; i++)
             {
+                Collider coll = _colls[i];
                 if (coll == null) break;
-                // Gets the attached rb without calling getComponent
+
+                objects_in.Add(coll.name);
+
+                /// Ignore if the object was already there
+                if (_names_in.Contains(coll.name)) continue;
+                
+                /// Gets the attached rb without calling GetComponent
                 Rigidbody rb = coll.attachedRigidbody;
                 if (rb != null)
+                {
                     _affected_rb.Add(coll.attachedRigidbody);
+                    _names_in.Add(coll.name);
+
+                    /// Make the rune impossible to place inside
+                    SC_MarkDisk disk = coll.GetComponent<SC_MarkDisk>();
+                    disk.can_spawn = false;
+                    _disks_in.Add(disk);
+                }
             }
+
+            // Check wich objects are still there
+            string[] names_copy = _names_in.ToArray();
+            SC_MarkDisk[] disks_copy = _disks_in.ToArray();
+            for (int i = 0; i < names_copy.Length; i++)
+            {
+                if (!objects_in.Contains(names_copy[i]))
+                {
+                    _names_in.RemoveAt(i);
+                    _affected_rb.RemoveAt(i);
+                    disks_copy[i].can_spawn = true;
+                    _disks_in.RemoveAt(i);
+                }
+            }
+
             ApplyForces();
 
             if (_changeColorRoutine == null)
                 _changeColorRoutine = StartCoroutine(ChangeColorRoutine());
+        }
+        else
+        {
+            _affected_rb.Clear();
+            if (_disks_in.Count > 0)
+            {
+                for (int i = 0; i <  _disks_in.Count; i++)
+                    _disks_in[i].can_spawn = true;
+                _disks_in.Clear();
+            }
+            _names_in.Clear();
         }
     }
     private void ApplyForces()
