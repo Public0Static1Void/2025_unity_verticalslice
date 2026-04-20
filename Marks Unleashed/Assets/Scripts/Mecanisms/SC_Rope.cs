@@ -240,6 +240,12 @@ public class SC_Rope : MonoBehaviour
             }
         }
     }
+    public void OnUngrab()
+    {
+        UnityEngine.Color c = ropeRenderer.material.color;
+        c.a = 1;
+        ropeRenderer.material.color = c;
+    }
 
     private void HandlePlayerGrab(int i, RopePoint point)
     {
@@ -252,6 +258,11 @@ public class SC_Rope : MonoBehaviour
         current_distance = 1 - (Vector3.Distance(points[grabbed_index].position, points[0].position) / RopeLength());
         
         playerMovement.grabbing = true;
+
+        UnityEngine.Color c = ropeRenderer.material.color;
+        c.a = 0.5f;
+        ropeRenderer.material.color = c;
+        
         playerMovement.grabbedRope = this;
         playerMovement.grabPoint = points[grabbed_index];
 
@@ -436,30 +447,31 @@ public class SC_Rope : MonoBehaviour
 
         return next_lowest_index > grabbed_index ? 1 : -1;
     }
-    public void GrabRope(Vector3 point)
-    {
-        // Find the closest point
-        float minDist = float.MaxValue;
-        int closest = 0;
-        for (int i = 0; i < points.Length; i++)
-        {
-            float dist = Vector3.Distance(points[i].position, point);
-            if (dist < minDist)
-            {
-                closest = i;
-                minDist = dist;
-            }
-        }
+    //public void GrabRope(Vector3 point)
+    //{
+    //    // Find the closest point
+    //    float minDist = float.MaxValue;
+    //    int closest = 0;
+    //    for (int i = 0; i < points.Length; i++)
+    //    {
+    //        float dist = Vector3.Distance(points[i].position, point);
+    //        if (dist < minDist)
+    //        {
+    //            closest = i;
+    //            minDist = dist;
+    //        }
+    //    }
 
-        playerMovement.grabbing = true;
-        playerMovement.grabPoint = points[closest];
+    //    playerMovement.grabbing = true;
+    //    //Change rope alpha
 
-        playerMovement.rb.constraints = RigidbodyConstraints.FreezeRotation;
-    }
+        
+    //    playerMovement.grabPoint = points[closest];
 
-    /// <summary>
-    /// Gets the max distance of the rope
-    /// </summary>
+    //    playerMovement.rb.constraints = RigidbodyConstraints.FreezeRotation;
+    //}
+
+    // Gets the max distance of the rope
     float RopeLength()
     {
         float accumulated = 0;
