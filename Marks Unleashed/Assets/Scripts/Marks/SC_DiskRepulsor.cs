@@ -18,6 +18,8 @@ public class SC_DiskRepulsor : MonoBehaviour
 
     Collider[] _colls;
 
+    public GameObject parts_collision;
+
     private void Start()
     {
         // Init the lists
@@ -58,6 +60,8 @@ public class SC_DiskRepulsor : MonoBehaviour
                     SC_MarkDisk disk = coll.GetComponent<SC_MarkDisk>();
                     disk.can_spawn = false;
                     _disks_in.Add(disk);
+
+                    Destroy(Instantiate(parts_collision, rb.position, Quaternion.identity), 5);
                 }
             }
 
