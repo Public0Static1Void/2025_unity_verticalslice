@@ -7,7 +7,7 @@ public class SC_LifeSystem : MonoBehaviour
 {
     [Header("Stats")]
     public int max_life = 1;
-    public int life = 1;
+    public float life = 1;
     public bool update_life_on_start = true;
 
     public int damage = 1;
@@ -25,7 +25,7 @@ public class SC_LifeSystem : MonoBehaviour
         if (update_life_on_start)
             life = max_life;
     }
-    public virtual void Damage(int damage)
+    public virtual void Damage(float damage)
     {
         life -= damage;
         if (life <= 0)
@@ -34,7 +34,7 @@ public class SC_LifeSystem : MonoBehaviour
         }
     }
 
-    public void BurnDamage(int damage_per_second, float seconds_applied)
+    public void BurnDamage(float damage_per_second, float seconds_applied)
     {
         StartCoroutine(BurnDamageCoroutine(damage_per_second, seconds_applied));
     }
@@ -139,7 +139,7 @@ public class SC_LifeSystem : MonoBehaviour
         }
     }
     
-    private IEnumerator BurnDamageCoroutine(int damage_per_second, float seconds_applied)
+    private IEnumerator BurnDamageCoroutine(float damage_per_second, float seconds_applied)
     {
         int loop_count = 0;
         while (loop_count < seconds_applied)

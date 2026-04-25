@@ -6,7 +6,6 @@ public class SC_AugmentRadiusOverTime : MonoBehaviour
     public float duration = 1;
     public float max_radius = 1;
     public float time_between_waves = 0.25f;
-    public ParticleSystem ps;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

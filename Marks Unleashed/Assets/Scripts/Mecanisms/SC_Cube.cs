@@ -44,7 +44,8 @@ public class SC_Cube : MonoBehaviour
     {
         if (can_sound)
         {
-            audioSource.Play();
+            if (audioSource != null)
+                audioSource.Play();
             can_sound = false;
         }   
     }

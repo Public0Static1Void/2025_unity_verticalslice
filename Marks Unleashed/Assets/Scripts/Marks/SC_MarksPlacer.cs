@@ -2,16 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine.XR;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
     public static SC_MarksPlacer Instance { get; private set; }
+
+    public string first_rune = "Tierra";
 
     [Header("References")]
     public GameObject ob_mark_disk;
@@ -66,8 +63,8 @@ public class SC_MarksPlacer : MonoBehaviour
     public bool placing_mark = false;
     public bool activate_mark = false;
 
-
-    private float launch_timer = 0;
+    [HideInInspector] public float disk_launch_force = 75;
+    [HideInInspector] public float launch_timer = 0;
     private bool launching_disk = false;
     private bool launch_mode = false;
 
@@ -375,11 +372,12 @@ public class SC_MarksPlacer : MonoBehaviour
         // Get the selected mark info
         SC_Mark mark_info = SC_ElementManager.instance.marks[index];
 
-        GameObject mark_disk = new GameObject($"Mark {mark_info.element.name} disk");
-        mark_disk.transform.position = marks_canvas.transform.position;
+        GameObject mark_disk = new GameObject($"Mark {mark_info.element.name} disk {UnityEngine.Random.Range(10, 999)}");
+        mark_disk.transform.position = cameraRotation.transform.position + cameraRotation.transform.forward * 2;
+        mark_disk.layer = LayerMask.NameToLayer("RuneDisk");
 
         SC_MarkDisk disk = mark_disk.AddComponent<SC_MarkDisk>();
-        disk.InitDisk(this, mark_info, Camera.main.transform.forward + transform.right * 0.075f, 75 * timer);
+        disk.InitDisk(this, mark_info, Camera.main.transform.forward, disk_launch_force * timer);
 
         SC_SoundManager.instance.InstantiateSound(clips_swhoosh[UnityEngine.Random.Range(0, clips_swhoosh.Count)], transform.position);
         cameraRotation.ShakeCamera(0.25f, 0.05f);
@@ -406,6 +404,7 @@ public class SC_MarksPlacer : MonoBehaviour
         if (unlocked_marks.Count <= 0) return;
         if (SC_GameManager.instance.first_play)
         {
+            SC_GameManager.instance.ShowTutorial(first_rune, 1);
             SC_GameManager.instance.ShowText("Hold left click to shoot");
             SC_GameManager.instance.first_play = false;
         }

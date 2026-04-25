@@ -3,20 +3,20 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System;
 
-public class SC_MarkDisk : MonoBehaviour
+public class SC_MarkDisk : SC_OrientToMovement
 {
     public SC_Mark stored_mark;
     private SC_MarksPlacer marksPlacer;
-    private Transform rune_disk;
     private Rigidbody rb;
     private GameObject ob_disk;
 
     private Vector3 move_dir;
-    private Vector3 previous_pos;
 
     private bool activated = false;
 
     public event Action event_destroy;
+
+    public bool can_spawn = true;
 
     private void Awake()
     {
@@ -40,25 +40,17 @@ public class SC_MarkDisk : MonoBehaviour
         ob_disk.transform.SetParent(transform, false);
         ob_disk.transform.localPosition = Vector3.zero;
 
-        rune_disk = ob_disk.transform;
+        target = ob_disk.transform;
 
         // Adds force to the rigidbody
         rb.AddForce(direction * speed, ForceMode.Impulse);
     }
 
-    private void Update()
-    {
-        // Rotate the disk with the current movement direction
-        Vector3 dir = (transform.position - previous_pos).normalized;
-        if (dir.sqrMagnitude > 0.0001f)
-            rune_disk.transform.rotation = Quaternion.LookRotation(dir);
-
-        /// Store the last frame position
-        previous_pos = transform.position;
-    }
 
     private bool CheckNearbySurface(Vector3 dir)
     {
+        if (!can_spawn) return false;
+
         if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1))
         {
             // Get the position and rotation
@@ -152,8 +144,6 @@ public class SC_MarkDisk : MonoBehaviour
             ParticleSystem parts = ob_disk.GetComponentInChildren<ParticleSystem>();
             parts.Stop();
             parts.transform.parent = null;
-
-            
 
             activated = true;
             Destroy(gameObject);

@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Unity.Mathematics;
+using UnityEngine.Video;
 
 
 public class SC_GameManager : MonoBehaviour
@@ -20,6 +21,12 @@ public class SC_GameManager : MonoBehaviour
     public Image ob_loading_screen = null;
     public Image im_loading_bar = null;
     public Canvas main_canvas;
+    public GameObject im_stone_tut;
+    public GameObject im_ice_tut;
+    public GameObject im_air_tut;
+    public VideoPlayer video_stone;
+    public VideoPlayer video_air;
+    public VideoPlayer video_ice;
 
     private List<ElementTypes> unlocked_elements = new List<ElementTypes>();
 
@@ -39,7 +46,7 @@ public class SC_GameManager : MonoBehaviour
         }
 
         transform.parent = null;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
 
         Application.targetFrameRate = 60;
 
@@ -119,6 +126,13 @@ public class SC_GameManager : MonoBehaviour
         return vector;
     }
 
+    public static bool AreColorsSimilar(Color a, Color b, float threshold)
+    {
+        return Mathf.Abs(a.r - b.r) < threshold &&
+               Mathf.Abs(a.g - b.g) < threshold &&
+               Mathf.Abs(a.b - b.b) < threshold &&
+               Mathf.Abs(a.a - b.a) < threshold;
+    }
 
     public void ShowText(string text)
     {
@@ -151,10 +165,85 @@ public class SC_GameManager : MonoBehaviour
     }
 
 
+    public void ShowTutorial(string tutorial, float duration)
+    {
+        GameObject im_tut = null;
+        VideoClip clip = null;
+        switch (tutorial)
+        {
+            case "Tierra":
+                im_tut = im_stone_tut;
+                im_tut.SetActive(true);
+                video_stone.Play();
+                clip = video_stone.clip;
+                break;
+            case "Aire":
+                im_tut = im_air_tut;
+                im_tut.SetActive(true);
+                video_air.Play();
+                clip = video_air.clip;
+                break;
+            case "Hielo":
+                im_tut = im_ice_tut;
+                im_tut.SetActive(true);
+                video_ice.Play();
+                clip = video_ice.clip;
+                break;
+        }
+
+        Destroy(im_tut, (float)clip.length);
+    }
+
+
+
+    private IEnumerator ShowImageRoutine(Image im, float duration)
+    {
+        float timer = 0;
+
+        Color col = im.color;
+        col.a = 0;
+        im.color = col;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            col.a = 255 * timer;
+            im.color = col;
+
+            yield return null;
+        }
+
+        col.a = 255;
+        im.color = col;
+
+        yield return new WaitForSeconds(30);
+        HideImageRoutine(im, duration * 2);
+    }
+    private IEnumerator HideImageRoutine(Image im, float duration)
+    {
+        float timer = 0;
+
+        Color col = im.color;
+        col.a = 255;
+        im.color = col;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            col.a = 255 * (1 - (timer / duration));
+            im.color = col;
+
+            yield return null;
+        }
+
+        col.a = 0;
+        im.color = col;
+    }
+
 
     public void LoadSceneAsync(string sceneName)
     {
-        unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
+        //unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
         StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
     }
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)

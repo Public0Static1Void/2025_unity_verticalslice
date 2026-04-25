@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &9086716723403146497
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 429618664640226410, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 429618664640226410, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 1.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 429618664640226410, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: EmissionModule.m_BurstCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 429618664640226410, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: CollisionModule.collisionMessages
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 429618664640226410, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 429618664640226410, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: InitialModule.gravityModifier.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6849947571744775262, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_Name
+      value: Stone land line particles ray Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.1409917
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6726618
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.0000007059597
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.00000070595974
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164213594555263883, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6849947571744775262, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 215843418676529160}
+  m_SourcePrefab: {fileID: 100100000, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+--- !u!1 &2383925589664749919 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6849947571744775262, guid: 9a6d749a7a8071e408fdd8f168c2c5f4, type: 3}
+  m_PrefabInstance: {fileID: 9086716723403146497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &215843418676529160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2383925589664749919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f2a5ad7918bc948a0195f525c2ff3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  length: 1
+  particle_num: 20
+  time_between_parts: 0.01
+  check_distance: 2
+  particle_fall_speed: 1
+  distance_between_particles: 1
+  max_offset: {x: 0.25, y: 0.25}
