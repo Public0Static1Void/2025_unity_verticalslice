@@ -48,6 +48,9 @@ public class SC_MarksPlacer : MonoBehaviour
     [Header("Sounds")]
     public AudioClip clip_place_mark;
     public List<AudioClip> clips_swhoosh;
+    public AudioClip clip_select_rune;
+
+    private AudioSource _audioSource;
 
     [Header("Stats")]
     public float range_placing = 10;
@@ -104,6 +107,8 @@ public class SC_MarksPlacer : MonoBehaviour
 
         // Get the grab script
         script_grab = GetComponent<SC_Grab>();
+
+        _audioSource = GetComponent<AudioSource>();
 
         transform_arrow = Instantiate(arrow_gameObject).transform;
         transform_arrow.localScale = Vector3.one * 0.01f;
@@ -308,6 +313,39 @@ public class SC_MarksPlacer : MonoBehaviour
         tr.localPosition = end_pos;
         tr.rotation = end_rot;
     }
+    private IEnumerator FlotateRoutine(Transform tr, float duration, float distance, float start_pos)
+    {
+        float timer = 0;
+
+        float start_y = start_pos - distance;
+        float end_y = start_pos + distance;
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            Vector3 pos = tr.localPosition;
+            tr.localPosition = Vector3.Lerp(new Vector3(pos.x, start_y, pos.z), new Vector3(pos.x, end_y, pos.z), t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            Vector3 pos = tr.localPosition;
+            tr.localPosition = Vector3.Lerp(new Vector3(pos.x, end_y, pos.z), new Vector3(pos.x, start_y, pos.z), t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        StartCoroutine(FlotateRoutine(tr, duration, distance, start_pos));
+    }
 
     /// <summary>
     /// Activates the effects of all the placed marks
@@ -457,7 +495,14 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         if (unlocked_marks.Count <= 1) return;
 
-        current_mark = Mathf.Clamp(current_mark + direction, 0, unlocked_marks.Count - 1);
+        //current_mark = Mathf.Clamp(current_mark + direction, 0, unlocked_marks.Count - 1);
+        current_mark += direction;
+        if (current_mark > unlocked_marks.Count - 1)
+            current_mark = 0;
+        else if (current_mark < 0)
+            current_mark = unlocked_marks.Count - 1;
+
+        _audioSource.PlayOneShot(clip_select_rune);
 
         RefreshMarksList();
     }
@@ -472,7 +517,7 @@ public class SC_MarksPlacer : MonoBehaviour
         int rune_count = unlocked_marks.Count;
         if (rune_count == 0) return;
 
-        StopCoroutine("UpdateMarkUIPosition");
+        StopAllCoroutines();
 
         // Handle single mark edge case
         float step = rune_count > 1 ? Mathf.PI / (rune_count - 1) : 0f;
@@ -509,6 +554,8 @@ public class SC_MarksPlacer : MonoBehaviour
                 // Use the material instance, not shared
                 Color col = GetOutlineColor(meshr_disk);
                 SetOutlineColor(col);
+
+                
             }
             else
             {
@@ -530,6 +577,8 @@ public class SC_MarksPlacer : MonoBehaviour
                 new_scale
             ));
         }
+
+        StartCoroutine(FlotateRoutine(marks_list_images[current_mark].transform, 1, 0.5f, 0));
 
         int index = (int)unlocked_marks[current_mark];
         Element element = marks[index].element;
