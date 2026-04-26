@@ -4,7 +4,7 @@ using UnityEngine;
 public class SC_Mark_Ice : SC_Mark
 {
     public float range = 8;
-
+    
     public override void ActivateMark()
     {
         base.ActivateMark();
@@ -46,7 +46,9 @@ public class SC_Mark_Ice : SC_Mark
                         SC_CameraRotation.instance.ShakeCamera(0.5f, 0.5f);
 
                         freeze_time = range * 0.25f;
+                        coll.GetComponent<SC_PlayerLife>().Damage(0, SC_LifeSystem.Damage_type.ICE);
                         break;
+
                 }
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
