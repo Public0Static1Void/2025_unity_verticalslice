@@ -72,30 +72,50 @@ public class SC_PlayerLife : SC_LifeSystem
     }
     private IEnumerator Routine_damage_effect(float duration, Material damageMat)
     {
+        if (damageMat == null)
+        {
+            Debug.LogError("Material pasado a la corutina es null");
+            yield break;
+        }
+        Debug.Log("Corutina Routine_damage_effect INICIADA (Fade In)");
+        // Fade in
         float timer = 0;
 
         while (timer < duration)
         {
-            float t = timer / duration;
-            t = Mathf.SmoothStep(0, 1, t);
-            float softnessValue = Mathf.Lerp(0, 2, t);
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+            //t = Mathf.SmoothStep(0, 1, t);
+            float softnessValue = Mathf.Lerp(4f, 0.7f, t);
+
             damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+            
+            Debug.Log($"Timer: {timer:F2} | t: {t:F2} | Softness set to: {softnessValue:F2} | GetFloat: {damageMat.GetFloat("_Softness"):F2}");
             
             timer += Time.deltaTime;
             yield return null;
         }
+        damageMat.SetFloat("_Softness", 0.7f);
 
-        timer = 0;
+        Debug.Log("Fade In terminado, empezando Fade Out");
+        //Fade Out
+        timer = 0f;
         while (timer < duration)
         {
-            float t = timer / duration;
-            t = Mathf.SmoothStep(0, 1, t);
-            float softnessValue = Mathf.Lerp(2, 0, t);
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+            float softnessValue = Mathf.Lerp(0.7f, 4f, t);
+
             damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+
+            Debug.Log($"FADE OUT Timer: {timer:F2} | t: {t:F2} | Softness > {softnessValue:F2} | Get: {damageMat.GetFloat("_Softness"):F2}");
 
             timer += Time.deltaTime;
             yield return null;
         }
+        damageMat.SetFloat("_Softness", 4f);
+
+        Debug.Log("Corutina Routine_damage_effect TERMINADA");
     }
 
     public override void UpdateAppliedElementsUI()
@@ -119,6 +139,8 @@ public class SC_PlayerLife : SC_LifeSystem
     }
     public override void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL)
     {
+        Debug.Log("Damage() llamado - Recibido daño: " + damage + " | Tipo: " + damage_type);
+
         base.Damage(damage);
 
         SC_CameraRotation.instance.ShakeCamera(0.25f, 0.25f);
@@ -127,24 +149,34 @@ public class SC_PlayerLife : SC_LifeSystem
         target_intensity = vignette_value * 0.75f;
         target_color = vignette_color;
 
-        Material mat = null;
+        Material originalMat = null;
         switch(damage_type)
         {
             case Damage_type.NORMAL:
-                mat = ice_damage_material; //Recordar cambiar material daño normal
+                originalMat = ice_damage_material; //Recordar cambiar material daño normal
                 break;
 
             case Damage_type.FIRE:
-                mat = new Material (fire_damage_material); 
+                originalMat = fire_damage_material; 
                 break;
 
             case Damage_type.ICE:
-                mat = new Material (ice_damage_material);
+                originalMat = ice_damage_material;
                 break;
         }
-        image_vignette.material = mat;
 
-        StartCoroutine(Routine_damage_effect(vignette_duration, mat));
+        if (originalMat == null)
+        {
+            Debug.LogError($"El material para el tipo {damage_type} no está asignado en el Inspector");
+            return;
+        }
+
+        Material instanceMat = new Material(originalMat);
+        image_vignette.material = instanceMat;
+
+        Debug.Log($" Material instancia creado y asignado: {instanceMat.name}");
+
+        StartCoroutine(Routine_damage_effect(vignette_duration, instanceMat));
         RecoverHealth();
     }
 
