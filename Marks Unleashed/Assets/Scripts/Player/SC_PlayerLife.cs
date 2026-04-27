@@ -1,6 +1,8 @@
 using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -11,6 +13,7 @@ public class SC_PlayerLife : SC_LifeSystem
 {
     [Header("Stats")]
     public float recover_time = 5;
+    public float vignette_duration;
     public Color vignette_color;
 
     [Header("Scene")]
@@ -23,14 +26,18 @@ public class SC_PlayerLife : SC_LifeSystem
     public Volume camera_volume;
     private Vignette camera_vignette = null;
 
+    public Image image_vignette;
 
     private bool recovering_health = false;
 
-    private Coroutine routine_color = null;
+    private Coroutine routine_damage_effect = null;
 
     private float target_intensity = 0;
     public Color target_color = Color.white;
 
+    [Header("Materials")]
+    [SerializeField] private Material fire_damage_material;
+    [SerializeField] private Material ice_damage_material;
 
     private void Start()
     {
@@ -63,6 +70,33 @@ public class SC_PlayerLife : SC_LifeSystem
         }
             
     }
+    private IEnumerator Routine_damage_effect(float duration, Material damageMat)
+    {
+        float timer = 0;
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+            float softnessValue = Mathf.Lerp(0, 2, t);
+            damageMat.SetFloat("_Softness", softnessValue);
+            
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+            float softnessValue = Mathf.Lerp(2, 0, t);
+            damageMat.SetFloat("_Softness", softnessValue);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
 
     public override void UpdateAppliedElementsUI()
     {
@@ -83,7 +117,7 @@ public class SC_PlayerLife : SC_LifeSystem
             applied_elements_images[i].sprite = sprite;
         }
     }
-    public override void Damage(float damage)
+    public override void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL)
     {
         base.Damage(damage);
 
@@ -93,6 +127,24 @@ public class SC_PlayerLife : SC_LifeSystem
         target_intensity = vignette_value * 0.75f;
         target_color = vignette_color;
 
+        Material mat = null;
+        switch(damage_type)
+        {
+            case Damage_type.NORMAL:
+                mat = ice_damage_material; //Recordar cambiar material daño normal
+                break;
+
+            case Damage_type.FIRE:
+                mat = new Material (fire_damage_material); 
+                break;
+
+            case Damage_type.ICE:
+                mat = new Material (ice_damage_material);
+                break;
+        }
+        image_vignette.material = mat;
+
+        StartCoroutine(Routine_damage_effect(vignette_duration, mat));
         RecoverHealth();
     }
 
@@ -134,6 +186,7 @@ public class SC_PlayerLife : SC_LifeSystem
 
     public void SetVignetteValue(float newValue, Color newColor, bool priority = false)
     {
+        return;
         target_intensity = newValue;
         target_color = newColor;
     }
@@ -141,7 +194,6 @@ public class SC_PlayerLife : SC_LifeSystem
 
     public override void Die()
     {
-        Debug.Log("Dead x)");
         SceneManager.LoadScene(reload_scene);
     }
 }
