@@ -189,6 +189,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 69cf202e89231884ca3cdf6d9495d5f9, type: 3}
   m_PrefabInstance: {fileID: 80255463}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &101665346 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3002971487377218920, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+  m_PrefabInstance: {fileID: 2079463570}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &114891207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6741,6 +6746,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4485371566872726750, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: meshRend_arm
+      value: 
+      objectReference: {fileID: 101665346}
     - target: {fileID: 4485371566872726750, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: ui_order_parent
       value: 
