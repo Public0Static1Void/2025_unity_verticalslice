@@ -167,6 +167,8 @@ public class SC_GameManager : MonoBehaviour
 
     public void ShowTutorial(string tutorial, float duration)
     {
+        if (tutorial == "") return;
+
         GameObject im_tut = null;
         VideoClip clip = null;
         switch (tutorial)
