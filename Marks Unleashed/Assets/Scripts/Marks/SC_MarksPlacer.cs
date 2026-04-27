@@ -64,6 +64,7 @@ public class SC_MarksPlacer : MonoBehaviour
     public Element equipped_mark;
 
     public List<SC_Mark> placed_marks;
+    private ElementTypes element_last_activated;
 
     [HideInInspector] public int current_mark = 0;
 
@@ -266,8 +267,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
     public ElementTypes GetCurrentRuneType()
     {
-        if (unlocked_marks.Count <= 0) return ElementTypes.NONE_LAST;
-        return unlocked_marks[current_mark];
+        return element_last_activated;
     }
 
     public void RemoveMarkFromPlaced(string mark_name)
@@ -378,7 +378,7 @@ public class SC_MarksPlacer : MonoBehaviour
     }
 
     /// <summary>
-    /// Activates the effects of all the placed marks
+    /// Activates the effects of the placed mark
     /// </summary>
     private void ActivateMark()
     {
@@ -389,8 +389,10 @@ public class SC_MarksPlacer : MonoBehaviour
         StartCoroutine(ActivateMarkAnimation());
 
         int activate_index = 0;
+        // Checks if the first rune is null and searches for the next one
         if (placed_marks[0] == null)
         {
+            
             placed_marks.RemoveAt(0);
             for (int i = 0; i < placed_marks.Count; i++)
             {
@@ -406,9 +408,21 @@ public class SC_MarksPlacer : MonoBehaviour
                 }
             }
         }
-
+        // Activates the rune
+        element_last_activated = placed_marks[activate_index].element.el_type;
         placed_marks[activate_index].GetComponent<SC_Mark>().ActivateMark();
         placed_marks.RemoveAt(0);
+
+        switch (element_last_activated)
+        {
+            default:
+                _anim_arm.Play("anim_toon_arm_activate_rune", 0, 0);
+                break;
+            case ElementTypes.STONE:
+                _anim_arm.Play("anim_toon_arm_activate_rune_stone", 0, 0);
+                break;
+        }
+        
 
         SetArrowPos();
 
@@ -478,7 +492,7 @@ public class SC_MarksPlacer : MonoBehaviour
         }
 
         open_menu = !open_menu;
-        _anim_arm.enabled = !open_menu;
+        //_anim_arm.enabled = !open_menu;
         marks_canvas.SetActive(open_menu);
 
         int index = (int)unlocked_marks[current_mark];
