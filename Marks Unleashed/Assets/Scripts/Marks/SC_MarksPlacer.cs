@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
@@ -30,6 +31,9 @@ public class SC_MarksPlacer : MonoBehaviour
     private UnityEngine.UI.Image[] im_activation_order;
 
     private List<GameObject> element_hands = new List<GameObject>();
+
+    public Transform tr_left_arm;
+    private Animator _anim_arm;
 
     // World UI
     public GameObject arrow_gameObject;
@@ -60,8 +64,9 @@ public class SC_MarksPlacer : MonoBehaviour
     public Element equipped_mark;
 
     public List<SC_Mark> placed_marks;
+    private ElementTypes element_last_activated;
 
-    private int current_mark = 0;
+    [HideInInspector] public int current_mark = 0;
 
     public bool placing_mark = false;
     public bool activate_mark = false;
@@ -115,6 +120,8 @@ public class SC_MarksPlacer : MonoBehaviour
         transform_arrow.gameObject.SetActive(false);
 
         _mpb = new MaterialPropertyBlock();
+
+        _anim_arm = tr_left_arm.GetComponentInParent<Animator>();
     }
 
     private IEnumerator InitMarksUI()
@@ -258,6 +265,11 @@ public class SC_MarksPlacer : MonoBehaviour
         return unlocked_marks;
     }
 
+    public ElementTypes GetCurrentRuneType()
+    {
+        return element_last_activated;
+    }
+
     public void RemoveMarkFromPlaced(string mark_name)
     {
         for (int i = 0; i < placed_marks.Count; i++)
@@ -346,9 +358,27 @@ public class SC_MarksPlacer : MonoBehaviour
 
         StartCoroutine(FlotateRoutine(tr, duration, distance, start_pos));
     }
+    private IEnumerator RotateRoutine(Transform tr, Quaternion target_rot, float duration)
+    {
+        float timer = 0;
+
+        Quaternion start_rot = tr.localRotation;
+
+        while (timer < duration)
+        {
+            yield return new WaitForEndOfFrame();
+
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            tr.localRotation = Quaternion.Lerp(start_rot, target_rot, t);
+
+            timer += Time.deltaTime;
+        }
+    }
 
     /// <summary>
-    /// Activates the effects of all the placed marks
+    /// Activates the effects of the placed mark
     /// </summary>
     private void ActivateMark()
     {
@@ -359,8 +389,10 @@ public class SC_MarksPlacer : MonoBehaviour
         StartCoroutine(ActivateMarkAnimation());
 
         int activate_index = 0;
+        // Checks if the first rune is null and searches for the next one
         if (placed_marks[0] == null)
         {
+            
             placed_marks.RemoveAt(0);
             for (int i = 0; i < placed_marks.Count; i++)
             {
@@ -376,9 +408,21 @@ public class SC_MarksPlacer : MonoBehaviour
                 }
             }
         }
-
+        // Activates the rune
+        element_last_activated = placed_marks[activate_index].element.el_type;
         placed_marks[activate_index].GetComponent<SC_Mark>().ActivateMark();
         placed_marks.RemoveAt(0);
+
+        switch (element_last_activated)
+        {
+            default:
+                _anim_arm.Play("anim_toon_arm_activate_rune", 0, 0);
+                break;
+            case ElementTypes.STONE:
+                _anim_arm.Play("anim_toon_arm_activate_rune_stone", 0, 0);
+                break;
+        }
+        
 
         SetArrowPos();
 
@@ -446,9 +490,9 @@ public class SC_MarksPlacer : MonoBehaviour
             SC_GameManager.instance.ShowText("Hold left click to shoot");
             SC_GameManager.instance.first_play = false;
         }
-            
 
         open_menu = !open_menu;
+        //_anim_arm.enabled = !open_menu;
         marks_canvas.SetActive(open_menu);
 
         int index = (int)unlocked_marks[current_mark];
@@ -470,6 +514,8 @@ public class SC_MarksPlacer : MonoBehaviour
             EnableElementHand(-1);
             placing_mark = false;
         }
+
+        
 
         RefreshMarksList();
     }
@@ -578,9 +624,11 @@ public class SC_MarksPlacer : MonoBehaviour
             ));
         }
 
-        StartCoroutine(FlotateRoutine(marks_list_images[current_mark].transform, 1, 0.5f, 0));
-
         int index = (int)unlocked_marks[current_mark];
+        StartCoroutine(FlotateRoutine(marks_list_images[index].transform, 1, 0.05f, 0));
+
+        StartCoroutine(RotateRoutine(tr_left_arm, Quaternion.Euler(0, (225 / unlocked_marks.Count) * current_mark, 0), 0.25f));
+
         Element element = marks[index].element;
         equipped_mark = element;
         mark_placeholder_image.sprite = element.im_mark_sprite;
