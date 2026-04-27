@@ -6,12 +6,10 @@ public class SC_PlayerAnimations : MonoBehaviour
     private SC_Grab player_grab = null;
     private SC_MarksPlacer player_marks = null;
 
-    private Animator anim;
+    public Animator anim;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-
         player_move = GetComponent<SC_PlayerMovement>();
         player_grab = GetComponent<SC_Grab>();
         player_marks = SC_MarksPlacer.Instance;
