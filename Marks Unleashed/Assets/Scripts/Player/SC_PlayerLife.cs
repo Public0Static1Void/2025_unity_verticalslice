@@ -145,17 +145,18 @@ public class SC_PlayerLife : SC_LifeSystem
 
         SC_CameraRotation.instance.ShakeCamera(0.25f, 0.25f);
 
-        float vignette_value = 1 - ((float)life / (float)max_life);
-        target_intensity = vignette_value * 0.75f;
-        target_color = vignette_color;
+
+        if (damage_type == Damage_type.NORMAL)
+        {
+            float vignette_value = 1 - ((float)life / (float)max_life);
+            target_intensity = vignette_value * 0.75f;
+            target_color = vignette_color;
+            return;
+        }
 
         Material originalMat = null;
         switch(damage_type)
         {
-            case Damage_type.NORMAL:
-                originalMat = ice_damage_material; //Recordar cambiar material daño normal
-                break;
-
             case Damage_type.FIRE:
                 originalMat = fire_damage_material; 
                 break;
@@ -173,7 +174,7 @@ public class SC_PlayerLife : SC_LifeSystem
 
         Material instanceMat = new Material(originalMat);
         image_vignette.material = instanceMat;
-
+        
         Debug.Log($" Material instancia creado y asignado: {instanceMat.name}");
 
         StartCoroutine(Routine_damage_effect(vignette_duration, instanceMat));
