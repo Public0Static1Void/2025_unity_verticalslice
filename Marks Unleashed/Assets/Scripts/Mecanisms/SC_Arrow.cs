@@ -60,7 +60,7 @@ public class SC_Arrow : MonoBehaviour
             _orient._rb.isKinematic = true;
             transform.SetParent(collision.transform, true);
 
-
+            GetComponent<Collider>().enabled = false;
         }
     }
 }

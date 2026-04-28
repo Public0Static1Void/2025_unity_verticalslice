@@ -15,9 +15,14 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     public bool can_move = true;
     public float throwForce = 10;
 
+    public Material mat_decompose;
+
+    private MeshRenderer _meshRenderer;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _meshRenderer = GetComponentInChildren<MeshRenderer>();
     }
 
     private void OnEnable()
@@ -52,6 +57,26 @@ public class SC_Test_Mark_Stone : MonoBehaviour
         }
 
         _rb.linearVelocity = Vector3.zero;
+
+        StartCoroutine(DecomposeRoutine());
+    }
+
+    private IEnumerator DecomposeRoutine()
+    {
+        // Add the new material
+        _meshRenderer.material = mat_decompose;
+
+        float timer = 0;
+        float duration = 4.75f;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = 1 - t;
+            _meshRenderer.material.SetFloat("_DissolveAmount", t * 2);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

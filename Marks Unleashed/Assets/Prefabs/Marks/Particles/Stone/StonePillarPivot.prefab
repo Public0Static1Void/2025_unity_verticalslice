@@ -287,8 +287,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 5
-      minScalar: 3
+      scalar: 3.5
+      minScalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5293,8 +5293,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 5
-      minScalar: 3
+      scalar: 3.5
+      minScalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -9920,6 +9920,7 @@ MonoBehaviour:
   rotAngle: -90
   can_move: 1
   throwForce: 250
+  mat_decompose: {fileID: 2100000, guid: b33a33e42e2f0204c8c0e75d8fe34bed, type: 2}
 --- !u!65 &4210717753034003340
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10002,9 +10003,17 @@ PrefabInstance:
       value: 90
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 4befe6cd714f041478ac97531c195c7e, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 4befe6cd714f041478ac97531c195c7e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 3ed01c5b6df659f4f84cb590ceb77dfb, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 4befe6cd714f041478ac97531c195c7e, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b33a33e42e2f0204c8c0e75d8fe34bed, type: 2}
     - target: {fileID: 919132149155446097, guid: 4befe6cd714f041478ac97531c195c7e, type: 3}
       propertyPath: m_Name
       value: runa tierra

@@ -63,7 +63,7 @@ public class SC_ObjectSpawner : MonoBehaviour
         }
         for (int i = 0; i < to_remove.Count; i++)
         {
-            if (i >= _spawned.Count) break;
+            if (i > _spawned.Count - 1) break;
 
             _spawned.RemoveAt(to_remove[i]);
             spawned--;
