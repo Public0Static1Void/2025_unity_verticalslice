@@ -151,12 +151,19 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             if (moveDir.magnitude > 0.1f)
             {
-                Vector3 diff = desiredVel - horizontalVel;
-                Vector3 accel = diff * acceleration;
-                /// Get the speed by input
-                float input_speed = GetSpeedByInput();
-                /// Set the horizontal speed based on the acceleration and air control
-                horizontalVel += accel * input_speed * (!grounded ? air_control : 1);
+                if (!sliding)
+                {
+                    Vector3 diff = desiredVel - horizontalVel;
+                    Vector3 accel = diff * acceleration;
+
+                    float input_speed = GetSpeedByInput();
+                    horizontalVel += accel * input_speed * (!grounded ? air_control : 1);
+                }
+                else if (moveDir.y >= 0)
+                {
+                    Vector3 slideControl = moveDir * acceleration * 10; // tweak control strength
+                    horizontalVel += slideControl * Time.deltaTime;
+                }
             }
 
             vel.x = horizontalVel.x;
