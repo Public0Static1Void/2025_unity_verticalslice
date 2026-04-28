@@ -16,6 +16,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     public float throwForce = 10;
 
     public Material mat_decompose;
+    public GameObject ob_PiedraRotia;
 
     private MeshRenderer _meshRenderer;
 
@@ -58,9 +59,45 @@ public class SC_Test_Mark_Stone : MonoBehaviour
 
         _rb.linearVelocity = Vector3.zero;
 
-        StartCoroutine(DecomposeRoutine());
+        
+        StartCoroutine(EsperarRomper());
     }
 
+    private IEnumerator DecreaseTilLDieRoutine(Transform tr)
+    {
+        float timer = 0;
+        float duration = Random.Range(8, 12);
+
+        Vector3 start_scale = tr.localScale;
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            tr.localScale = Vector3.Lerp(start_scale, Vector3.zero, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(tr.gameObject);
+    }
+
+    private IEnumerator EsperarRomper()
+    {
+        yield return new WaitForSeconds(2);
+        ob_PiedraRotia.transform.SetParent(null, true);
+        ob_PiedraRotia.SetActive(true);
+        gameObject.SetActive(false);
+
+        for (int i = 0; i < ob_PiedraRotia.transform.childCount; i++)
+        {
+            SC_CoroutineRunner.instance.StartCoroutine(DecreaseTilLDieRoutine(ob_PiedraRotia.transform.GetChild(i)));
+        }
+
+        Destroy(ob_PiedraRotia, 20);
+    }
     private IEnumerator DecomposeRoutine()
     {
         // Add the new material

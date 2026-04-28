@@ -134,7 +134,7 @@ public class SC_MarkDisk : SC_OrientToMovement
 
         if (collision.gameObject.name == "Player")
         {
-            collision.gameObject.GetComponent<SC_PlayerLife>().Damage(1);
+            //collision.gameObject.GetComponent<SC_PlayerLife>().Damage(1);
         }
 
         Vector3 dir_to_surface = collision.GetContact(0).normal;

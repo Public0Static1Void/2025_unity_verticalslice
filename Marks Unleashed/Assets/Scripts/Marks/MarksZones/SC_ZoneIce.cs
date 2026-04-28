@@ -42,7 +42,6 @@ public class SC_ZoneIce : SC_Zone
 
         clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
 
-        range = 6;
         range_horizontal = range;
     }
     private void Update()
@@ -65,6 +64,7 @@ public class SC_ZoneIce : SC_Zone
         {
             SC_PlayerMovement pm = ob.GetComponent<SC_PlayerMovement>();
             pm.ground_friction = pm._ground_start_friction;
+            pm.sliding = false;
         }
     }
 
@@ -82,7 +82,9 @@ public class SC_ZoneIce : SC_Zone
 
             if (rb.CompareTag("Player"))
             {
-                rb.GetComponent<SC_PlayerMovement>().ground_friction = 1;
+                SC_PlayerMovement pm = rb.GetComponent<SC_PlayerMovement>();
+                pm.ground_friction = 1;
+                pm.sliding = true;
             }
 
             if (start_speeds[i] == Vector3.zero)

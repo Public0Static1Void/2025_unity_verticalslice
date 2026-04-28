@@ -24,6 +24,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     [HideInInspector] public float _ground_start_friction = 0;
     public float coyote_time = 1;
     private float _timer_coyote = 0;
+    public bool sliding = false;
 
     [Header("Air")]
     public AudioClip clip_air, clip_ground_hit, clip_jump;
