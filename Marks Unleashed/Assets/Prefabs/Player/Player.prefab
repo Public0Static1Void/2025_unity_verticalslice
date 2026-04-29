@@ -4941,7 +4941,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -10140,7 +10140,7 @@ LineRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 1
+    alignment: 0
     textureMode: 0
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
@@ -16107,6 +16107,7 @@ MonoBehaviour:
   ground_offset: 0.2
   _ground_start_friction: 0
   coyote_time: 1
+  sliding: 0
   clip_air: {fileID: 8300000, guid: 463cbd631bb5e054fbbeb0fe5a6bc199, type: 3}
   clip_ground_hit: {fileID: 8300000, guid: bef328481e3152b459a8910718e605ec, type: 3}
   clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
