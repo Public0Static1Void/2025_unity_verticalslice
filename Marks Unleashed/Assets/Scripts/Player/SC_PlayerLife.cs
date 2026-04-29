@@ -66,7 +66,7 @@ public class SC_PlayerLife : SC_LifeSystem
         else
         {
             target_color = Color.white;
-            Debug.Log("Color restored");
+            //Debug.Log("Color restored");
         }
             
     }

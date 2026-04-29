@@ -33,7 +33,7 @@ public class SC_SoundManager : MonoBehaviour
 
         audio_as.rolloffMode = AudioRolloffMode.Linear;
 
-        audio_as.maxDistance = 25;
+        audio_as.maxDistance = 50;
         audio_as.spatialBlend = 5;
 
         audio_as.clip = clip;

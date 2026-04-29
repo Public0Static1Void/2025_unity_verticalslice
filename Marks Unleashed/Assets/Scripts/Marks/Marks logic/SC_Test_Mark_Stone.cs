@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SC_Test_Mark_Stone : MonoBehaviour
 {
@@ -15,10 +16,16 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     public bool can_move = true;
     public float throwForce = 10;
 
+    [Header("References")]
     public Material mat_decompose;
     public GameObject ob_PiedraRotia;
+    public AudioClip clip_break;
 
     private MeshRenderer _meshRenderer;
+
+    [Header("Break Explosion")]
+    public float force_explosion = 10000;
+    public List<Rigidbody> _rbs_stone_pieces;
 
     private void Awake()
     {
@@ -66,7 +73,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     private IEnumerator DecreaseTilLDieRoutine(Transform tr)
     {
         float timer = 0;
-        float duration = Random.Range(8, 12);
+        float duration = Random.Range(5, 8);
 
         Vector3 start_scale = tr.localScale;
 
@@ -75,13 +82,15 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             float t = timer / duration;
             t = Mathf.SmoothStep(0, 1, t);
 
+            if (tr == null) break;
             tr.localScale = Vector3.Lerp(start_scale, Vector3.zero, t);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
-        Destroy(tr.gameObject);
+        if (tr != null)
+            Destroy(tr.gameObject);
     }
 
     private IEnumerator EsperarRomper()
@@ -96,24 +105,22 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             SC_CoroutineRunner.instance.StartCoroutine(DecreaseTilLDieRoutine(ob_PiedraRotia.transform.GetChild(i)));
         }
 
-        Destroy(ob_PiedraRotia, 20);
-    }
-    private IEnumerator DecomposeRoutine()
-    {
-        // Add the new material
-        _meshRenderer.material = mat_decompose;
+        Vector3 random_offset = new Vector3(
+                Random.Range(-2f, 2f),
+                Random.Range(-2f, 2f),
+                Random.Range(-2f, 2f)
+            );
 
-        float timer = 0;
-        float duration = 4.75f;
-        while (timer < duration)
+        foreach (Rigidbody rb in _rbs_stone_pieces)
         {
-            float t = timer / duration;
-            t = 1 - t;
-            _meshRenderer.material.SetFloat("_DissolveAmount", t * 2);
-
-            timer += Time.deltaTime;
-            yield return null;
+            rb.WakeUp();
+            Vector3 dir = (rb.transform.position - (transform.position + random_offset)).normalized;
+            rb.AddForce(dir * force_explosion, ForceMode.Impulse);
         }
+        
+        Destroy(ob_PiedraRotia, 20);
+
+        SC_SoundManager.instance.InstantiateSound(clip_break, transform.position);
     }
 
     private void OnCollisionEnter(Collision collision)

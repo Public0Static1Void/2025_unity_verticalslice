@@ -103,10 +103,18 @@ public class SC_ZoneIce : SC_Zone
         {
             for (int i = 0; i < affected_rb.Count; i++)
             {
-                if (affected_rb[i] == null) continue;
-                affected_rb[i].gameObject.GetComponent<Collider>().material = null;
+                Rigidbody rb = affected_rb[i];
+                if (rb == null) continue;
+                rb.gameObject.GetComponent<Collider>().material = null;
                 if (i < attached_audio.Count && attached_audio[i] != null)
                     Destroy(attached_audio[i]);
+
+                if (rb.CompareTag("Player"))
+                {
+                    SC_PlayerMovement pm = rb.GetComponent<SC_PlayerMovement>();
+                    pm.ground_friction = pm._ground_start_friction;
+                    pm.sliding = false;
+                }
             }
         }
     }
