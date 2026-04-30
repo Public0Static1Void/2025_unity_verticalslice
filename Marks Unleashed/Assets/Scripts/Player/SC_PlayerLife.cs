@@ -1,8 +1,5 @@
-using NUnit.Framework;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -31,6 +28,9 @@ public class SC_PlayerLife : SC_LifeSystem
     private bool recovering_health = false;
 
     private Coroutine routine_damage_effect = null;
+
+    private bool isBurning = false;
+    private Coroutine burnEffectCoroutine = null;
 
     private float target_intensity = 0;
     public Color target_color = Color.white;
@@ -70,6 +70,64 @@ public class SC_PlayerLife : SC_LifeSystem
         }
             
     }
+
+    private IEnumerator BurnEffectCoroutine(float duration, Material damageMat)
+    {
+        isBurning = true;
+        float timer = 0;
+
+        //Fade IN
+        float fadeInTime = 0.3f;
+        float t = 0;
+        while (t < fadeInTime)
+        {
+            float lerp = t / fadeInTime;
+            float softnessValue = Mathf.Lerp(4, 0.7f, lerp);
+            damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        damageMat.SetFloat("_Softness", 0.7f);
+
+        //Mantener efecto mientras dura burn
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        //Fade OUT
+        t = 0;
+        while(t < fadeInTime)
+        {
+            float lerp = t / fadeInTime;
+            float softnessValue = Mathf.Lerp(0.7f, 4f, lerp);
+            damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        damageMat.SetFloat("_Softness", 4f);
+
+        isBurning = false;
+    }
+
+    public void StartBurnEffect(float duration)
+    {
+        if (isBurning)
+            return;
+
+        Material instanceMat = new Material(fire_damage_material);
+        image_vignette.material = instanceMat;
+
+        burnEffectCoroutine = StartCoroutine(BurnEffectCoroutine(duration, instanceMat));
+    }
+
     private IEnumerator Routine_damage_effect(float duration, Material damageMat)
     {
         if (damageMat == null)
@@ -157,7 +215,11 @@ public class SC_PlayerLife : SC_LifeSystem
         Material originalMat = null;
         switch(damage_type)
         {
+            //Si ya se está quemando no spammear vignette
             case Damage_type.FIRE:
+                if (isBurning)
+                    return;
+
                 originalMat = fire_damage_material; 
                 break;
 

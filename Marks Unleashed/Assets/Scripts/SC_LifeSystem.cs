@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows.Speech;
 
 public class SC_LifeSystem : MonoBehaviour
 {
@@ -39,6 +38,12 @@ public class SC_LifeSystem : MonoBehaviour
     public void BurnDamage(float damage_per_second, float seconds_applied)
     {
         StartCoroutine(BurnDamageCoroutine(damage_per_second, seconds_applied));
+        
+        SC_PlayerLife player = GetComponent<SC_PlayerLife>();
+        if (player != null) 
+        {
+            player.StartBurnEffect(seconds_applied);
+        }
     }
 
     public virtual void UpdateAppliedElementsUI()
