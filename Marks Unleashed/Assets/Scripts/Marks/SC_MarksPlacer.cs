@@ -53,6 +53,7 @@ public class SC_MarksPlacer : MonoBehaviour
     public AudioClip clip_place_mark;
     public List<AudioClip> clips_swhoosh;
     public AudioClip clip_select_rune;
+    public AudioClip clip_charge_rune, clip_charge_rune_end;
 
     private AudioSource _audioSource;
 
@@ -659,6 +660,30 @@ public class SC_MarksPlacer : MonoBehaviour
         meshRend_arm.SetPropertyBlock(_mpb);
     }
 
+    private IEnumerator PlayChargeSoundRoutine(float duration)
+    {
+        float timer = 0;
+        float timer_sound = 0;
+
+        SC_SoundManager.instance.InstantiateSound(clip_charge_rune, transform.position);
+        /*
+        while (timer < duration * 0.95f && launching_disk)
+        {
+            if (timer_sound > duration * 0.1f)
+            {
+                float t = timer / duration;
+                //SC_SoundManager.instance.InstantiateSound(clip_charge_rune, transform.position, false, 0.5f + t);
+                timer_sound = 0;
+            }
+
+            timer_sound += Time.deltaTime;
+            timer += Time.deltaTime;
+            yield return null;
+        }*/
+        yield return new WaitForSeconds(duration * 0.95f);
+        SC_SoundManager.instance.InstantiateSound(clip_charge_rune_end, transform.position);
+    }
+
     #endregion
 
     #region Inputs
@@ -691,6 +716,7 @@ public class SC_MarksPlacer : MonoBehaviour
                 cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1, true);
                 cameraRotation.ShakeCameraProgressive(0.05f, 0.2f, 1.5f);
                 cameraRotation.ShakeUIElements(10, 1.5f);
+                StartCoroutine(PlayChargeSoundRoutine(0.95f));
             }
             else
             {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using System.Collections.Generic;
 
 public class SC_SoundManager : MonoBehaviour
 {
@@ -8,45 +9,68 @@ public class SC_SoundManager : MonoBehaviour
 
     public AudioMixerGroup main_mixer = null;
 
+    public int max_sounds = 100;
+
+    public List<AudioSource> list_audiosources;
+    private int indx_audio = 0;
+
     private void Awake()
     {
         instance = this;
+
+        // Init the audiosources
+        list_audiosources = new List<AudioSource>();
+
+        GameObject sounds_parent = new GameObject("Sounds parent");
+
+        for (int i = 0; i < max_sounds; i++)
+        {
+            GameObject ob_audio = new GameObject($"AudioSource {i}");
+            ob_audio.transform.parent = sounds_parent.transform;
+
+            // Configure the audio source
+            AudioSource audio_as = ob_audio.AddComponent<AudioSource>();
+            audio_as.rolloffMode = AudioRolloffMode.Linear;
+            audio_as.maxDistance = 50;
+            audio_as.spatialBlend = 5;
+            audio_as.outputAudioMixerGroup = main_mixer;
+
+            list_audiosources.Add(audio_as);
+        }
     }
+
+
     public void PlaySound(AudioClip clip)
     {
         main_audiosource.clip = clip;
         main_audiosource.Play();
     }
 
+    public void InstantiateSoundOnly(AudioClip clip)
+    {
+        InstantiateSound(clip);
+    }
     public GameObject InstantiateSound(AudioClip clip)
     {
         return InstantiateSound(clip, SC_PlayerMovement.instance.transform.position);
     }
-    public GameObject InstantiateSound(AudioClip clip, Vector3 position, bool loop = false)
+    public GameObject InstantiateSound(AudioClip clip, Vector3 position, bool loop = false, float volume = 1, float pitch = 1)
     {
         if (clip == null) return null;
 
-        GameObject new_ob = new GameObject("AudioSource");
-        new_ob.transform.position = position;
-
-        AudioSource audio_as = new_ob.AddComponent<AudioSource>();
-
-        audio_as.rolloffMode = AudioRolloffMode.Linear;
-
-        audio_as.maxDistance = 50;
-        audio_as.spatialBlend = 5;
-
+        AudioSource audio_as = list_audiosources[indx_audio];
+        audio_as.transform.position = position;
         audio_as.clip = clip;
-        audio_as.outputAudioMixerGroup = main_mixer;
-
         audio_as.loop = loop;
-
+        audio_as.volume = volume;
+        audio_as.pitch = pitch;
         audio_as.Play();
 
-        if (!loop)
-            Destroy(new_ob, clip.length + 1);
+        indx_audio++;
+        if (indx_audio >= list_audiosources.Count)
+            indx_audio = 0;
 
-        return new_ob;
+        return audio_as.gameObject;
     }
 
     public void AttachAudioToObject(GameObject audio_object, GameObject other_object)

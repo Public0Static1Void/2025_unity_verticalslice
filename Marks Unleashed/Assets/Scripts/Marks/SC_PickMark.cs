@@ -1,10 +1,12 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(BoxCollider))]
 public class SC_PickMark : SC_Interactable
 {
     public ElementTypes elementType;
+
+    public UnityEvent events_on_pick;
 
     public override void Activate()
     {
@@ -15,6 +17,8 @@ public class SC_PickMark : SC_Interactable
             SC_GameManager.instance.ShowText("Press Q to open the mark menu");
             SC_GameManager.instance.mark_unlocked = true;
         }
+
+        events_on_pick?.Invoke();
 
         Destroy(gameObject);
     }

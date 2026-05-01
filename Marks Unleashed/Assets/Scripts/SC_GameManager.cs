@@ -46,7 +46,7 @@ public class SC_GameManager : MonoBehaviour
         }
 
         transform.parent = null;
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
 
         Application.targetFrameRate = 60;
 
@@ -196,7 +196,36 @@ public class SC_GameManager : MonoBehaviour
         Destroy(im_tut, (float)clip.length);
     }
 
+    public void IncreaseLights(GameObject ob)
+    {
+        Light[] lights = GetChildsComponents<Light>(ob.transform);
+        IncreaseLights(lights, 1);
+    }
+    public void IncreaseLights(Light[] lights, float duration)
+    {
+        StartCoroutine(IncreaseLightsRoutine(lights, duration));
+    }
+    private IEnumerator IncreaseLightsRoutine(Light[] lights, float duration)
+    {
+        List<float> intensities = new List<float>();
+        foreach (Light l in lights)
+        {
+            intensities.Add(l.intensity);
+        }
 
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            for (int i = 0; i < intensities.Count && i < lights.Length; i++)
+            {
+                lights[i].intensity = intensities[i] * t;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
 
     private IEnumerator ShowImageRoutine(Image im, float duration)
     {

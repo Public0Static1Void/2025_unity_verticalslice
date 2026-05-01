@@ -47,7 +47,7 @@ public class SC_Rope : MonoBehaviour
     public LineRenderer ropeRenderer;
     public GameObject anchor, bottom_anchor;
     public SC_PlayerMovement playerMovement;
-    public AudioClip clip_slide;
+    public AudioClip clip_slide, clip_grab;
 
     [Header("Functions")]
     public bool scalable = false;
@@ -70,6 +70,8 @@ public class SC_Rope : MonoBehaviour
     public RopeEvent event_stretched;
 
     private GameObject _collider;
+
+    private float last_input = 0;
 
     private void Start()
     {
@@ -131,6 +133,8 @@ public class SC_Rope : MonoBehaviour
         }
 
         _collider.transform.position = points[points.Length - 1].position;
+
+        last_input = playerMovement.input.y;
     }
     private void LateUpdate()
     {
@@ -267,6 +271,8 @@ public class SC_Rope : MonoBehaviour
         playerMovement.grabPoint = points[grabbed_index];
 
         points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.1f;
+
+        SC_SoundManager.instance.InstantiateSound(clip_grab, points[grabbed_index].position);
     }
 
     private void DrawRope()
@@ -306,6 +312,10 @@ public class SC_Rope : MonoBehaviour
         // Build up inertia
         p.previousPosition -= impulse;
         playerMovement.vel += impulse;
+
+        // Play a sound if the direction is different from the last registered
+        if (dir != last_input)
+            SC_SoundManager.instance.InstantiateSound(clip_grab, playerMovement.transform.position, false, Random.Range(0.75f, 1.25f), Random.Range(0.5f, 0.75f));
     }
 
     private void ClimbRope(float dir)
