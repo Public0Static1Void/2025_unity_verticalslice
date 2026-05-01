@@ -18,7 +18,6 @@ public class SC_ZoneBurn : SC_Zone
     public Vector3 pos_particles = Vector3.zero;
 
 
-
     protected override void Start()
     {
         base.Start();
@@ -107,7 +106,6 @@ public class SC_ZoneBurn : SC_Zone
         }
     }
 
-
     protected override void OnDestroy()
     {
         if (particles == null) return;
@@ -132,8 +130,8 @@ public class SC_ZoneBurn : SC_Zone
                 SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
                 if (lf != null)
                 {
-                    lf.Damage(damage_per_second);
-                    lf.ApplyElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
+                    lf.Damage(damage_per_second, SC_LifeSystem.Damage_type.FIRE);
+                    //lf.ApplyElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
                 }
             }
             yield return new WaitForSeconds(1);
