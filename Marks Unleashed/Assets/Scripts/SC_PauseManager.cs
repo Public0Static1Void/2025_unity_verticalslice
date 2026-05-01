@@ -11,6 +11,7 @@ public class SC_PauseManager : MonoBehaviour
     Resolution[] screenResolutions;
 
     public GameObject pause_menu;
+    public GameObject options_menu;
 
     public TMP_Dropdown resolutionDropdown;
     public Toggle fullscreenToggle;
@@ -90,9 +91,12 @@ public class SC_PauseManager : MonoBehaviour
     }
     private void ClosePause()
     {
+        if (options_menu.activeSelf)
+            options_menu.SetActive(false);
+
         Time.timeScale = 1;
-        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void SetResolution(int resolutionIndex)
@@ -110,6 +114,7 @@ public class SC_PauseManager : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
     }
 
+    // --- AUDIO ---
     public void SetMasterVolume(float _value)
     {
         audioMixer.SetFloat("MasterVolume", _value);
@@ -125,7 +130,6 @@ public class SC_PauseManager : MonoBehaviour
         audioMixer.SetFloat("SFXVolume", _value);
         PlayerPrefs.SetFloat("SFXVolume", _value);
     }
-
     public void PlaySound(AudioClip clip)
     {
         audioSource.clip = clip;

@@ -90,6 +90,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   main_audiosource: {fileID: 0}
   main_mixer: {fileID: 3636804509459534179, guid: a10dcd4c0b0a7aa4f834e7e55d2c2dd7, type: 2}
+  max_sounds: 100
+  list_audiosources: []
 --- !u!1 &4007193997908358349
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pause_menu: {fileID: 0}
+  options_menu: {fileID: 0}
   resolutionDropdown: {fileID: 0}
   fullscreenToggle: {fileID: 0}
   audioSource: {fileID: 0}
