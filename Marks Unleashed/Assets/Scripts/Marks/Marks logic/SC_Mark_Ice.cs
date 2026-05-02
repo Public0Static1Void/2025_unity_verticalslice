@@ -103,6 +103,7 @@ public class SC_Mark_Ice : SC_Mark
             {
                 movingPlatform.can_move = true;
                 movingPlatform.RestoreMtColor();
+                movingPlatform.Slow(0, 4);
             }
         }
     }

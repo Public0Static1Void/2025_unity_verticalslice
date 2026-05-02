@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class SC_MovingPlatform : SC_Interactable
 {
     public bool start_active = false, return_to_position = false, can_move = true;
@@ -26,13 +27,15 @@ public class SC_MovingPlatform : SC_Interactable
 
     public UnityEngine.UI.Image im_timer;
 
-    [Header("Sounds")]
-    public AudioClip clip_on_move;
+    private AudioSource _audioSource;
     private SC_SoundManager soundManager;
+
+    private float speed = 1;
 
     private void Start()
     {
         soundManager = SC_SoundManager.instance;
+        _audioSource = GetComponent<AudioSource>();
 
         pos_start = transform.position;
         rot_start = transform.rotation;
@@ -83,7 +86,8 @@ public class SC_MovingPlatform : SC_Interactable
         StartCoroutine(TimerRoutine(act ? delay : delay * 2));
         yield return new WaitForSeconds(act ? delay : delay * 2);
 
-        soundManager.InstantiateSound(clip_on_move, transform.position);
+        if (_audioSource != null)
+            _audioSource.Play();
 
         if (act)
         {
@@ -119,7 +123,7 @@ public class SC_MovingPlatform : SC_Interactable
         {
             if (can_move)
             {
-                time += Time.fixedDeltaTime;
+                time += Time.fixedDeltaTime * speed;
 
                 float t = time / duration;
                 t = Mathf.SmoothStep(0f, 1f, t);
@@ -159,7 +163,7 @@ public class SC_MovingPlatform : SC_Interactable
         {
             if (can_move)
             {
-                time += Time.fixedDeltaTime;
+                time += Time.fixedDeltaTime * speed;
 
                 float t = time / duration;
                 t = Mathf.SmoothStep(0f, 1f, t);
@@ -183,6 +187,31 @@ public class SC_MovingPlatform : SC_Interactable
         if (return_to_position)
             Activate();
     }
+
+    public void SetCanMove(bool v)
+    {
+        can_move = v;
+    }
+    public void Slow(float slow, float duration)
+    {
+        StartCoroutine(SlowRoutine(slow, duration));
+    }
+    private IEnumerator SlowRoutine(float slow, float duration)
+    {
+        speed = slow;
+
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            speed = Mathf.Lerp(slow, 1, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        speed = 1;
+    }
+
 
     #region MatColor
     // Change material color
