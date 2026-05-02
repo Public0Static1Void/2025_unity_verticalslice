@@ -402,6 +402,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &96327178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -948,6 +949,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!114 &225903984 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
@@ -1193,6 +1195,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1740105340204177750, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 225903984}
+    - target: {fileID: 1740105340204177750, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: BackToMenu
+      objectReference: {fileID: 0}
     - target: {fileID: 1872436042995272834, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1309,6 +1319,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 225903984}
+    - target: {fileID: 6112860629402114555, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 225903984}
+    - target: {fileID: 6112860629402114555, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TogglePause
+      objectReference: {fileID: 0}
     - target: {fileID: 6512883924045938173, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0.75
@@ -1977,6 +1995,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!1001 &486792876
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2004,7 +2023,7 @@ PrefabInstance:
     - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: pause_menu
       value: 
-      objectReference: {fileID: 1600687332}
+      objectReference: {fileID: 0}
     - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: audioSource
       value: 
@@ -2138,6 +2157,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &497017314
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2514,6 +2534,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &677230689
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2746,6 +2767,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &906299285
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3248,6 +3270,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &1028498852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3381,6 +3404,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &1050476614
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3820,6 +3844,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!1 &1162831438
 GameObject:
   m_ObjectHideFlags: 0
@@ -4912,6 +4937,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &1398293321
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5219,6 +5245,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!1 &1522660055
 GameObject:
   m_ObjectHideFlags: 0
@@ -5563,11 +5590,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c09860b5505bdc40bd18e80d77e8407, type: 3}
---- !u!1 &1600687332 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2640072634577181768, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
-  m_PrefabInstance: {fileID: 271917235}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1766461433
 GameObject:
   m_ObjectHideFlags: 0
@@ -5832,6 +5854,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &1771207477
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5970,6 +5993,7 @@ MonoBehaviour:
   col_freeze_2: {r: 0, g: 0, b: 0, a: 0}
   delay: 0
   im_timer: {fileID: 0}
+  clip_on_move: {fileID: 0}
 --- !u!65 &1925341968
 BoxCollider:
   m_ObjectHideFlags: 0
