@@ -25,6 +25,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public float coyote_time = 1;
     private float _timer_coyote = 0;
     public bool sliding = false;
+    private float ground_collison_timer = 0;
+    private bool can_play_ground_sound = true;
 
     [Header("Air")]
     public AudioClip clip_air, clip_ground_hit, clip_jump;
@@ -120,17 +122,39 @@ public class SC_PlayerMovement : SC_ObjectMovement
         if (!start_grounded && grounded)
         {
             _cameraRotation.ShakeUIElements(10 * Mathf.Abs(rb.linearVelocity.y), 0.25f);
-            SC_SoundManager.instance.InstantiateSound(clip_ground_hit_slow, transform.position);
+
+            if (can_play_ground_sound)
+            {
+                Debug.Log($"Enters {can_play_ground_sound}, Timer:{ground_collison_timer}");
+                SC_SoundManager.instance.InstantiateSound(clip_ground_hit_slow, transform.position);
+                can_play_ground_sound = false;
+                ground_collison_timer = 0;
+            }
+            
             var emission = parts_smoke.emission;
             var burst = emission.GetBurst(0);
             burst.count = 10;
             emission.SetBurst(0, burst);
             parts_smoke.Play();
         }
+
+        // Small recoil for the ground collision sound
+        if (!can_play_ground_sound)
+        {
+            //Debug.Log($"Timer: {ground_collison_timer}");
+            ground_collison_timer += Time.deltaTime;
+            if (ground_collison_timer > 0.02f)
+            {
+                can_play_ground_sound = true;
+                ground_collison_timer = 0;
+            }
+        }
     }
 
     private void FixedUpdate()
     {
+        HandleGroundAttachment();
+
         if (grabbing && grabPoint != null)
         {
             _timer_air = 0;
@@ -247,46 +271,36 @@ public class SC_PlayerMovement : SC_ObjectMovement
         // Handles what happen when there's a big collision
         if (big_collision)
         {
-            SC_SoundManager.instance.InstantiateSound(clip_ground_hit, transform.position);
+            Debug.Log("Big collision");
+            if (can_play_ground_sound)
+            {
+                SC_SoundManager.instance.InstantiateSound(clip_ground_hit, transform.position);
+                can_play_ground_sound = false;
+            }
 
             HandleBigCollision();
         }
 
         HandleCameraBlur();
-        HandleGroundAttachment();
+        UpdateGroundTracking();
     }
 
     private void HandleGroundAttachment()
     {
         if (currentGround != null && grounded)
         {
-            Rigidbody groundRb = currentGround.GetComponent<Rigidbody>();
-
-            Vector3 groundDelta = Vector3.zero;
-
-            if (groundRb != null)
-            {
-                // Correct for Rigidbody-driven movement
-                groundDelta = groundRb.linearVelocity * Time.fixedDeltaTime * 0.6f;
-            }
-            else
-            {
-                // Fallback for transform-driven movement
-                groundDelta = currentGround.position - lastGroundPos;
-            }
-
-            // Rotation (still valid for both cases)
+            Vector3 targetPos = currentGround.TransformPoint(lastGroundPos);
             Quaternion rotDelta = currentGround.rotation * Quaternion.Inverse(lastGroundRot);
 
-            Vector3 dir = rb.position - currentGround.position;
-            dir = rotDelta * dir;
-
-            Vector3 targetPos = currentGround.position + dir;
-
-            rb.MovePosition(rb.position + groundDelta + (targetPos - rb.position));
-
-            // Save for next frame
-            lastGroundPos = currentGround.position;
+            rb.position = targetPos;
+            rb.MoveRotation(rotDelta * rb.rotation);
+        }
+    }
+    private void UpdateGroundTracking()
+    {
+        if (currentGround != null && grounded)
+        {
+            lastGroundPos = currentGround.InverseTransformPoint(rb.position);
             lastGroundRot = currentGround.rotation;
         }
     }
@@ -366,7 +380,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
             {
                 currentGround = collision.transform;
-                lastGroundPos = currentGround.position;
+                lastGroundPos = currentGround.InverseTransformPoint(rb.position);
                 lastGroundRot = currentGround.rotation;
                 return;
             }

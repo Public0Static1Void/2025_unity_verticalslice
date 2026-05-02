@@ -4,6 +4,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(BoxCollider))]
 public class SC_TriggerEvents : MonoBehaviour
 {
+    public string tag = "";
     public UnityEvent event_entry;
     public UnityEvent event_exit;
 
@@ -11,12 +12,13 @@ public class SC_TriggerEvents : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!active) return;
+        if (!active || (tag != "" && !other.CompareTag(tag))) return;
 
         event_entry.Invoke();
     }
     private void OnTriggerExit(Collider other)
     {
+        if (!active || (tag != "" && !other.CompareTag(tag))) return;
         event_exit.Invoke();
     }
 

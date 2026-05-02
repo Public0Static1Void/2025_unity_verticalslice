@@ -210,6 +210,7 @@ public class SC_GameManager : MonoBehaviour
         List<float> intensities = new List<float>();
         foreach (Light l in lights)
         {
+            if (l == null) continue;
             intensities.Add(l.intensity);
         }
 

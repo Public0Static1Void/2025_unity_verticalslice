@@ -26,8 +26,14 @@ public class SC_MovingPlatform : SC_Interactable
 
     public UnityEngine.UI.Image im_timer;
 
+    [Header("Sounds")]
+    public AudioClip clip_on_move;
+    private SC_SoundManager soundManager;
+
     private void Start()
     {
+        soundManager = SC_SoundManager.instance;
+
         pos_start = transform.position;
         rot_start = transform.rotation;
 
@@ -76,6 +82,9 @@ public class SC_MovingPlatform : SC_Interactable
     {
         StartCoroutine(TimerRoutine(act ? delay : delay * 2));
         yield return new WaitForSeconds(act ? delay : delay * 2);
+
+        soundManager.InstantiateSound(clip_on_move, transform.position);
+
         if (act)
         {
             if (active)
@@ -110,7 +119,7 @@ public class SC_MovingPlatform : SC_Interactable
         {
             if (can_move)
             {
-                time += Time.deltaTime;
+                time += Time.fixedDeltaTime;
 
                 float t = time / duration;
                 t = Mathf.SmoothStep(0f, 1f, t);
@@ -121,7 +130,7 @@ public class SC_MovingPlatform : SC_Interactable
                     transform.rotation = Quaternion.Lerp(rot_start, endRot, t);
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         if (move)
@@ -150,7 +159,7 @@ public class SC_MovingPlatform : SC_Interactable
         {
             if (can_move)
             {
-                time += Time.deltaTime;
+                time += Time.fixedDeltaTime;
 
                 float t = time / duration;
                 t = Mathf.SmoothStep(0f, 1f, t);
@@ -161,7 +170,7 @@ public class SC_MovingPlatform : SC_Interactable
                     transform.rotation = Quaternion.Lerp(startRot, rot_start, t);
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         if (move)
