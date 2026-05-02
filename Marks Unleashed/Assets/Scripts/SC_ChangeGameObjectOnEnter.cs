@@ -31,6 +31,7 @@ public class SC_ChangeGameObjectOnEnter : MonoBehaviour
 
             foreach (Rigidbody rb in rbs)
             {
+                if (rb == null) continue;
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, Random.Range(-1.5f, -0.5f), rb.linearVelocity.z);
             }
         }

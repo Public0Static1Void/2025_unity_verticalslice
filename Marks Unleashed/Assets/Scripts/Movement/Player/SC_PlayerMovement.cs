@@ -15,6 +15,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public Vector3 vel = Vector3.zero;
     public AnimationCurve curve_acceleration;
     public float t_speed;
+    private Vector3 vel_ground;
 
     [Header("Ground")]
     public bool grounded = false;
@@ -71,7 +72,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
     // Ground attachment
     private Transform currentGround;
-    private Vector3 lastGroundPos;
+    private Vector3 lastGroundPos, lastGroundWorldPos;
     private Quaternion lastGroundRot;
 
     private void Awake()
@@ -292,7 +293,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             Vector3 targetPos = currentGround.TransformPoint(lastGroundPos);
             Quaternion rotDelta = currentGround.rotation * Quaternion.Inverse(lastGroundRot);
 
-            rb.position = targetPos;
+            rb.MovePosition(new Vector3(targetPos.x, targetPos.y + transform.localScale.y * 0.01f, targetPos.z));
             rb.MoveRotation(rotDelta * rb.rotation);
         }
     }
@@ -300,8 +301,14 @@ public class SC_PlayerMovement : SC_ObjectMovement
     {
         if (currentGround != null && grounded)
         {
+            vel_ground = (currentGround.position - lastGroundWorldPos) / Time.fixedDeltaTime;
+            lastGroundWorldPos = currentGround.position;
             lastGroundPos = currentGround.InverseTransformPoint(rb.position);
             lastGroundRot = currentGround.rotation;
+        }
+        else
+        {
+            vel_ground = Vector3.zero;
         }
     }
     private void HandleCameraDirection(Vector2 dir)
@@ -380,6 +387,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
             {
                 currentGround = collision.transform;
+                lastGroundWorldPos = currentGround.position;
                 lastGroundPos = currentGround.InverseTransformPoint(rb.position);
                 lastGroundRot = currentGround.rotation;
                 return;

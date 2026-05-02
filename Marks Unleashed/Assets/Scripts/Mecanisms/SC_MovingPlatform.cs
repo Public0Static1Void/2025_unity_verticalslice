@@ -30,9 +30,9 @@ public class SC_MovingPlatform : SC_Interactable
     private AudioSource _audioSource;
     private SC_SoundManager soundManager;
 
-    private float speed = 1;
+    protected float speed = 1;
 
-    private void Start()
+    protected virtual void Start()
     {
         soundManager = SC_SoundManager.instance;
         _audioSource = GetComponent<AudioSource>();

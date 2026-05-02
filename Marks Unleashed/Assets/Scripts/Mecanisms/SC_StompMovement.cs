@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class SC_StompMovement : MonoBehaviour
+public class SC_StompMovement : SC_MovingPlatform
 {
     public GameObject ob_right;
     public GameObject ob_left;
@@ -18,7 +18,7 @@ public class SC_StompMovement : MonoBehaviour
 
     Vector3 dir;
 
-    void Start()
+    protected override void Start()
     {
         soundManager = SC_SoundManager.instance;
 
@@ -52,14 +52,15 @@ public class SC_StompMovement : MonoBehaviour
             ob_right.transform.position = Vector3.Lerp(pos_right_start, pos_right_end, t);
             ob_left.transform.position = Vector3.Lerp(pos_left_start, pos_left_end, t);
 
-            timer += Time.deltaTime;
+            if (can_move)
+                timer += Time.deltaTime * speed;
             yield return null;
         }
 
         ob_right.transform.position = pos_right_end;
         ob_left.transform.position = pos_left_end;
 
-        Collider[] colls = Physics.OverlapSphere(pos_right_end - dir * 4, 2, 1 << LayerMask.NameToLayer("Player"));
+        Collider[] colls = Physics.OverlapSphere(pos_right_end - dir * 4, 4, 1 << LayerMask.NameToLayer("Player"));
         if (colls.Length > 0)
         {
             colls[0].GetComponent<SC_PlayerLife>().Damage(100);
@@ -84,7 +85,8 @@ public class SC_StompMovement : MonoBehaviour
             ob_right.transform.position = Vector3.Lerp(pos_right_end, pos_right_start, t);
             ob_left.transform.position = Vector3.Lerp(pos_left_end, pos_left_start, t);
 
-            timer += Time.deltaTime;
+            if (can_move)
+                timer += Time.deltaTime * speed;
             yield return null;
         }
 
@@ -94,6 +96,6 @@ public class SC_StompMovement : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(pos_right_end - dir * 4, 3);
+        Gizmos.DrawWireSphere(pos_right_end - dir * 4, 4);
     }
 }
