@@ -164,6 +164,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 995836804}
     - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
+      propertyPath: blurVolume
+      value: 
+      objectReference: {fileID: 1892973436}
+    - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: pause_menu
       value: 
       objectReference: {fileID: 1164909002}
@@ -1715,6 +1719,17 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &1892973436 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2282631796843851029, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+  m_PrefabInstance: {fileID: 2072299696}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1929959771 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3409738046028039211, guid: 2bfd9e6ed37ec84438ca20aad8ffa730, type: 3}
@@ -1754,6 +1769,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1476266000}
+    - target: {fileID: 569853700911711599, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: m_CameraType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 569853700911711599, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: m_VolumeLayerMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1536250707576338277, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1762,6 +1785,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1252232378}
+    - target: {fileID: 3211878514787334470, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4485371566872726750, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: first_rune
       value: Hielo
@@ -1770,6 +1797,10 @@ PrefabInstance:
       propertyPath: ui_order_parent
       value: 
       objectReference: {fileID: 98061932}
+    - target: {fileID: 5469162942262911932, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: m_VolumeLayerMask.m_Bits
+      value: 262144
+      objectReference: {fileID: 0}
     - target: {fileID: 5580325089323799196, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -1814,10 +1845,6 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[23].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1252232378}
-    - target: {fileID: 7534136154024164982, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 13119
-      objectReference: {fileID: 0}
     - target: {fileID: 7730454806014991902, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -21,6 +22,7 @@ public class SC_PauseManager : MonoBehaviour
     public SC_PlayerAnimations playerAnimations;
     public SC_CameraRotation cam;
     public Animator arm_animator;
+    [SerializeField] private Volume blurVolume;
 
     [Header("Audio Sliders")]
     [SerializeField] private Slider _masterSlider;
@@ -78,12 +80,14 @@ public class SC_PauseManager : MonoBehaviour
         {
             arm_animator.SetBool("pause", true);
             cam.canMoveCamera = false;
+            blurVolume.enabled = true;
             OpenPause();
         }
         else
         {
             arm_animator.SetBool("pause", false);
             cam.canMoveCamera = true;
+            blurVolume.enabled = false;
             ClosePause();
         }
     }
