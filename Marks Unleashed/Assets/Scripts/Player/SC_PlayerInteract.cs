@@ -12,9 +12,14 @@ public class SC_PlayerInteract : MonoBehaviour
 
     public float text_show_speed = 3;
 
-    private string text = "Press E to interact";
+    private string text = "Interact_Text";
 
     private Collider nearest_coll = null;
+
+    private void Start()
+    {
+        text = SC_IdiomManager.instance.GetText(text);
+    }
 
     private void Update()
     {

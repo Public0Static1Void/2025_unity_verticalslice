@@ -8,6 +8,13 @@ public class SC_PickMark : SC_Interactable
 
     public UnityEvent events_on_pick;
 
+    private string text = "Open_Rune_Menu";
+
+    private void Start()
+    {
+        text = SC_IdiomManager.instance.GetText(text);
+    }
+
     public override void Activate()
     {
         SC_MarksPlacer.Instance.UnlockMark(elementType);

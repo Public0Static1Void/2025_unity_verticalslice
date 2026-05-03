@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1825290491454021326}
   - component: {fileID: 2504261307162977516}
   - component: {fileID: 6335322296973271285}
+  - component: {fileID: 8737944000574393946}
   m_Layer: 5
   m_Name: ButtonResume
   m_TagString: Untagged
@@ -154,6 +155,35 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8737944000574393946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082313243804943955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 0}
+          m_TargetAssemblyTypeName: SC_SoundManager, Assembly-CSharp
+          m_MethodName: InstantiateSoundOnly
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: d7de67652b8bdb54b89af7927204dba1, type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2544967206700158421
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,6 +275,7 @@ GameObject:
   - component: {fileID: 8268900589007089226}
   - component: {fileID: 7940913393243710529}
   - component: {fileID: 2783960362835817114}
+  - component: {fileID: 8442086325054184681}
   m_Layer: 5
   m_Name: ButtonBackToMenu
   m_TagString: Untagged
@@ -386,6 +417,35 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8442086325054184681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2874223837056723574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 0}
+          m_TargetAssemblyTypeName: SC_SoundManager, Assembly-CSharp
+          m_MethodName: InstantiateSoundOnly
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: d7de67652b8bdb54b89af7927204dba1, type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &3913176526918799891
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,6 +731,7 @@ GameObject:
   - component: {fileID: 2835988303293481800}
   - component: {fileID: 227265708928225674}
   - component: {fileID: 3499776687002011019}
+  - component: {fileID: 1136229170444443316}
   m_Layer: 5
   m_Name: ButtonOptions
   m_TagString: Untagged
@@ -800,6 +861,35 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1136229170444443316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4687349442229623341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 0}
+          m_TargetAssemblyTypeName: SC_SoundManager, Assembly-CSharp
+          m_MethodName: InstantiateSoundOnly
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: d7de67652b8bdb54b89af7927204dba1, type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &4796838842133859793
 GameObject:
   m_ObjectHideFlags: 0

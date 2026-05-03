@@ -3,15 +3,25 @@ using UnityEngine;
 
 public class SC_IdiomManager : MonoBehaviour
 {
+    public static SC_IdiomManager instance { get; private set; }
     public enum Language { SPANISH, ENGLISH }
 
-    private Language _currentLanguage = Language.ENGLISH;
+    public Language _currentLanguage = Language.ENGLISH;
 
     Dictionary<string, string[]> localizedTexts = new Dictionary<string, string[]>();
 
     void Awake()
     {
-        LoadCSV("idioms.csv");
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+
+        LoadCSV("idioms");
     }
 
     void LoadCSV(string fileName)
@@ -59,5 +69,23 @@ public class SC_IdiomManager : MonoBehaviour
         }
 
         return values[index];
+    }
+
+    public void ChangeLanguage(string language)
+    {
+        switch (language)
+        {
+            default:
+                _currentLanguage = Language.ENGLISH;
+                break;
+            case "spain":
+                _currentLanguage = Language.SPANISH;
+                break;
+            case "uk":
+                _currentLanguage = Language.ENGLISH;
+                break;
+        }
+        
+        SC_GameManager.instance.LoadTexts();
     }
 }

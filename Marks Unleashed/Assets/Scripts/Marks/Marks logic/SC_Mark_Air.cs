@@ -8,9 +8,9 @@ public class SC_Mark_Air : SC_Mark
     public override void ActivateMark()
     {
         base.ActivateMark();
-        GameObject ob_parts = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.forward, transform.up));
+        particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.forward, transform.up));
         if (!regenerate && !destroyable)
-            Destroy(ob_parts, 10);
+            Destroy(particles, 10);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
@@ -37,7 +37,7 @@ public class SC_Mark_Air : SC_Mark
         {
             ob_airZone.transform.SetParent(transform.parent.parent, true);
         }
-
+        
         Destroy(ob_airZone, 5);
 
         SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();

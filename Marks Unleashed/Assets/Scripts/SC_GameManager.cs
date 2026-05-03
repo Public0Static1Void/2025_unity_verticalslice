@@ -17,6 +17,9 @@ public class SC_GameManager : MonoBehaviour
 
     public bool mark_unlocked = false;
 
+    [Header("Stats")]
+    public bool destroy_on_load = false;
+
     [Header("References")]
     public Image ob_loading_screen = null;
     public Image im_loading_bar = null;
@@ -32,6 +35,12 @@ public class SC_GameManager : MonoBehaviour
 
     public bool first_play = true;
 
+    [Space(15)]
+    [Header("Translation")]
+    public List<TMP_Text> texts_to_translate = new List<TMP_Text>();
+    private List<string> texts_keys = new List<string>();
+    private SC_IdiomManager _idiomManager;
+
     void Awake()
     {
         if (instance != null)
@@ -46,22 +55,39 @@ public class SC_GameManager : MonoBehaviour
         }
 
         transform.parent = null;
-        DontDestroyOnLoad(gameObject);
+        if (!destroy_on_load)
+            DontDestroyOnLoad(gameObject);
 
         Application.targetFrameRate = 60;
 
         Time.timeScale = 0;
 
+        if (!destroy_on_load)
+            StartCoroutine(FadeOut());
 
-        StartCoroutine(FadeOut());
+        foreach (TMP_Text txt in texts_to_translate)
+        {
+            texts_keys.Add(txt.text);
+        }
     }
 
     private void Start()
     {
+        _idiomManager = SC_IdiomManager.instance;
+        LoadTexts();
         // Get your unlocked marks
-        for (int i = 0; i <  unlocked_elements.Count; i++)
+        for (int i = 0; i < unlocked_elements.Count; i++)
         {
             SC_MarksPlacer.Instance.UnlockMark(unlocked_elements[i]);
+        }
+    }
+    public void LoadTexts()
+    {
+        // Translate the scene texts
+        for (int i = 0; i <  texts_keys.Count; i++)
+        {
+            if (i < texts_keys.Count - 1)
+                texts_to_translate[i].text = _idiomManager.GetText(texts_keys[i]);
         }
     }
 
