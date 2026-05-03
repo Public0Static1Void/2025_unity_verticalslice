@@ -1,0 +1,63 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SC_IdiomManager : MonoBehaviour
+{
+    public enum Language { SPANISH, ENGLISH }
+
+    private Language _currentLanguage = Language.ENGLISH;
+
+    Dictionary<string, string[]> localizedTexts = new Dictionary<string, string[]>();
+
+    void Awake()
+    {
+        LoadCSV("idioms.csv");
+    }
+
+    void LoadCSV(string fileName)
+    {
+        TextAsset file = Resources.Load<TextAsset>(fileName);
+
+        if (file == null)
+        {
+            Debug.LogError("CSV file not found!");
+            return;
+        }
+
+        string[] lines = file.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++) // skip header
+        {
+            if (string.IsNullOrWhiteSpace(lines[i]))
+                continue;
+
+            string[] columns = lines[i].Split(',');
+
+            string key = columns[0].Trim();
+            string spanish = columns[1].Trim();
+            string english = columns[2].Trim();
+
+            localizedTexts[key] = new string[] { spanish, english };
+        }
+    }
+
+    public string GetText(string key)
+    {
+        if (!localizedTexts.ContainsKey(key))
+        {
+            Debug.LogWarning($"No key found: {key}");
+            return key;
+        }
+
+        string[] values = localizedTexts[key];
+
+        int index = (int)_currentLanguage;
+        if (index < 0 || index >= values.Length)
+        {
+            Debug.LogWarning($"Index out of bounds: {key}");
+            return key;
+        }
+
+        return values[index];
+    }
+}

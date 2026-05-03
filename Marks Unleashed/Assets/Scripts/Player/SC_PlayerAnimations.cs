@@ -31,6 +31,5 @@ public class SC_PlayerAnimations : MonoBehaviour
         anim.SetBool("pull", player_grab.launching);
         anim.SetBool("open_marks", player_marks.placing_mark);
         anim.SetBool("activate_mark", player_marks.activate_mark);
-        anim.SetBool("pause", player_pause.opened);
     }
 }

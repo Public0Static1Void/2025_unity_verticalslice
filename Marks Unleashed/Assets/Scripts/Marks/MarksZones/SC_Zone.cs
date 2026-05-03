@@ -151,25 +151,29 @@ public abstract class SC_Zone : MonoBehaviour
     {
         try
         {
-            Debug.Log("Destroying zone");
+            if (particles != null)
+            {
+                particles.transform.SetParent(null, true);
+                particles.GetComponent<ParticleSystem>().Stop();
+                Transform tr = particles.transform.GetChild(0);
+                if (tr != null)
+                {
+                    tr.GetComponent<ParticleSystem>().Stop();
+                }
+                Destroy(particles, 10);
+                Debug.Log($"Destroyed: {name}");
+                Debug.Log($"Destroyed object: {name}", this);
+                Debug.Log(StackTraceUtility.ExtractStackTrace());
+
+                Debug.Log("Destroying zone");
+            }
             if (gameObject != null)
                 Destroy(gameObject);
         } catch { }
     }
     protected virtual void OnDestroy()
     {
-        if (particles == null) return;
-        particles.transform.SetParent(null, true);
-        particles.GetComponent<ParticleSystem>().Stop();
-        Transform tr = particles.transform.GetChild(0);
-        if (tr != null)
-        {
-            tr.GetComponent<ParticleSystem>().Stop();
-        }
-        Destroy(particles, 10);
-        Debug.Log($"Destroyed: {name}");
-        Debug.Log($"Destroyed object: {name}", this);
-        Debug.Log(StackTraceUtility.ExtractStackTrace());
+        
     }
 
     public void HighlightZone()
