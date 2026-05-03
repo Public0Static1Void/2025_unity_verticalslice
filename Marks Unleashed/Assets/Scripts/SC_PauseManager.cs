@@ -18,13 +18,16 @@ public class SC_PauseManager : MonoBehaviour
 
     public AudioSource audioSource;
     public AudioMixer audioMixer;
+    public SC_PlayerAnimations playerAnimations;
+    public SC_CameraRotation cam;
+    public Animator arm_animator;
 
     [Header("Audio Sliders")]
     [SerializeField] private Slider _masterSlider;
     [SerializeField] private Slider _musicSlider;
     [SerializeField] private Slider _sfxSlider;
     
-    private bool opened = false;
+    public bool opened = false;
 
     private void Start()
     {
@@ -72,9 +75,17 @@ public class SC_PauseManager : MonoBehaviour
         pause_menu.SetActive(opened);
 
         if (opened)
+        {
+            arm_animator.SetBool("pause", true);
+            cam.canMoveCamera = false;
             OpenPause();
+        }
         else
+        {
+            arm_animator.SetBool("pause", false);
+            cam.canMoveCamera = true;
             ClosePause();
+        }
     }
     public void OpenPauseMenuOnKeyPressed(InputAction.CallbackContext con)
     {
@@ -85,7 +96,8 @@ public class SC_PauseManager : MonoBehaviour
 
     private void OpenPause()
     {
-        Time.timeScale = 0;
+        arm_animator.Play("anim_toon_arm_pause");
+        //Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
