@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SC_StompMovement : SC_MovingPlatform
@@ -17,6 +18,9 @@ public class SC_StompMovement : SC_MovingPlatform
     private SC_SoundManager soundManager;
 
     Vector3 dir;
+
+    [Header("Particles")]
+    public List<ParticleSystem> parts_collision;
 
     protected override void Start()
     {
@@ -66,7 +70,13 @@ public class SC_StompMovement : SC_MovingPlatform
             colls[0].GetComponent<SC_PlayerLife>().Damage(100);
         }
 
+        // Start the collision effects
         soundManager.InstantiateSound(clip_stomp, ob_right.transform.position, pitch: Random.Range(0.48f, 0.52f));
+
+        foreach (ParticleSystem parts in parts_collision)
+        {
+            parts.Play();
+        }
 
         SC_CameraRotation.instance.ShakeCamera(1, 0.75f);
         yield return new WaitForSeconds(1);

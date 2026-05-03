@@ -101,7 +101,7 @@ public class SC_Mark : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             StartCoroutine(ReapearMark());
         }
-        else
+        else if (destroyable)
         {
             Destroy(gameObject);
         }

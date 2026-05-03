@@ -9,6 +9,8 @@ public class SC_Mark_Air : SC_Mark
     {
         base.ActivateMark();
         particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
+        if (!regenerate && !destroyable)
+            Destroy(particles, 10);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)

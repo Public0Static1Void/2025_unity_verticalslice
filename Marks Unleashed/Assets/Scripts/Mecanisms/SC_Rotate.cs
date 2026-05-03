@@ -6,6 +6,6 @@ public class SC_Rotate : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(rotation, Space.Self);
+        transform.Rotate(rotation * Time.deltaTime, Space.Self);
     }
 }
