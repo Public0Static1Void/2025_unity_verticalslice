@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -22,7 +23,9 @@ public class SC_PauseManager : MonoBehaviour
     public SC_PlayerAnimations playerAnimations;
     public SC_CameraRotation cam;
     public Animator arm_animator;
+
     [SerializeField] private Volume blurVolume;
+    private DepthOfField dof;
 
     [Header("Audio Sliders")]
     [SerializeField] private Slider _masterSlider;
@@ -33,6 +36,12 @@ public class SC_PauseManager : MonoBehaviour
 
     private void Start()
     {
+        //Blur empieza false
+        if(blurVolume.profile.TryGet(out dof))
+        {
+            dof.active = false;
+        }
+
         screenResolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
@@ -71,6 +80,15 @@ public class SC_PauseManager : MonoBehaviour
         SetSFXVolume(_sfxSlider.value);
 
     }
+
+    public void SetBlur(bool state)
+    {
+        if (dof != null)
+        {
+            dof.active = state;
+        }
+    }
+
     public void TogglePause()
     {
         opened = !opened;
@@ -80,14 +98,14 @@ public class SC_PauseManager : MonoBehaviour
         {
             arm_animator.SetBool("pause", true);
             cam.canMoveCamera = false;
-            blurVolume.enabled = true;
+            SetBlur(true);
             OpenPause();
         }
         else
         {
             arm_animator.SetBool("pause", false);
             cam.canMoveCamera = true;
-            blurVolume.enabled = false;
+            SetBlur(false);
             ClosePause();
         }
     }
