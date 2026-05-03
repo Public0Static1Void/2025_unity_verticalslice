@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -18,16 +20,28 @@ public class SC_PauseManager : MonoBehaviour
 
     public AudioSource audioSource;
     public AudioMixer audioMixer;
+    public SC_PlayerAnimations playerAnimations;
+    public SC_CameraRotation cam;
+    public Animator arm_animator;
+
+    [SerializeField] private Volume blurVolume;
+    private DepthOfField dof;
 
     [Header("Audio Sliders")]
     [SerializeField] private Slider _masterSlider;
     [SerializeField] private Slider _musicSlider;
     [SerializeField] private Slider _sfxSlider;
     
-    private bool opened = false;
+    public bool opened = false;
 
     private void Start()
     {
+        //Blur empieza false
+        if(blurVolume.profile.TryGet(out dof))
+        {
+            dof.active = false;
+        }
+
         screenResolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
@@ -66,15 +80,34 @@ public class SC_PauseManager : MonoBehaviour
         SetSFXVolume(_sfxSlider.value);
 
     }
+
+    public void SetBlur(bool state)
+    {
+        if (dof != null)
+        {
+            dof.active = state;
+        }
+    }
+
     public void TogglePause()
     {
         opened = !opened;
         pause_menu.SetActive(opened);
 
         if (opened)
+        {
+            arm_animator.SetBool("pause", true);
+            cam.canMoveCamera = false;
+            SetBlur(true);
             OpenPause();
+        }
         else
+        {
+            arm_animator.SetBool("pause", false);
+            cam.canMoveCamera = true;
+            SetBlur(false);
             ClosePause();
+        }
     }
     public void OpenPauseMenuOnKeyPressed(InputAction.CallbackContext con)
     {
@@ -85,7 +118,8 @@ public class SC_PauseManager : MonoBehaviour
 
     private void OpenPause()
     {
-        Time.timeScale = 0;
+        arm_animator.Play("anim_toon_arm_pause");
+        //Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }

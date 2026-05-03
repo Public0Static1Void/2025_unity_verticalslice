@@ -16,6 +16,7 @@ public class SC_CameraRotation : MonoBehaviour
     [Range(0, 1)] public float fov_multiplier = 0.5f;
     public float bob_speed = 1, bob_amount = 1;
     public float sway = 1;
+    public bool canMoveCamera = true;
 
     [HideInInspector] public float base_fov;
 
@@ -98,7 +99,7 @@ public class SC_CameraRotation : MonoBehaviour
 
     void LateUpdate()
     {
-        if (parent == null || camera_handle == null) return;
+        if (parent == null || camera_handle == null || canMoveCamera == false) return;
 
         x += input.x * turn_speed * Time.deltaTime;
         y += input.y * turn_speed * Time.deltaTime * 2;

@@ -9572,6 +9572,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d38f9e002f7c604e94ccd2d871a5d6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &703674190 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2641528409324908165, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+  m_PrefabInstance: {fileID: 703674187}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &703674191 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5024986258079173671, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+  m_PrefabInstance: {fileID: 703674187}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 080095c9e68f6a345bd60d87008f2758, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &711452722
 GameObject:
   m_ObjectHideFlags: 0
@@ -17168,6 +17184,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 703674188}
     - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
+      propertyPath: cam
+      value: 
+      objectReference: {fileID: 703674189}
+    - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: _sfxSlider
       value: 
       objectReference: {fileID: 1156135859}
@@ -17184,6 +17204,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1954200488}
     - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
+      propertyPath: arm_animator
+      value: 
+      objectReference: {fileID: 703674190}
+    - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: options_menu
       value: 
       objectReference: {fileID: 942647398}
@@ -17195,6 +17219,10 @@ PrefabInstance:
       propertyPath: fullscreenToggle
       value: 
       objectReference: {fileID: 146870954}
+    - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
+      propertyPath: playerAnimations
+      value: 
+      objectReference: {fileID: 703674191}
     - target: {fileID: 5326322045675495810, guid: 2e59008aa58620545b1cdad7ab9b2e1e, type: 3}
       propertyPath: resolutionDropdown
       value: 
