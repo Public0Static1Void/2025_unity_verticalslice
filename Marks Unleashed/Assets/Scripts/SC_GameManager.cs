@@ -86,7 +86,7 @@ public class SC_GameManager : MonoBehaviour
         // Translate the scene texts
         for (int i = 0; i <  texts_keys.Count; i++)
         {
-            if (i < texts_keys.Count - 1)
+            if (i < texts_keys.Count)
                 texts_to_translate[i].text = _idiomManager.GetText(texts_keys[i]);
         }
     }

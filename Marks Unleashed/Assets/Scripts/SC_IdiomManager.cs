@@ -4,7 +4,7 @@ using UnityEngine;
 public class SC_IdiomManager : MonoBehaviour
 {
     public static SC_IdiomManager instance { get; private set; }
-    public enum Language { SPANISH, ENGLISH }
+    public enum Language { SPANISH, ENGLISH, CATALAN }
 
     public Language _currentLanguage = Language.ENGLISH;
 
@@ -46,8 +46,9 @@ public class SC_IdiomManager : MonoBehaviour
             string key = columns[0].Trim();
             string spanish = columns[1].Trim();
             string english = columns[2].Trim();
+            string catalan = columns[3].Trim();
 
-            localizedTexts[key] = new string[] { spanish, english };
+            localizedTexts[key] = new string[] { spanish, english, catalan };
         }
     }
 
@@ -83,6 +84,9 @@ public class SC_IdiomManager : MonoBehaviour
                 break;
             case "uk":
                 _currentLanguage = Language.ENGLISH;
+                break;
+            case "cat":
+                _currentLanguage = Language.CATALAN;
                 break;
         }
         

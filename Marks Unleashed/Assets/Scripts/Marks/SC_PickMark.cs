@@ -21,7 +21,7 @@ public class SC_PickMark : SC_Interactable
 
         if (!SC_GameManager.instance.mark_unlocked)
         {
-            SC_GameManager.instance.ShowText("Press Q to open the mark menu");
+            SC_GameManager.instance.ShowText(text);
             SC_GameManager.instance.mark_unlocked = true;
         }
 
