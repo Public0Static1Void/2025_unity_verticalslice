@@ -1,14 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class SC_DeathZone : MonoBehaviour
 {
-    public string load_scene = "SampleScene";
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            SC_GameManager.instance.LoadSceneAsync(load_scene);
+            SC_PlayerLife playerLife = other.GetComponent<SC_PlayerLife>();
+            if (playerLife != null) 
+            {
+                playerLife.Damage(999);
+            }
         }
         else
         {
