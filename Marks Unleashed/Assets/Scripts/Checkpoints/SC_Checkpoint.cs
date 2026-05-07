@@ -7,8 +7,7 @@ public class SC_Checkpoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             SC_CheckpointManager.Instance.SetCheckpoint(transform.position);
-
-            Debug.Log("CHECKPOINT Reached!!");
+            Destroy(this.gameObject);
         }
     }
 }
