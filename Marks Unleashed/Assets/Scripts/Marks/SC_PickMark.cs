@@ -12,7 +12,7 @@ public class SC_PickMark : SC_Interactable
 
     private void Start()
     {
-        text = SC_IdiomManager.instance.GetText(text);
+        text = SC_LanguageManager.instance.GetText(text);
     }
 
     public override void Activate()

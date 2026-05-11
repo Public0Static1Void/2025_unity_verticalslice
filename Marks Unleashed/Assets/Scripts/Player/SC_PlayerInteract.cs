@@ -18,7 +18,7 @@ public class SC_PlayerInteract : MonoBehaviour
 
     private void Start()
     {
-        text = SC_IdiomManager.instance.GetText(text);
+        text = SC_LanguageManager.instance.GetText(text);
     }
 
     private void Update()
