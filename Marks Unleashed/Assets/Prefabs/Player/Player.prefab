@@ -9951,7 +9951,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 70.00001
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -10052,7 +10052,6 @@ MonoBehaviour:
   shake_force: 3
   ui_elements_speed: 10
   ui_elements_to_move:
-  - {fileID: 0}
   - {fileID: 0}
 --- !u!1 &3211878514787334470
 GameObject:
@@ -15511,7 +15510,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -15549,7 +15548,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 0
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
@@ -16502,6 +16501,7 @@ MonoBehaviour:
   meshRend_arm: {fileID: 0}
   element_hands_parent: {fileID: 9202291555860841457}
   ui_order_parent: {fileID: 0}
+  spr_circle_void: {fileID: 21300000, guid: 4250dfd4d9df4f84b8637310e1f5f642, type: 3}
   tr_left_arm: {fileID: 3946404654244269557}
   arrow_gameObject: {fileID: 4412467590885669045, guid: 22fd6c7a4b4039d4eab896b77ea5fb14, type: 3}
   marks_canvas: {fileID: 5114043827531764904}
@@ -16585,6 +16585,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 3777577418923214271}
   steps: 15
   timeStep: 0.1
+  ob_launch_preview: {fileID: 0}
   firePoint: {fileID: 5174274437327528411}
   force: 0
 --- !u!82 &364061599270309392

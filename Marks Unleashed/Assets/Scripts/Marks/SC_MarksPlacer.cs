@@ -28,6 +28,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
     // Marks activation order UI
     public Transform ui_order_parent;
+    public Sprite spr_circle_void;
     private UnityEngine.UI.Image[] im_activation_order;
 
     private List<GameObject> element_hands = new List<GameObject>();
@@ -285,8 +286,9 @@ public class SC_MarksPlacer : MonoBehaviour
         UpdateActivateMarksUI();
     }
 
-    public void UpdateActivateMarksUI()
+    public void UpdateActivateMarksUI(bool activate_animation = true)
     {
+        Coroutine coroutine_ui_grow = null;
         for (int i = 0; i < im_activation_order.Length; i++)
         {
             if (im_activation_order[i] == null) continue;
@@ -295,17 +297,60 @@ public class SC_MarksPlacer : MonoBehaviour
             if (i < placed_marks.Count && placed_marks[i] != null)
             {
                 spr = placed_marks[i].element.im_mark_sprite;
-                im_activation_order[i].gameObject.SetActive (true);
+                Color col = im_activation_order[i].color;
+                im_activation_order[i].color = new Color(col.g, col.g, col.b, 1);
+
+                if (i == placed_marks.Count - 1 && coroutine_ui_grow == null && activate_animation)
+                {
+                    Debug.Log("Executing animation");
+                    coroutine_ui_grow = SC_CoroutineRunner.instance.StartCoroutine(GrowUIElementRoutine(im_activation_order[i].transform, Vector3.one * 1.2f, 0.25f));
+                }
             }
             else
             {
                 if (im_activation_order[i] != null)
-                    im_activation_order[i].gameObject.SetActive(false);
+                {
+                    Color col = im_activation_order[i].color;
+                    im_activation_order[i].color = new Color(col.g, col.g, col.b, 0.05f);
+                    
+                    spr = spr_circle_void;
+                }
             }
 
             if (im_activation_order[i] != null)
                 im_activation_order[i].sprite = spr;
         }  
+    }
+
+    private IEnumerator GrowUIElementRoutine(Transform tr, Vector3 target_size, float duration)
+    {
+        float timer = 0;
+        Vector3 start_size = Vector3.one * 0.8f;
+
+        while (timer < duration * 0.25f)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            tr.localScale = Vector3.Lerp(start_size, target_size, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        tr.localScale = target_size;
+        timer = 0;
+        while (timer < duration * 0.75f)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            tr.localScale = Vector3.Lerp(target_size, start_size, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        tr.localScale = start_size;
     }
     private IEnumerator UpdateMarkUIPosition(Transform tr, Vector2 start_pos, Vector2 end_pos, Quaternion start_rot, Quaternion end_rot, Vector3 start_size, Vector3 end_size)
     {
@@ -393,7 +438,6 @@ public class SC_MarksPlacer : MonoBehaviour
         // Checks if the first rune is null and searches for the next one
         if (placed_marks[0] == null)
         {
-            
             placed_marks.RemoveAt(0);
             for (int i = 0; i < placed_marks.Count; i++)
             {
@@ -424,10 +468,9 @@ public class SC_MarksPlacer : MonoBehaviour
                 break;
         }
         
-
         SetArrowPos();
 
-        UpdateActivateMarksUI();
+        UpdateActivateMarksUI(false);
     }
 
     private IEnumerator ActivateMarkAnimation()
