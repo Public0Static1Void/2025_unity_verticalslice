@@ -8,7 +8,13 @@ public class SC_Mark_Stone : SC_Mark
     {
         base.ActivateMark();
         //Instancia partículas y las destruye desués de X segundos
-        GameObject stone_wall = Instantiate(particles, transform.position, transform.rotation);
+        float dist = 0;
+        if (Physics.Raycast(transform.position + transform.forward, transform.up, out RaycastHit hit, 10))
+        {
+            Debug.Log($"Hit {hit.distance}");
+            dist = hit.distance;
+        }
+        GameObject stone_wall = Instantiate(particles, transform.position + transform.up * (10 - (10 - dist)), transform.rotation);
         Destroy(stone_wall, 5);
 
         DesactivateMark();
