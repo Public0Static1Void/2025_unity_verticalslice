@@ -15,7 +15,7 @@ public class SC_Mark_Stone : SC_Mark
             Debug.Log($"Hit {hit.distance}");
             dist = hit.distance;
         }
-        GameObject stone_wall = Instantiate(particles, transform.position + transform.up * (10 - (10 - dist)), transform.rotation);
+        GameObject stone_wall = Instantiate(particles, transform.position + transform.up * 10, transform.rotation);
         Destroy(stone_wall, 5);
 
         DesactivateMark();
