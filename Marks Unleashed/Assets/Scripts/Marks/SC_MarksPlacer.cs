@@ -662,24 +662,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
     private IEnumerator PlayChargeSoundRoutine(float duration)
     {
-        float timer = 0;
-        float timer_sound = 0;
-
         SC_SoundManager.instance.InstantiateSound(clip_charge_rune, transform.position);
-        /*
-        while (timer < duration * 0.95f && launching_disk)
-        {
-            if (timer_sound > duration * 0.1f)
-            {
-                float t = timer / duration;
-                //SC_SoundManager.instance.InstantiateSound(clip_charge_rune, transform.position, false, 0.5f + t);
-                timer_sound = 0;
-            }
-
-            timer_sound += Time.deltaTime;
-            timer += Time.deltaTime;
-            yield return null;
-        }*/
         yield return new WaitForSeconds(duration * 0.95f);
         SC_SoundManager.instance.InstantiateSound(clip_charge_rune_end, transform.position);
     }
