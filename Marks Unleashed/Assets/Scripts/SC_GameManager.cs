@@ -39,7 +39,7 @@ public class SC_GameManager : MonoBehaviour
     [Header("Translation")]
     public List<TMP_Text> texts_to_translate = new List<TMP_Text>();
     private List<string> texts_keys = new List<string>();
-    private SC_IdiomManager _idiomManager;
+    private SC_LanguageManager _idiomManager;
 
     void Awake()
     {
@@ -73,7 +73,7 @@ public class SC_GameManager : MonoBehaviour
 
     private void Start()
     {
-        _idiomManager = SC_IdiomManager.instance;
+        _idiomManager = SC_LanguageManager.instance;
         LoadTexts();
         // Get your unlocked marks
         for (int i = 0; i < unlocked_elements.Count; i++)

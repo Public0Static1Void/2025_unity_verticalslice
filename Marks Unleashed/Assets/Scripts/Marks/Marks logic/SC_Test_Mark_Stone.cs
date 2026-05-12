@@ -18,7 +18,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
 
     [Header("References")]
     public Material mat_decompose;
-    public GameObject ob_PiedraRotia;
+    public GameObject ob_BrokenRock;
     public AudioClip clip_break;
 
     private MeshRenderer _meshRenderer;
@@ -96,13 +96,13 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     private IEnumerator EsperarRomper()
     {
         yield return new WaitForSeconds(2);
-        ob_PiedraRotia.transform.SetParent(null, true);
-        ob_PiedraRotia.SetActive(true);
+        ob_BrokenRock.transform.SetParent(null, true);
+        ob_BrokenRock.SetActive(true);
         gameObject.SetActive(false);
 
-        for (int i = 0; i < ob_PiedraRotia.transform.childCount; i++)
+        for (int i = 0; i < ob_BrokenRock.transform.childCount; i++)
         {
-            SC_CoroutineRunner.instance.StartCoroutine(DecreaseTilLDieRoutine(ob_PiedraRotia.transform.GetChild(i)));
+            SC_CoroutineRunner.instance.StartCoroutine(DecreaseTilLDieRoutine(ob_BrokenRock.transform.GetChild(i)));
         }
 
         Vector3 random_offset = new Vector3(
@@ -118,7 +118,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             rb.AddForce(dir * force_explosion, ForceMode.Impulse);
         }
         
-        Destroy(ob_PiedraRotia, 20);
+        Destroy(ob_BrokenRock, 20);
 
         SC_SoundManager.instance.InstantiateSound(clip_break, transform.position);
     }

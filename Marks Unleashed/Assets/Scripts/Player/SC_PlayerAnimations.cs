@@ -21,7 +21,7 @@ public class SC_PlayerAnimations : MonoBehaviour
     {
         if (!player_move.can_move)
         {
-            anim.SetBool("Walk", false);
+            anim.SetBool("walk", false);
             return;
         }
 

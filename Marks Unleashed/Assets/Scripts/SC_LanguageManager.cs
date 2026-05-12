@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SC_IdiomManager : MonoBehaviour
+public class SC_LanguageManager : MonoBehaviour
 {
-    public static SC_IdiomManager instance { get; private set; }
+    public static SC_LanguageManager instance { get; private set; }
     public enum Language { SPANISH, ENGLISH, CATALAN }
 
     public Language _currentLanguage = Language.ENGLISH;

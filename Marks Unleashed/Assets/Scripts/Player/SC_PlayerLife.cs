@@ -289,6 +289,7 @@ public class SC_PlayerLife : SC_LifeSystem
 
     public override void Die()
     {
-        SceneManager.LoadScene(reload_scene);
+        SC_PlayerRespawn respawnScript = GetComponent<SC_PlayerRespawn>();
+        respawnScript.Respawn();
     }
 }
