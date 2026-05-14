@@ -162,7 +162,7 @@ public class SC_GameManager : MonoBehaviour
 
     public void ShowText(string text)
     {
-        txt_announce.text = text;
+        txt_announce.text = SC_LanguageManager.instance.GetText(text);
         StartCoroutine(ShowTextCoroutine(2));
     }
     private IEnumerator ShowTextCoroutine(float show_speed = 1)

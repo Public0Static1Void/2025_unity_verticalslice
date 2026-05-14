@@ -2738,7 +2738,7 @@ GameObject:
   - component: {fileID: 1120606524}
   - component: {fileID: 1120606525}
   m_Layer: 0
-  m_Name: IdiomManager
+  m_Name: LanguageManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2768,10 +2768,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1120606523}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ace0cf94704432149839909edefaa8dd, type: 3}
+  m_Script: {fileID: 11500000, guid: fe3834fc691f10a4b89c66e2115d428c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentLanguage: 0
+  _currentLanguage: 1
 --- !u!1 &1153171550
 GameObject:
   m_ObjectHideFlags: 0
@@ -5688,7 +5688,7 @@ SceneRoots:
   - {fileID: 669358345}
   - {fileID: 251158644}
   - {fileID: 1853097989}
-  - {fileID: 743501994}
   - {fileID: 2095708159}
   - {fileID: 1120606524}
   - {fileID: 826530269}
+  - {fileID: 743501994}
