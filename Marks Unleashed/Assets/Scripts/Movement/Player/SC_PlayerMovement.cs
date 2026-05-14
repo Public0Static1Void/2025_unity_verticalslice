@@ -28,6 +28,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public bool sliding = false;
     private float ground_collison_timer = 0;
     private bool can_play_ground_sound = true;
+    public LayerMask layer_ground;
 
     [Header("Air")]
     public AudioClip clip_air, clip_ground_hit, clip_jump;
@@ -110,7 +111,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private void Update()
     {
         bool start_grounded = grounded;
-        grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, transform.localScale.y + ground_offset);
+        grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, transform.localScale.y + ground_offset, layer_ground);
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 

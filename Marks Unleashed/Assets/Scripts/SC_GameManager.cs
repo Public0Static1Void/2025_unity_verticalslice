@@ -1,12 +1,13 @@
 using System;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using TMPro;
-using System.Collections;
+using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Unity.Mathematics;
 using UnityEngine.Video;
 
 
@@ -131,8 +132,9 @@ public class SC_GameManager : MonoBehaviour
     /// <summary>
     /// Returns all the components of type T attached on the parent children
     /// </summary>
-    public static T[] GetChildsComponents<T>(Transform parent) where T : Component
+    public static T[] GetChildsComponents<T>(Transform parent, bool ignore_parent = false) where T : Component
     {
+        /*
         T[] children = new T[parent.childCount];
 
         for (int i = 0; i < parent.childCount; i++)
@@ -141,6 +143,16 @@ public class SC_GameManager : MonoBehaviour
         }
 
         return children;
+        */
+        if (ignore_parent)
+        {
+            return parent
+                    .GetComponentsInChildren<T>(includeInactive: true)
+                    .Where(component => component.transform != parent)
+                    .ToArray();
+        }
+        else
+            return parent.GetComponentsInChildren<T>(includeInactive: true);
     }
 
     public static Vector3 LimitVector(Vector3 vector, float max_x, float min_x, float max_y, float min_y, float max_z, float min_z)
@@ -238,6 +250,7 @@ public class SC_GameManager : MonoBehaviour
         {
             if (l == null) continue;
             intensities.Add(l.intensity);
+            l.intensity = 0;
         }
 
         float timer = 0;

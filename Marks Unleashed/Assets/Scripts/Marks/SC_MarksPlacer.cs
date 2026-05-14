@@ -107,7 +107,7 @@ public class SC_MarksPlacer : MonoBehaviour
         mark_placeholder_image = mark_placeholder.GetComponentInChildren<UnityEngine.UI.Image>();
 
         // Marks activation order UI
-        im_activation_order = SC_GameManager.GetChildsComponents<UnityEngine.UI.Image>(ui_order_parent);
+        im_activation_order = SC_GameManager.GetChildsComponents<UnityEngine.UI.Image>(ui_order_parent, true);
 
         // Get the camera script
         cameraRotation = GetComponentInChildren<SC_CameraRotation>();
@@ -227,7 +227,7 @@ public class SC_MarksPlacer : MonoBehaviour
             transform_arrow.LookAt(transform);
         }
 
-        if (launching_disk)
+        if (launching_disk && launch_timer < 1)
         {
             launch_timer += Time.deltaTime;
         }

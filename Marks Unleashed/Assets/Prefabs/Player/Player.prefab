@@ -15393,6 +15393,92 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5174274437327528411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7286184670130585053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 201051317361968272}
+  - component: {fileID: 2899110617395239984}
+  - component: {fileID: 4776757870258698148}
+  m_Layer: 0
+  m_Name: Launch zone preview
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &201051317361968272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286184670130585053}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -9.460002, y: 3.7269998, z: 9.126259}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 8976910792773025556}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &2899110617395239984
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286184670130585053}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &4776757870258698148
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286184670130585053}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a606077e2a8a1474bbe4d5436effacb9, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7540175549442027599
 GameObject:
   m_ObjectHideFlags: 0
@@ -15893,6 +15979,7 @@ Transform:
   - {fileID: 7204168695175205811}
   - {fileID: 4031009933831871771}
   - {fileID: 2927575912067143945}
+  - {fileID: 201051317361968272}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5670107609483913175
@@ -16329,6 +16416,9 @@ MonoBehaviour:
   _ground_start_friction: 0
   coyote_time: 1
   sliding: 0
+  layer_ground:
+    serializedVersion: 2
+    m_Bits: 524283
   clip_air: {fileID: 8300000, guid: 463cbd631bb5e054fbbeb0fe5a6bc199, type: 3}
   clip_ground_hit: {fileID: 8300000, guid: bef328481e3152b459a8910718e605ec, type: 3}
   clip_jump: {fileID: 8300000, guid: ec5211932bc28c744be2f493e3bfd1ca, type: 3}
@@ -16585,9 +16675,12 @@ MonoBehaviour:
   lineRenderer: {fileID: 3777577418923214271}
   steps: 15
   timeStep: 0.1
-  ob_launch_preview: {fileID: 0}
+  ob_launch_preview: {fileID: 7286184670130585053}
   firePoint: {fileID: 5174274437327528411}
   force: 0
+  layer_terrain:
+    serializedVersion: 2
+    m_Bits: 491519
 --- !u!82 &364061599270309392
 AudioSource:
   m_ObjectHideFlags: 0
@@ -16697,6 +16790,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0837424835b704547ab606d0d601abec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  respawn_time: 1
+  im_fadeout: {fileID: 0}
 --- !u!1 &8581860238097454709
 GameObject:
   m_ObjectHideFlags: 0
