@@ -73,7 +73,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     private IEnumerator DecreaseTilLDieRoutine(Transform tr)
     {
         float timer = 0;
-        float duration = Random.Range(5, 8);
+        float duration = Random.Range(1.5f, 3.5f);
 
         Vector3 start_scale = tr.localScale;
 

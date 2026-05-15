@@ -15,16 +15,20 @@ public class SC_ExpandReveal : MonoBehaviour
     private void Start()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
-        _mat = _meshRenderer.sharedMaterial;
-
-        if (start_active)
+        if (_meshRenderer != null)
         {
-            Grow();
-        }
+            _mat = _meshRenderer.sharedMaterial;
+
+            if (start_active)
+            {
+                Grow();
+            }
+        }       
     }
 
     public void Grow()
     {
+        if (_mat == null) return;
         StartCoroutine(GrowRoutine());
     }
 
