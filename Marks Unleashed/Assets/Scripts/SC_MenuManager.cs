@@ -31,7 +31,7 @@ public class SC_MenuManager : MonoBehaviour
 
     private void Start()
     {
-        CloseAllMenus();
+        //CloseAllMenus();
 
         screenResolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();

@@ -61,8 +61,6 @@ public class SC_GameManager : MonoBehaviour
 
         Application.targetFrameRate = 60;
 
-        Time.timeScale = 0;
-
         if (!destroy_on_load)
             StartCoroutine(FadeOut());
 

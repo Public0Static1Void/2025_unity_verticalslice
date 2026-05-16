@@ -1,5 +1,4 @@
 using UnityEngine;
-using static SC_MenuPoint;
 
 //Para añadir otro menu:
 /*
@@ -12,9 +11,11 @@ using static SC_MenuPoint;
  */
 public class SC_CameraTransition : MonoBehaviour
 {
-    public float moveSpeed = 3f;
+    [Header("Transition Speed")]
+    public float moveSpeed = 300f;
+    public float rotSpeed = 120f;
 
-    private Transform currentTarget; //Punto al que se dirige la camara
+    private Transform currentTarget;
     private bool isMoving = false;
     private SC_MenuPoint[] menuPoints;
 
@@ -26,21 +27,12 @@ public class SC_CameraTransition : MonoBehaviour
     private void Update()
     {
         if (!isMoving || currentTarget == null) return;
-
+        
         transform.position = Vector3.Lerp(transform.position, currentTarget.position, Time.deltaTime * moveSpeed);
         transform.rotation = Quaternion.Lerp(transform.rotation, currentTarget.rotation, Time.deltaTime * moveSpeed);
-
-        //Sin este snap la camara se "acerca todo el rato"
-        float distance = Vector3.Distance(transform.position, currentTarget.position);
-        if (distance < 0.0001) 
-        {
-            transform.position = currentTarget.position;
-            transform.rotation = currentTarget.rotation;
-            isMoving = false;
-        }
     }
 
-    public void MoveToMenu(MenuType menu)
+    public void MoveToMenu(SC_MenuPoint.MenuType menu)
     {
         foreach (SC_MenuPoint point in menuPoints) 
         {
@@ -57,17 +49,27 @@ public class SC_CameraTransition : MonoBehaviour
     #region Funciones para mover Cam
     public void GoToMain()
     {
-        MoveToMenu(MenuType.MAIN);
+        MoveToMenu(SC_MenuPoint.MenuType.MAIN);
     }
-
     public void GoToOptions()
     {
-        MoveToMenu(MenuType.OPTIONS);
+        MoveToMenu(SC_MenuPoint.MenuType.OPTIONS);
     }
-
+    public void GoToGraphics()
+    {
+        MoveToMenu(SC_MenuPoint.MenuType.GRAPHICS);
+    }
+    public void GoToAudio()
+    {
+        MoveToMenu(SC_MenuPoint.MenuType.AUDIO);
+    }
+    public void GoToLanguage()
+    {
+        MoveToMenu(SC_MenuPoint.MenuType.LANGUAGE);
+    }
     public void GoToCredits()
     {
-        MoveToMenu(MenuType.CREDITS);
+        MoveToMenu(SC_MenuPoint.MenuType.CREDITS);
     }
     #endregion
 }

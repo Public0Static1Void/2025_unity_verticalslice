@@ -8,6 +8,9 @@ public class SC_MenuPoint : MonoBehaviour
     {
         MAIN,
         OPTIONS,
+        GRAPHICS,
+        AUDIO,
+        LANGUAGE,
         CREDITS
     }
 }
