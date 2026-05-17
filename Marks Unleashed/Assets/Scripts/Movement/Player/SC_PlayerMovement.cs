@@ -115,7 +115,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
         distance_from_ground = grounded ? hit.distance : transform.localScale.y + ground_offset;
 
-        if (grounded && rb.linearVelocity.magnitude >= 15)
+        if (grounded && rb.linearVelocity.magnitude >= 15 && !sliding)
             big_collision = true;
         else
             big_collision = false;

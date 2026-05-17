@@ -208,7 +208,7 @@ public class SC_Rope : MonoBehaviour
         {
             RopePoint point = points[i];
             // Get the nearby colliders
-            Collider[] colls = Physics.OverlapSphere(point.position, collision_radius, layer_collision);
+            Collider[] colls = Physics.OverlapSphere(point.position, collision_radius * 5, layer_collision);
 
             foreach (Collider coll in colls)
             {
@@ -219,6 +219,9 @@ public class SC_Rope : MonoBehaviour
                     continue;
                 }
                 if (coll.name == "Player" && playerMovement.grabbing || coll.name == "Collider Rope" || coll.name == "Ice zone")
+                    continue;
+                // Don't check physical collisions if they are outside the radius
+                if (Vector3.Distance(coll.transform.position, point.position) > collision_radius)
                     continue;
                 if (!can_move) continue; /// Don't check when the rope is fixed
 
@@ -246,9 +249,8 @@ public class SC_Rope : MonoBehaviour
     }
     public void OnUngrab()
     {
-        UnityEngine.Color c = ropeRenderer.material.color;
-        c.a = 1;
-        ropeRenderer.material.color = c;
+        // Set the rope opaque
+        ropeRenderer.material.SetFloat("_Tweak_transparency", 0);
     }
 
     private void HandlePlayerGrab(int i, RopePoint point)
@@ -263,9 +265,8 @@ public class SC_Rope : MonoBehaviour
         
         playerMovement.grabbing = true;
 
-        UnityEngine.Color c = ropeRenderer.material.color;
-        c.a = 0.5f;
-        ropeRenderer.material.color = c;
+        // Set the rope transparent
+        ropeRenderer.material.SetFloat("_Tweak_transparency", -0.5f);
         
         playerMovement.grabbedRope = this;
         playerMovement.grabPoint = points[grabbed_index];
@@ -503,6 +504,11 @@ public class SC_Rope : MonoBehaviour
         can_move = true;
     }
 
+    public void DeatachAnchor()
+    {
+        bottom_anchor = null;
+    }
+
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying)
@@ -537,7 +543,10 @@ public class SC_Rope : MonoBehaviour
                         2 * (1 - t) * t * control +
                         Mathf.Pow(t, 2) * end;
 
+                    Gizmos.color = UnityEngine.Color.white;
                     Gizmos.DrawWireSphere(pos, collision_radius);
+                    Gizmos.color = UnityEngine.Color.gray;
+                    Gizmos.DrawWireSphere(pos, collision_radius * 5);
                 }
             }
         }
@@ -546,6 +555,12 @@ public class SC_Rope : MonoBehaviour
         Gizmos.color = UnityEngine.Color.red;
 
         foreach (var p in points)
+        {
+            Gizmos.color = UnityEngine.Color.white;
             Gizmos.DrawWireSphere(p.position, collision_radius);
+            Gizmos.color = UnityEngine.Color.gray;
+            Gizmos.DrawWireSphere(p.position, collision_radius * 5);
+        }
+            
     }
 }

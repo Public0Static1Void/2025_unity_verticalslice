@@ -82,6 +82,10 @@ public class SC_MarksPlacer : MonoBehaviour
 
     public event Action event_destroy_runes;
 
+
+    // Routines
+    private List<Coroutine> routines_float = new List<Coroutine>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -98,7 +102,6 @@ public class SC_MarksPlacer : MonoBehaviour
         StartCoroutine(InitMarksUI());
 
         mark_placeholder = Instantiate(mark_placeholder, player.transform.position, Quaternion.identity);
-        marks_canvas.SetActive(false);
         mark_placeholder.SetActive(false);
         mark_placeholder.GetComponentInChildren<Canvas>().sortingOrder = -2;
         mark_placeholder_rb =  mark_placeholder.GetComponent<Rigidbody>();
@@ -260,7 +263,7 @@ public class SC_MarksPlacer : MonoBehaviour
         unlocked_marks.Add(marks[(int)type].element.el_type);
         marks_list_images[(int)type].gameObject.SetActive(true);
 
-        RefreshMarksList();
+        OpenMarkSelectionMenu();
     }
     public List<ElementTypes> GetUnlockedMarks()
     {
@@ -509,23 +512,36 @@ public class SC_MarksPlacer : MonoBehaviour
         cameraRotation.ShakeCamera(0.25f, 0.05f);
 
         placing_mark = false;
+
+        StartCoroutine(CloseRuneMenuAfterTime());
     }
+
+    /// <summary>
+    /// Closes the rune menu after 3 seconds of no use after launching a rune
+    /// </summary>
+    private IEnumerator CloseRuneMenuAfterTime()
+    {
+        yield return new WaitForSeconds(5);
+        if (!placing_mark)
+            OpenMarkSelectionMenu(-1);
+    }
+
     /// <summary>
     /// Instantiates a mark on the looking surface and adds it to the placed marks list
     /// </summary>
     private void PlaceMarkOnSurface(float timer)
     {
-        if (!open_menu || !placing_mark || unlocked_marks.Count <= 0) return;
+        if (unlocked_marks.Count <= 0) return;
 
-        OpenMarkSelectionMenu();
         PlaceMark((int)unlocked_marks[current_mark], timer);
+        StopCoroutine("CloseRuneMenuAfterTime");
     }
 
     #region SelectionMenu
     /// <summary>
     /// Opens or closes the mark in-game selection menu
     /// </summary>
-    private void OpenMarkSelectionMenu()
+    private void OpenMarkSelectionMenu(int set_state = 0)
     {
         if (unlocked_marks.Count <= 0) return;
         if (SC_GameManager.instance.first_play)
@@ -535,9 +551,21 @@ public class SC_MarksPlacer : MonoBehaviour
             SC_GameManager.instance.first_play = false;
         }
 
-        open_menu = !open_menu;
+        if (set_state < 0)
+            open_menu = false;
+        else if (set_state > 0)
+            open_menu = true;
+        else
+            open_menu = !open_menu;
         //_anim_arm.enabled = !open_menu;
-        marks_canvas.SetActive(open_menu);
+        //marks_canvas.SetActive(open_menu);
+
+        for (int i = 0; i < unlocked_marks.Count; i++)
+        {
+            int indx = (int)unlocked_marks[i];
+            
+            StartCoroutine(DissolveDiskAnimation(marks_list_images[indx].gameObject, open_menu ? 1 : 0, open_menu ? 0 : 1, 0.5f));
+        }
 
         int index = (int)unlocked_marks[current_mark];
         equipped_mark = marks[index].element;
@@ -549,19 +577,44 @@ public class SC_MarksPlacer : MonoBehaviour
         // Aquí hay que poner que haga animación etc
         if (open_menu)
         {
+            StopCoroutine("CloseRuneMenuAfterTime");
             cameraRotation.SetTurnSpeed(0.75f);
-            placing_mark = true;
         }
         else
         {
             cameraRotation.SetTurnSpeed(1);
             EnableElementHand(-1);
-            placing_mark = false;
         }
 
-        
+        if (open_menu)
+            RefreshMarksList();
+    }
 
-        RefreshMarksList();
+    private IEnumerator DissolveDiskAnimation(GameObject ob, float dissolve_amount, float start_amount, float duration)
+    {
+        if (dissolve_amount > 1) dissolve_amount = 1;
+        else if (dissolve_amount < 0) dissolve_amount = 0;
+            ob.SetActive(true);
+
+        Material mat = ob.GetComponentInChildren<MeshRenderer>().material;
+
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+
+            float dissolve = Mathf.Lerp(start_amount, dissolve_amount, t);
+
+            mat.SetFloat("_DissolveAmount", dissolve);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        mat.SetFloat("_DissolveAmount", dissolve_amount);
+
+        if (dissolve_amount <= 0)
+            ob.SetActive(false);
     }
 
     /// <summary>
@@ -607,7 +660,9 @@ public class SC_MarksPlacer : MonoBehaviour
         int rune_count = unlocked_marks.Count;
         if (rune_count == 0) return;
 
-        StopAllCoroutines();
+        foreach (Coroutine c in routines_float)
+            if (c != null) StopCoroutine(c);
+        routines_float.Clear();
 
         // Handle single mark edge case
         float step = rune_count > 1 ? Mathf.PI / (rune_count - 1) : 0f;
@@ -669,16 +724,14 @@ public class SC_MarksPlacer : MonoBehaviour
         }
 
         int index = (int)unlocked_marks[current_mark];
-        StartCoroutine(FlotateRoutine(marks_list_images[index].transform, 1, 0.05f, 0));
 
-        StartCoroutine(RotateRoutine(tr_left_arm, Quaternion.Euler(0, (225 / unlocked_marks.Count) * current_mark, 0), 0.25f));
+        routines_float.Add(StartCoroutine(FlotateRoutine(marks_list_images[index].transform, 1, 0.05f, 0)));
+        routines_float.Add(StartCoroutine(RotateRoutine(tr_left_arm, Quaternion.Euler(0, (225 / unlocked_marks.Count) * current_mark, 0), 0.25f)));
 
         Element element = marks[index].element;
         equipped_mark = element;
         mark_placeholder_image.sprite = element.im_mark_sprite;
         EnableElementHand(index);
-
-        
     }
     private Color GetOutlineColor(Renderer renderer)
     {
@@ -715,7 +768,7 @@ public class SC_MarksPlacer : MonoBehaviour
     #region Inputs
     public void OpenMarksMenu(InputAction.CallbackContext con)
     {
-        if (con.performed)
+        if (con.started)
         {
             OpenMarkSelectionMenu();
         }
@@ -733,8 +786,7 @@ public class SC_MarksPlacer : MonoBehaviour
     }
     public void SelectMarkOnMenu(InputAction.CallbackContext con)
     {
-        if (con.performed && marks_canvas.activeSelf
-            && placed_marks.Count < max_marks)
+        if (con.performed && unlocked_marks.Count > 0 && placed_marks.Count < max_marks)
         {
             if (!launch_mode)
             {
@@ -743,6 +795,11 @@ public class SC_MarksPlacer : MonoBehaviour
                 cameraRotation.ShakeCameraProgressive(0.05f, 0.2f, 1.5f);
                 cameraRotation.ShakeUIElements(10, 1.5f);
                 StartCoroutine(PlayChargeSoundRoutine(0.95f));
+
+                if (!open_menu)
+                    OpenMarkSelectionMenu();
+
+                placing_mark = true;
             }
             else
             {
