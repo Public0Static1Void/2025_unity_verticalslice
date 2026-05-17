@@ -15,6 +15,10 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public Vector3 vel = Vector3.zero;
     public AnimationCurve curve_acceleration;
     public float t_speed;
+    public float speed_sprint;
+    private float _speed_current;
+    private bool _sprinting = false;
+
     private Vector3 vel_ground;
 
     [Header("Ground")]
@@ -106,6 +110,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
         audio_effects.loop = true;
 
         _ground_start_friction = ground_friction;
+
+        _speed_current = speed;
     }
 
     private void Update()
@@ -151,6 +157,17 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 ground_collison_timer = 0;
             }
         }
+
+        if (_sprinting)
+        {
+            _speed_current += Time.deltaTime * acceleration * 20;
+            if (_speed_current > speed_sprint) _speed_current = speed_sprint;
+        }
+        else if (_speed_current > speed)
+        {
+            _speed_current -= Time.deltaTime * acceleration * 10;
+            if (_speed_current < speed) _speed_current = speed;
+        }
     }
 
     private void FixedUpdate()
@@ -171,7 +188,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
             if (!can_move) moveDir = Vector3.zero;
 
             // Get the desired speed for the frame
-            Vector3 desiredVel = moveDir * speed;
+            Vector3 desiredVel = moveDir * _speed_current;
 
             Vector3 horizontalVel = new Vector3(vel.x, 0, vel.z);
 
@@ -483,6 +500,14 @@ public class SC_PlayerMovement : SC_ObjectMovement
             input = Vector2.zero;
             moving = false;
         }
+    }
+
+    public void PlayerSprint(InputAction.CallbackContext con)
+    {
+        if (con.performed)
+            _sprinting = true;
+        if (con.canceled)
+            _sprinting = false;
     }
 
     public void PlayerJump(InputAction.CallbackContext con)

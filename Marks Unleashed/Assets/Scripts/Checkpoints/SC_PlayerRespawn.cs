@@ -91,5 +91,7 @@ public class SC_PlayerRespawn : MonoBehaviour
 
         im_fadeout.color = new Color(col.r, col.g, col.b, 0);
         im_fadeout.gameObject.SetActive(false);
+
+        _playerMovement.rb.useGravity = true;
     }
 }
