@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SC_PlayerMovement : SC_ObjectMovement
@@ -17,7 +18,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public float t_speed;
     public float speed_sprint;
     private float _speed_current;
-    private bool _sprinting = false;
+    // Stamina
+    public bool sprinting = false;
+    public const float max_stamina = 5;
+    private float _current_stamina = max_stamina;
+    private float _timer_stamina = 0;
 
     private Vector3 vel_ground;
 
@@ -45,6 +50,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public Volume camera_volume;
     private MotionBlur camera_blur;
     private float _timer_air = 0;
+    private float _timer_air_global = 0;
 
     public bool moving = false;
 
@@ -67,6 +73,12 @@ public class SC_PlayerMovement : SC_ObjectMovement
     [Header("Particles")]
     public ParticleSystem parts_smoke;
     public ParticleSystem parts_smoke_walk;
+
+    [Header("UI")]
+    public Image im_stamina_bar;
+    private Image _im_stamina_bar_parent;
+    public Color col_stamina_full;
+    public Color col_stamina_empty;
 
 
     private bool big_collision = false;
@@ -91,6 +103,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
         rb = GetComponent<Rigidbody>();
         playerLife = GetComponent<SC_PlayerLife>();
         _cameraRotation = SC_CameraRotation.instance;
+
+        _im_stamina_bar_parent = im_stamina_bar.transform.parent.GetComponent<Image>();
 
         camera_volume.profile.TryGet<MotionBlur>(out camera_blur);
         if (camera_blur != null)
@@ -133,7 +147,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             if (can_play_ground_sound)
             {
-                Debug.Log($"Enters {can_play_ground_sound}, Timer:{ground_collison_timer}");
                 SC_SoundManager.instance.InstantiateSound(clip_ground_hit_slow, transform.position);
                 can_play_ground_sound = false;
                 ground_collison_timer = 0;
@@ -158,16 +171,72 @@ public class SC_PlayerMovement : SC_ObjectMovement
             }
         }
 
-        if (_sprinting)
+        // The player was sprinting, jumped and touched the ground
+        if (_timer_air_global > 0.5f && grounded && sprinting && !big_collision)
+        {
+            Debug.Log("Groudn sprint");
+            SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down + Vector3.left, 0.4f, Quaternion.Euler(0, 0, 0), 0.5f, true);
+        }
+
+        if (!grounded)  _timer_air_global += Time.deltaTime;
+        else            _timer_air_global = 0;
+
+        
+
+
+        // STAMINA SYSTEM
+        /// Make the stamina bar slowly visible
+        Color col = im_stamina_bar.color;
+        if (sprinting)
         {
             _speed_current += Time.deltaTime * acceleration * 20;
             if (_speed_current > speed_sprint) _speed_current = speed_sprint;
+
+            _current_stamina -= Time.deltaTime;
+            if (_current_stamina <= 0) sprinting = false;
+
+            
+            if (col.a < 1)
+            {
+                col = new Color(col.r, col.g, col.b, col.a + Time.deltaTime);
+                _im_stamina_bar_parent.color = new Color(_im_stamina_bar_parent.color.r, _im_stamina_bar_parent.color.g, _im_stamina_bar_parent.color.b, col.a);
+                im_stamina_bar.color = col;
+            }
+
+            _timer_stamina = 0;
         }
-        else if (_speed_current > speed)
+        else
         {
-            _speed_current -= Time.deltaTime * acceleration * 10;
-            if (_speed_current < speed) _speed_current = speed;
+            if (_speed_current > speed)
+            {
+                _speed_current -= Time.deltaTime * acceleration * 10;
+                if (_speed_current < speed) _speed_current = speed;
+            }
+
+            if (_timer_stamina >= 0.5f)
+            {
+                _current_stamina += Time.deltaTime * 2;
+                if (_current_stamina > max_stamina) _current_stamina = max_stamina;
+            }
+            else
+                _timer_stamina += Time.deltaTime;
+
+            if (col.a > 0 && _current_stamina > max_stamina * 0.8f)
+            {
+                col = new Color(col.r, col.g, col.b, col.a - Time.deltaTime);
+                _im_stamina_bar_parent.color = new Color(_im_stamina_bar_parent.color.r, _im_stamina_bar_parent.color.g, _im_stamina_bar_parent.color.b, col.a);
+                im_stamina_bar.color = col;
+            }
         }
+
+        // Lerp the color
+        im_stamina_bar.color = Color.Lerp(
+            new Color(col_stamina_empty.r, col_stamina_empty.g, col_stamina_empty.b, col.a),
+            new Color(col_stamina_full.r, col_stamina_full.g, col_stamina_full.b, col.a),
+            _current_stamina / max_stamina
+        );
+
+        im_stamina_bar.transform.localScale = new Vector3(_current_stamina / max_stamina, im_stamina_bar.transform.localScale.y, im_stamina_bar.transform.localScale.z);
     }
 
     private void FixedUpdate()
@@ -505,9 +574,9 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public void PlayerSprint(InputAction.CallbackContext con)
     {
         if (con.performed)
-            _sprinting = true;
+            sprinting = true;
         if (con.canceled)
-            _sprinting = false;
+            sprinting = false;
     }
 
     public void PlayerJump(InputAction.CallbackContext con)
