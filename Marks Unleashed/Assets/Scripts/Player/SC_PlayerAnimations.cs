@@ -25,7 +25,8 @@ public class SC_PlayerAnimations : MonoBehaviour
             return;
         }
 
-        anim.SetBool("walk", player_move.moving && player_move.grounded);
+        anim.SetBool("walk", player_move.moving && player_move.grounded && !player_move.sprinting);
+        anim.SetBool("run", player_move.moving && player_move.grounded && player_move.sprinting);
         anim.SetBool("jump", !player_move.grounded);
         anim.SetBool("grab", player_grab.grabbing);
         anim.SetBool("pull", player_grab.launching);
