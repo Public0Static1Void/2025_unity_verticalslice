@@ -546,8 +546,8 @@ public class SC_MarksPlacer : MonoBehaviour
         if (unlocked_marks.Count <= 0) return;
         if (SC_GameManager.instance.first_play)
         {
-            SC_GameManager.instance.ShowTutorial(first_rune, 1);
-            SC_GameManager.instance.ShowText(SC_LanguageManager.instance.GetText("Launch_Text"));
+            //SC_GameManager.instance.ShowTutorial(first_rune, 1);
+            //SC_GameManager.instance.ShowText(SC_LanguageManager.instance.GetText("Launch_Text"));
             SC_GameManager.instance.first_play = false;
         }
 

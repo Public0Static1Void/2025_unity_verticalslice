@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -709,7 +709,7 @@ PrefabInstance:
       objectReference: {fileID: 7357453731384552512}
     - target: {fileID: 1060674803470407157, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: layer_terrain.m_Bits
-      value: 491515
+      value: 491483
       objectReference: {fileID: 0}
     - target: {fileID: 1536250707576338277, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: ground_offset
@@ -806,6 +806,10 @@ PrefabInstance:
     - target: {fileID: 6948238209509761939, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7534136154024164982, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 98079
       objectReference: {fileID: 0}
     - target: {fileID: 7730454806014991902, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

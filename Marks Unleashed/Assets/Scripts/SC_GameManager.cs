@@ -265,50 +265,85 @@ public class SC_GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ShowImageRoutine(Image im, float duration)
+    public void HideImage(Image im) => StartCoroutine(FadeRoutine(im, 1, false));
+    public void ShowImage(Image im) => StartCoroutine(FadeRoutine(im, 1, true));
+    public void HideText(TMP_Text text) => StartCoroutine(FadeTMPRoutine(text, 1, false));
+    public void ShowText(TMP_Text text) => StartCoroutine(FadeTMPRoutine(text, 1, true));
+
+    private IEnumerator FadeRoutine(Graphic graphic, float duration, bool fadeIn)
     {
         float timer = 0;
+        Color col = graphic.color;
+        col.a = fadeIn ? 0f : 1f;
+        graphic.color = col;
 
-        Color col = im.color;
-        col.a = 0;
-        im.color = col;
         while (timer < duration)
         {
             timer += Time.deltaTime;
-
-            col.a = 255 * timer;
-            im.color = col;
-
+            float t = Mathf.Clamp01(timer / duration);
+            col.a = fadeIn ? t : 1f - t;
+            graphic.color = col;
             yield return null;
         }
 
-        col.a = 255;
-        im.color = col;
-
-        yield return new WaitForSeconds(30);
-        HideImageRoutine(im, duration * 2);
+        col.a = fadeIn ? 1f : 0f;
+        graphic.color = col;
     }
-    private IEnumerator HideImageRoutine(Image im, float duration)
+    private IEnumerator FadeTMPRoutine(TMP_Text text, float duration, bool fadeIn)
     {
+        text.ForceMeshUpdate();
+        var info = text.textInfo;
         float timer = 0;
 
-        Color col = im.color;
-        col.a = 255;
-        im.color = col;
         while (timer < duration)
         {
             timer += Time.deltaTime;
+            float alpha = Mathf.Clamp01(fadeIn ? timer / duration : 1f - timer / duration);
+            byte a = (byte)(alpha * 255);
 
-            col.a = 255 * (1 - (timer / duration));
-            im.color = col;
-
+            for (int i = 0; i < info.characterCount; i++)
+            {
+                if (!info.characterInfo[i].isVisible) continue;
+                var charInfo = info.characterInfo[i];
+                int matIdx = charInfo.materialReferenceIndex;
+                int vertIdx = charInfo.vertexIndex;
+                var colors = info.meshInfo[matIdx].colors32;
+                for (int v = 0; v < 4; v++)
+                {
+                    colors[vertIdx + v].a = a;
+                }
+            }
+            text.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32); // colors only
             yield return null;
         }
-
-        col.a = 0;
-        im.color = col;
     }
 
+    public void WaveTextEffect(TMP_Text text) => StartCoroutine(WaveTextRoutine(text: text, speed: 2, amplitude:4));
+    private IEnumerator WaveTextRoutine(TMP_Text text, float speed = 2f, float amplitude = 8f)
+    {
+        text.ForceMeshUpdate();
+        var info = text.textInfo;
+        var origins = new Vector3[info.meshInfo.Length][];
+        for (int m = 0; m < info.meshInfo.Length; m++)
+            origins[m] = (Vector3[])info.meshInfo[m].vertices.Clone();
+
+        while (true)
+        {
+            for (int i = 0; i < info.characterCount; i++)
+            {
+                if (!info.characterInfo[i].isVisible) continue;
+                var charInfo = info.characterInfo[i];
+                int matIdx = charInfo.materialReferenceIndex;
+                int vertIdx = charInfo.vertexIndex;
+                float offset = Mathf.Sin(Time.time * speed + i * 0.5f) * amplitude;
+                var verts = info.meshInfo[matIdx].vertices;
+                for (int v = 0; v < 4; v++)
+                    verts[vertIdx + v] = origins[matIdx][vertIdx + v] + Vector3.up * offset;
+            }
+            text.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices); // vertices only
+            yield return null;
+        }
+    }
 
     public void LoadSceneAsync(string sceneName)
     {

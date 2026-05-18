@@ -174,7 +174,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
         // The player was sprinting, jumped and touched the ground
         if (_timer_air_global > 0.5f && grounded && sprinting && !big_collision)
         {
-            Debug.Log("Groudn sprint");
             SC_CameraRotation.instance.OffsetCameraAndReturn(Vector3.down + Vector3.left, 0.4f, Quaternion.Euler(0, 0, 0), 0.5f, true);
         }
 
@@ -205,7 +204,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
 
             _timer_stamina = 0;
         }
-        else
+        else if (grounded)
         {
             if (_speed_current > speed)
             {
