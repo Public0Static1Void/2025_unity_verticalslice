@@ -318,7 +318,7 @@ public class SC_GameManager : MonoBehaviour
         }
     }
 
-    public void WaveTextEffect(TMP_Text text) => StartCoroutine(WaveTextRoutine(text: text, speed: 2, amplitude:4));
+    public void WaveTextEffect(TMP_Text text) => StartCoroutine(WaveTextRoutine(text: text, speed: 3, amplitude:8));
     private IEnumerator WaveTextRoutine(TMP_Text text, float speed = 2f, float amplitude = 8f)
     {
         text.ForceMeshUpdate();
