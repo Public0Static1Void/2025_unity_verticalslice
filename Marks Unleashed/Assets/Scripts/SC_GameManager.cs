@@ -234,7 +234,7 @@ public class SC_GameManager : MonoBehaviour
 
     public void IncreaseLights(GameObject ob)
     {
-        Light[] lights = GetChildsComponents<Light>(ob.transform);
+        Light[] lights = GetChildsComponents<Light>(ob.transform, true);
         IncreaseLights(lights, 1);
     }
     public void IncreaseLights(Light[] lights, float duration)
