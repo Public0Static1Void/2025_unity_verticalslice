@@ -946,9 +946,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc323ab2c9caa3489ee1eb8183c13ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clips_walks:
+  ground_type_layer:
+    serializedVersion: 2
+    m_Bits: 1048576
+  ray_distance: 3
+  clips_walks_stone:
   - {fileID: 8300000, guid: 6a6afb45ebd6b8141a4db89f36aadca0, type: 3}
   - {fileID: 8300000, guid: 47c6843415f444946aa88856fbdaca85, type: 3}
+  clips_walk_grass:
+  - {fileID: 8300000, guid: 55c57b94fa8c42f49a5efefedbaf62b9, type: 3}
   walk_sound_delay: 0.5
   sprint_sound_delay: 0.3
 --- !u!4 &4085739079522064953 stripped
