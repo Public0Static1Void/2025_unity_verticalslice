@@ -32,7 +32,7 @@ public class SC_GameManager : MonoBehaviour
     public VideoPlayer video_air;
     public VideoPlayer video_ice;
 
-    private List<ElementTypes> unlocked_elements = new List<ElementTypes>();
+    [HideInInspector] public List<ElementTypes> unlocked_elements = new List<ElementTypes>();
 
     public bool first_play = true;
 
@@ -93,6 +93,7 @@ public class SC_GameManager : MonoBehaviour
     private IEnumerator FadeOut()
     {
         SetLoadingAlpha(1);
+        yield return new WaitForSeconds(0.5f);
         ob_loading_screen.gameObject.SetActive(true);
 
         float alpha = 1;
@@ -357,11 +358,12 @@ public class SC_GameManager : MonoBehaviour
         ob_loading_screen.gameObject.SetActive(true);
 
         float alpha = 0;
-
+        float duration = 3, timer = 0;
         // Fade in
-        while (alpha < 1)
+        while (timer < duration)
         {
-            alpha += Time.unscaledDeltaTime;
+            timer += Time.unscaledDeltaTime;
+            alpha = timer / duration;
             SetLoadingAlpha(alpha);
 
             im_loading_bar.fillAmount = alpha;

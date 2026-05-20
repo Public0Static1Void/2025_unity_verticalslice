@@ -17,6 +17,8 @@ public class SC_LobbyPathActivator : MonoBehaviour
     public GameObject door_air;
     public GameObject door_fire;
 
+    public Transform spawn_pos;
+
     void Start()
     {
         StartCoroutine(LateStart());
@@ -24,7 +26,7 @@ public class SC_LobbyPathActivator : MonoBehaviour
 
     private IEnumerator LateStart()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(4);
         unlocked_num = SC_MarksPlacer.Instance.GetUnlockedMarks().Count;
 
         UnlockElementGameObjects(unlocked_num);

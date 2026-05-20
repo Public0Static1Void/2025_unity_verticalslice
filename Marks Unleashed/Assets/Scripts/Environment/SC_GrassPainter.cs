@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [ExecuteInEditMode]
 public class GrassDensityPainter : MonoBehaviour
@@ -11,12 +13,12 @@ public class GrassDensityPainter : MonoBehaviour
     [Header("Brush Settings")]
     public float brushSize = 20f;
     [Range(0f, 1f)] public float brushStrength = 1f;
-    public bool eraseMode = false;  // true = paint black, false = paint white
+    public bool eraseMode = false;
 
+#if UNITY_EDITOR
     [ContextMenu("Create New Density Map")]
     public void CreateDensityMap()
     {
-        // Find a unique path
         string basePath = "Assets/GrassMaps/GrassDensityMap";
         string path = basePath + ".png";
         int index = 1;
@@ -33,9 +35,7 @@ public class GrassDensityPainter : MonoBehaviour
         tex.SetPixels(pixels);
         tex.Apply();
 
-        // Make sure the folder exists
         System.IO.Directory.CreateDirectory("Assets/GrassMaps");
-
         System.IO.File.WriteAllBytes(path, tex.EncodeToPNG());
         AssetDatabase.Refresh();
 
@@ -58,7 +58,9 @@ public class GrassDensityPainter : MonoBehaviour
         AssetDatabase.Refresh();
         Debug.Log("Saved!");
     }
+#endif
 
+    // Paint has no editor dependencies — stays outside the guard
     public void Paint(Vector2 uv)
     {
         if (densityMap == null) return;
@@ -78,13 +80,11 @@ public class GrassDensityPainter : MonoBehaviour
                 float dist = Vector2.Distance(new Vector2(x, y), new Vector2(centerX, centerY));
                 if (dist > radius) continue;
 
-                // Soft falloff
                 float falloff = 1f - (dist / radius);
                 Color current = densityMap.GetPixel(x, y);
                 densityMap.SetPixel(x, y, Color.Lerp(current, paintColor, falloff * brushStrength));
             }
         }
-
         densityMap.Apply();
     }
 }

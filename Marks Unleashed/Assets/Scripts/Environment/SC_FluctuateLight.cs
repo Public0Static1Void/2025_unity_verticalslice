@@ -12,9 +12,15 @@ public class SC_FluctuateLight : MonoBehaviour
 
     private float _timer = 0;
 
+    public bool use_start_intensity = false;
+
     void Start()
     {
         _light = GetComponent<Light>();
+        if (use_start_intensity)
+        {
+            start_intensity = _light.intensity;
+        }
     }
 
     void Update()

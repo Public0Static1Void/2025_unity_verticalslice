@@ -2965,6 +2965,7 @@ MonoBehaviour:
   speed: 5
   activate_delay: 1
   start_intensity: 40
+  use_start_intensity: 0
 --- !u!114 &210110763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15213,6 +15214,7 @@ GameObject:
   - component: {fileID: 1175787076}
   - component: {fileID: 1175787079}
   - component: {fileID: 1175787080}
+  - component: {fileID: 1175787081}
   m_Layer: 0
   m_Name: Cube (20)
   m_TagString: MovingPlatform
@@ -15419,6 +15421,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!65 &1175787081
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175787074}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.022189584, y: 0.022115123, z: 0.022060202}
+  m_Center: {x: 0.000023230445, y: -0.0000051008537, z: -0.00021995837}
 --- !u!1001 &1178781695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16683,6 +16706,7 @@ MonoBehaviour:
   speed: 5
   activate_delay: 1
   start_intensity: 40
+  use_start_intensity: 0
 --- !u!114 &1324513329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22562,6 +22586,7 @@ MonoBehaviour:
   speed: 5
   activate_delay: 1
   start_intensity: 40
+  use_start_intensity: 0
 --- !u!114 &1838495886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25711,6 +25736,7 @@ MonoBehaviour:
   speed: 5
   activate_delay: 1
   start_intensity: 40
+  use_start_intensity: 0
 --- !u!114 &2001560941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25923,6 +25949,7 @@ MonoBehaviour:
   speed: 5
   activate_delay: 1
   start_intensity: 40
+  use_start_intensity: 0
 --- !u!114 &2032583710
 MonoBehaviour:
   m_ObjectHideFlags: 0
