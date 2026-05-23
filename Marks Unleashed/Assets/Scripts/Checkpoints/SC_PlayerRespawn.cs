@@ -45,7 +45,7 @@ public class SC_PlayerRespawn : MonoBehaviour
         }
         else
         {
-            transform.position = startingPos;
+            StartCoroutine(WaitForTeleport(startingPos, respawn_time * 0.5f));
         }
 
         _playerMovement.StopMovement(respawn_time);
@@ -56,6 +56,12 @@ public class SC_PlayerRespawn : MonoBehaviour
 
         if (playerLife != null)
             playerLife.life = playerLife.max_life;
+    }
+    private IEnumerator WaitForTeleport(Vector3 pos, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        transform.position = pos;
+        playerLife.AttachCamera();
     }
 
     private IEnumerator FadeInFadeOutRoutine(float duration)

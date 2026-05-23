@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+using System.Linq.Expressions;
 
 public class SC_ObjectSpawner : MonoBehaviour
 {
@@ -22,21 +24,32 @@ public class SC_ObjectSpawner : MonoBehaviour
     public GameObject spawn_object;
     public Transform spawn_point;
     public ParticleSystem parts_spawn;
+    public MeshRenderer spawn_mesh;
 
     [Header("AudioClips")]
     public List<AudioClip> clips_spawn;
 
     private Rigidbody _rb;
 
+    private Coroutine _coroutine_shoot;
+
+    private MaterialPropertyBlock _mpb;
+    private Material _mat_spawner;
+    private Color _col_start;
+
     private void Start()
     {
         _spawned = new List<GameObject>();
         _rb = GetComponent<Rigidbody>();
+        _mat_spawner = spawn_mesh.material;
+        _col_start = GetMaterialColor(spawn_mesh);
+
+        _mpb = new MaterialPropertyBlock();
     }
 
     private void Update()
     {
-        if (!can_spawn) return;
+        if (!can_spawn || !loop) return;
 
         timer += Time.deltaTime;
         if (timer >= interval)
@@ -53,6 +66,8 @@ public class SC_ObjectSpawner : MonoBehaviour
 
     public void SpawnObject()
     {
+        if (!can_spawn) return;
+
         List<int> to_remove = new List<int>();
         for (int i = 0; i < _spawned.Count; i++)
         {
@@ -64,8 +79,11 @@ public class SC_ObjectSpawner : MonoBehaviour
         for (int i = 0; i < to_remove.Count; i++)
         {
             if (i > _spawned.Count - 1) break;
-
-            _spawned.RemoveAt(to_remove[i]);
+            try
+            {
+                _spawned.RemoveAt(to_remove[i]);
+            }
+            catch { }
             spawned--;
         }
         if (spawned < 0) spawned = 0;
@@ -86,12 +104,80 @@ public class SC_ObjectSpawner : MonoBehaviour
         _spawned.Add(instancied);
 
         // Add a recoil force
-        _rb.AddForce(-transform.forward * recoil_force, ForceMode.Impulse);
+        if (_rb != null)
+            _rb.AddForce(-transform.forward * recoil_force, ForceMode.Impulse);
+        else if (_coroutine_shoot == null)
+            _coroutine_shoot = StartCoroutine(RecoilRoutine(0.5f, 0.5f));
         // Spawn the particles
         parts_spawn.Play();
         // Play a sound
         SC_SoundManager.instance.InstantiateSound(clips_spawn[Random.Range(0, clips_spawn.Count)], transform.position);
 
         spawned++;
+    }
+
+    private IEnumerator RecoilRoutine(float distance, float duration)
+    {
+        Vector3 pos_start = transform.position;
+        Vector3 pos_end = pos_start - transform.forward * distance;
+
+        float timer = 0;
+
+        duration *= 0.25f;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            transform.position = Vector3.Lerp(pos_start, pos_end, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = pos_end;
+
+        duration *= 1.25f;
+        timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            transform.position = Vector3.Lerp(pos_end, pos_start, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = pos_start;
+
+        _coroutine_shoot = null;
+    }
+
+    public void Freeze()
+    {
+        spawn_mesh.GetPropertyBlock(_mpb);
+        _mpb.SetColor("_BaseColor", Color.cyan);
+        _mpb.SetColor("_1st_ShadeColor", Color.cyan);
+        spawn_mesh.SetPropertyBlock(_mpb);
+    }
+    public void UnFreeze()
+    {
+        spawn_mesh.GetPropertyBlock(_mpb);
+        _mpb.SetColor("_BaseColor", Color.white);
+        _mpb.SetColor("_1st_ShadeColor", Color.gray);
+        spawn_mesh.SetPropertyBlock(_mpb);
+    }
+
+    private Color GetMaterialColor(Renderer renderer)
+    {
+        // Always use material instance, never sharedMaterial
+        Material mat = renderer.material;
+
+        if (mat == null) return Color.black;
+
+        if (mat.HasProperty("_BaseColor"))
+            return mat.GetColor("_BaseColor");
+
+        return Color.black;
     }
 }

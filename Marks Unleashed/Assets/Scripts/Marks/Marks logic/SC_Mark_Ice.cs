@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 
 public class SC_Mark_Ice : SC_Mark
@@ -29,6 +30,12 @@ public class SC_Mark_Ice : SC_Mark
         {
             if (coll.name.Contains("Rope"))
                 coll.transform.parent.GetComponent<SC_Rope>().FixRope(range / 2);
+            else if (coll.name.Contains("Arrow spawner"))
+            {
+                SC_ObjectSpawner spawner = coll.gameObject.GetComponent<SC_ObjectSpawner>();
+                spawner.can_spawn = false;
+                spawner.Freeze();
+            }
 
             float freeze_time = range * 0.5f;
 
@@ -52,7 +59,6 @@ public class SC_Mark_Ice : SC_Mark
 
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
-                
             }
 
             Debug.Log($"{coll.name}: {coll.CompareTag("MovingPlatform")}");
@@ -94,7 +100,8 @@ public class SC_Mark_Ice : SC_Mark
             {
                 rb.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = true;
                 rb.isKinematic = true;
-            }  
+            }
+            
         }
         if (ob != null && ob.CompareTag("MovingPlatform"))
         {
@@ -106,6 +113,13 @@ public class SC_Mark_Ice : SC_Mark
                 movingPlatform.Slow(0, 4);
             }
         }
+        if (ob != null && ob.name.Contains("Arrow spawner"))
+        {
+            SC_ObjectSpawner spawner = ob.gameObject.GetComponent<SC_ObjectSpawner>();
+            spawner.can_spawn = true;
+            spawner.UnFreeze();
+        }
+            
     }
 
     private void OnDrawGizmos()

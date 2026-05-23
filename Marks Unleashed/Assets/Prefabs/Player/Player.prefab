@@ -9957,7 +9957,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 98111
+    m_Bits: 2195231
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -16411,6 +16411,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   t_speed: 0
   speed_sprint: 10
+  sprinting: 0
   grounded: 0
   ground_friction: 0.9
   ground_offset: 0.2
@@ -16437,6 +16438,9 @@ MonoBehaviour:
   playerLife: {fileID: 0}
   parts_smoke: {fileID: 2664860899613409095}
   parts_smoke_walk: {fileID: 503212857272967329}
+  im_stamina_bar: {fileID: 0}
+  col_stamina_full: {r: 0, g: 0, b: 0, a: 0}
+  col_stamina_empty: {r: 0, g: 0, b: 0, a: 0}
 --- !u!54 &2931825435595630837
 Rigidbody:
   m_ObjectHideFlags: 0
