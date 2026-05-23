@@ -16,6 +16,7 @@ public class SC_Mark_Stone : SC_Mark
             dist = hit.distance;
         }
         GameObject stone_wall = Instantiate(particles, transform.position + transform.up * (9 - (9 - dist)), transform.rotation);
+        stone_wall.GetComponent<SC_Test_Mark_Stone>().sc_Mark_Stone_Visualizer = GetComponentInChildren<SC_Mark_Stone_Visualizer>();
         Destroy(stone_wall, 5);
 
         DesactivateMark();
