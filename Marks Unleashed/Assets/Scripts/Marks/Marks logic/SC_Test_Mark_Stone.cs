@@ -38,12 +38,16 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _startRot = _rb.rotation;
+
+        if (!only_demostration)
+        {
+            _startRot = _rb.rotation;
+        }
+        
         _mat_hologram = GetComponentInChildren<MeshRenderer>().material;
     }
     private void Start()
     {
-        transform.rotation = _startRot;
         if (transform.parent != null)
         {
             int layer = ~LayerMask.GetMask("Player");
@@ -55,6 +59,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             }
 
             transform.position = transform.parent.position + transform.parent.up * (9 - (9 - dist));
+            //transform.rotation = transform.parent.rotation;
         }
     }
 
@@ -84,18 +89,27 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     }
     private IEnumerator ActivatePillarRoutine()
     {
-        _rb.rotation = _startRot;
-        _targetRot = _startRot * Quaternion.Euler(rotAngle, 0f, 0f);
-
         if (only_demostration)
         {
+            _startRot = transform.parent.rotation;
+            _rb.rotation = _startRot;
+
             StartCoroutine(DissolveHologram(0.5f, 0.1f));
             yield return new WaitForSeconds(0.4f);
-        } 
+            
+            Vector3 rotAxis = transform.parent != null
+                ? transform.parent.right
+                : transform.right;
+            _targetRot = Quaternion.AngleAxis(rotAngle, rotAxis) * _startRot;
+        }
+        else 
+        {
+            _targetRot = _startRot * Quaternion.Euler(rotAngle, 0f, 0f);
+        }
 
         float elapsed = 0f;
         while (elapsed < rotDuration) 
-        {
+        {           
             if (can_move)
             {
                 elapsed += Time.fixedDeltaTime;
@@ -108,11 +122,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         _rb.MoveRotation(_targetRot);
-        if (_playerRb != null && !only_demostration)
-        {
-            //_playerRb.AddForce(-transform.up * throwForce, ForceMode.Impulse);
-            StartCoroutine(MovePlayerRoutine(_playerRb.transform, sc_Mark_Stone_Visualizer.list_positions.Count, sc_Mark_Stone_Visualizer.list_positions));
-        }
+        
 
         _rb.linearVelocity = Vector3.zero;
 
@@ -127,12 +137,18 @@ public class SC_Test_Mark_Stone : MonoBehaviour
         }
     }
 
-    private IEnumerator MovePlayerRoutine(Transform tr, int total_points, List<Vector3> points)
+    private IEnumerator MovePlayerRoutine(Transform tr, Rigidbody p_rb, int total_points, List<Vector3> points)
     {
-        Collider coll = _playerRb.transform.GetComponent<Collider>();
-        coll.enabled = false;
+        Collider[] colls = _playerRb.transform.GetComponents<Collider>();
+        foreach (Collider coll in colls)
+        {
+            coll.enabled = false;
+        }
+        p_rb.useGravity = false;
+
+
         float timer = 0;
-        float duration = 0.1f * total_points;
+        float duration = 0.1f;
 
         for (int i = 1; i < total_points; i++)
         {
@@ -145,9 +161,15 @@ public class SC_Test_Mark_Stone : MonoBehaviour
                 timer += Time.deltaTime;
                 yield return null;
             }
+            timer = 0;
+            start_pos = tr.position;
         }
 
-        coll.enabled = true;
+        foreach (Collider coll in colls)
+        {
+            coll.enabled = true;
+        }
+        p_rb.useGravity = true;
     }
 
     private IEnumerator EsperarRomper()
@@ -215,8 +237,6 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             float amount = dissolve_amount > 0.1f ? t : 1 - t;
             float lerp = Mathf.Lerp(current_dissolve, amount, t);
             _mat_hologram.SetFloat("_DissolveAmount", lerp);
-
-            Debug.Log(amount);
 
             timer += Time.deltaTime;
             yield return null;

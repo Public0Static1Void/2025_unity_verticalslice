@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -35,9 +36,14 @@ public class SC_PlayerLife : SC_LifeSystem
     private float target_intensity = 0;
     public Color target_color = Color.white;
 
+    public Transform main_camera;
+
     [Header("Materials")]
     [SerializeField] private Material fire_damage_material;
     [SerializeField] private Material ice_damage_material;
+
+    private Coroutine routine_die;
+    private bool camera_deattached = false;
 
     private void Start()
     {
@@ -291,5 +297,46 @@ public class SC_PlayerLife : SC_LifeSystem
     {
         SC_PlayerRespawn respawnScript = GetComponent<SC_PlayerRespawn>();
         respawnScript.Respawn();
+        DeattachCamera();
+    }
+
+    public void DeattachCamera()
+    {
+        if (camera_deattached) return;
+        camera_deattached = true;
+
+        SC_CameraRotation.instance.canMoveCamera = false;
+
+        Vector3 pos_start_local = main_camera.localPosition;
+        Vector3 pos_start = main_camera.position;
+        main_camera.parent = null;
+        main_camera.position = pos_start;
+
+        BoxCollider coll = main_camera.GetComponent<BoxCollider>();
+        coll.enabled = true;
+        Rigidbody rb = main_camera.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.linearVelocity = SC_PlayerMovement.instance.rb.linearVelocity * 0.25f;
+        rb.AddForce((main_camera.transform.right + Vector3.up) * 0.5f, ForceMode.Impulse);
+        rb.AddTorque(-transform.right * 0.5f, ForceMode.Impulse);
+
+        SC_Arrow[] arrows = transform.GetComponentsInChildren<SC_Arrow>();
+        foreach (SC_Arrow arrow in arrows)
+            Destroy(arrow.gameObject);
+    }
+    public void AttachCamera()
+    {
+        if (!camera_deattached) return;
+
+        BoxCollider coll = main_camera.GetComponent<BoxCollider>();
+        Rigidbody rb = main_camera.GetComponent<Rigidbody>();
+
+        coll.enabled = false;
+        rb.isKinematic = true;
+
+        main_camera.SetParent(SC_PlayerMovement.instance.transform, true);
+        SC_CameraRotation.instance.canMoveCamera = true;
+
+        camera_deattached = false;
     }
 }

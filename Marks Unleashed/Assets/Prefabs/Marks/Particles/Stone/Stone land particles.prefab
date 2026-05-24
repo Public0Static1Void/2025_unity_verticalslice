@@ -14820,7 +14820,7 @@ MonoBehaviour:
   layer_trajectory_collision:
     serializedVersion: 2
     m_Bits: 2064287
-  force: 450
+  force: 400
   list_positions: []
 --- !u!1 &6527826006315187323
 GameObject:
@@ -14878,7 +14878,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0a9207527a28c094595c24ed293ef52f, type: 2}
+  - {fileID: 2100000, guid: 06d8d1e7e5a540146b5b13629a6ff5f7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14910,13 +14910,31 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4990177
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -15139,6 +15157,10 @@ PrefabInstance:
       propertyPath: only_demostration
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5783338239483755504, guid: 0ce496ea19fa0344e9d576d74a70d5ac, type: 3}
+      propertyPath: sc_Mark_Stone_Visualizer
+      value: 
+      objectReference: {fileID: 74788109892745892}
     - target: {fileID: 5783338239483755504, guid: 0ce496ea19fa0344e9d576d74a70d5ac, type: 3}
       propertyPath: _rbs_stone_pieces.Array.size
       value: 0

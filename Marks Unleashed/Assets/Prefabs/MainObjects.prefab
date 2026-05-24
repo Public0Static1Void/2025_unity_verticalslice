@@ -816,6 +816,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6608115200241079631, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+      propertyPath: main_camera
+      value: 
+      objectReference: {fileID: 281938875709490422}
+    - target: {fileID: 6608115200241079631, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: image_vignette
       value: 
       objectReference: {fileID: 131063852329265925}
@@ -846,10 +850,6 @@ PrefabInstance:
     - target: {fileID: 6948238209509761939, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 7534136154024164982, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 98079
       objectReference: {fileID: 0}
     - target: {fileID: 7730454806014991902, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -922,6 +922,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 080095c9e68f6a345bd60d87008f2758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &281938875709490422 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5174274437327528411, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}
+  m_PrefabInstance: {fileID: 4910914561495999789}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1171755697952035039 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6081543257605256690, guid: 3f9af51cca318ff4093b8535b1f3e052, type: 3}

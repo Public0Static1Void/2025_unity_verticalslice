@@ -10,6 +10,7 @@ public class SC_Arrow : MonoBehaviour
     private Transform _parent = null;
 
     public ElementTypes type_element;
+    public float hit_force = 100;
 
     private LayerMask _layer_burnable;
     private float _range_burn = 1;
@@ -61,6 +62,16 @@ public class SC_Arrow : MonoBehaviour
             transform.SetParent(collision.transform, true);
 
             GetComponent<Collider>().enabled = false;
+        }
+        
+    }
+    private void OnTriggerEnter(Collider collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.GetComponent<SC_PlayerLife>().Damage(4);
+            collision.gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * hit_force, ForceMode.Impulse);
+            SC_CameraRotation.instance.ShakeCamera(1, 0.25f);
         }
     }
 }

@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 3153976306213658494}
   - component: {fileID: 4212247479133274739}
+  - component: {fileID: 1851898654662141012}
   - component: {fileID: 5288491991399378895}
   - component: {fileID: 5617228880140706224}
   - component: {fileID: 6678635897816563323}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Arrow parent
   m_TagString: Arrow
   m_Icon: {fileID: 0}
@@ -57,6 +58,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.1, y: 0.1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &1851898654662141012
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799877573106548416}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3, y: 0.3, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5288491991399378895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,6 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type_element: 7
+  hit_force: 100
 --- !u!54 &6678635897816563323
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -178,6 +201,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 699aa2709ce5a7244b6d4de123013ff6, type: 3}
       propertyPath: m_Name
       value: Dardo Runebound
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 699aa2709ce5a7244b6d4de123013ff6, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

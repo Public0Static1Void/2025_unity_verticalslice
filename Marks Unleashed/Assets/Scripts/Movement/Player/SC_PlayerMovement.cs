@@ -241,6 +241,8 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private void FixedUpdate()
     {
         HandleGroundAttachment();
+        
+        
 
         if (grabbing && grabPoint != null)
         {
@@ -395,6 +397,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
         else
         {
             vel_ground = Vector3.zero;
+            lastGroundPos = transform.position;
         }
     }
     private void HandleCameraDirection(Vector2 dir)

@@ -1,6 +1,7 @@
 using System.Drawing;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class SC_Mark_Stone_Visualizer : MonoBehaviour
 {
@@ -19,8 +20,12 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
     public float trjy_time_between_points = 0.1f;
     public LayerMask layer_trajectory_collision;
     public float force = 10;
+    private Material mat_line;
 
     public List<Vector3> list_positions = new List<Vector3>(); /// Trajectory points
+
+    private bool _active = false;
+    private Coroutine _routine_progress;
 
     void Start()
     {
@@ -31,6 +36,8 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
         _throw_force = ob_previsualization.throwForce;
         trajectory_renderer.useWorldSpace = true;
 
+        mat_line = trajectory_renderer.material;
+
         CalculateTrajectory();
     }
 
@@ -40,17 +47,22 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
         Vector3 dir = (transform.position - _player.transform.position).normalized;
         // Check if the player is looking in direction to this object
         float dot = Vector3.Dot(_player.transform.forward, dir);
-        if (dot > 0.9f || dot < -0.6f) /// 1 looking 0 looking sideways -1 looking inverse
+        if (!_active && (dot > 0.8f || dot < -0.6f))
         {
             ob_previsualization.ActivatePillar();
+            if (_routine_progress == null)
+                _routine_progress = StartCoroutine(SetLineProgressively(0.5f, 1));
+            _active = true;
         }
-        else
+        else if (_active && dot < 0.75f && dot > -0.5f) // Less threshold to avoid jitter on the detection
         {
             ob_previsualization.DeactivatePillar();
+            if (_routine_progress == null)
+                _routine_progress = StartCoroutine(SetLineProgressively(0.5f, 0));
+            _active = false;
         }
-        //Debug.Log($"Condition: {dot > 9}, dot: {dot}");
 
-        
+
     }
 
     #region Trajectory calculation
@@ -70,6 +82,7 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
         DrawTrajectory(transform.position, launch_force);
     }
 
+    #region DrawTrajectory
     private void DrawTrajectory(Vector3 pos_start, Vector3 vel_start)
     {
         list_positions.Clear();
@@ -90,8 +103,6 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
                 trajectory_renderer.positionCount = i + 1;
                 trajectory_renderer.SetPosition(i, hit.point);
 
-                
-
                 pos_current = hit.point;
                 break;
             }
@@ -102,6 +113,25 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
 
         tr_hit_point.position = pos_current;
     }
+
+    private IEnumerator SetLineProgressively(float duration, float new_progress)
+    {
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+            mat_line.SetFloat("_Progress", new_progress > 0 ? t : 1 - t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        _routine_progress = null;
+    }
     #endregion
+
+    #endregion
+
 
 }
