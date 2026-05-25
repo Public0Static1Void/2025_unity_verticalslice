@@ -6280,6 +6280,7 @@ MonoBehaviour:
   spawn_object: {fileID: 1799877573106548416, guid: 5e27002fbbe13c74aadfd1b20427410a, type: 3}
   spawn_point: {fileID: 1358378401}
   parts_spawn: {fileID: 128289180}
+  spawn_mesh: {fileID: 0}
   clips_spawn:
   - {fileID: 8300000, guid: 75fb07be920f7d4489ed2cc05155dd1f, type: 3}
   - {fileID: 8300000, guid: 9530ab38c5ad00447b71ecf885dfede0, type: 3}
@@ -7986,6 +7987,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1219870973282639654, guid: c36fcad6863ae40488d47e2e75b3dfa1, type: 3}
+      propertyPath: codexManager
+      value: 
+      objectReference: {fileID: 1672965556}
+    - target: {fileID: 1219870973282639654, guid: c36fcad6863ae40488d47e2e75b3dfa1, type: 3}
+      propertyPath: entryToUnlock
+      value: 
+      objectReference: {fileID: 11400000, guid: 400a8defd12a36c43b285caea61ff8a3, type: 2}
+    - target: {fileID: 1219870973282639654, guid: c36fcad6863ae40488d47e2e75b3dfa1, type: 3}
       propertyPath: events_on_pick.m_PersistentCalls.m_Calls.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -8436,6 +8445,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+--- !u!114 &1672965556 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5234274826522540464, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+  m_PrefabInstance: {fileID: 1672965555}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ac00af8131c5ae48ab70cabbc4a7694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1675006925
 PrefabInstance:
   m_ObjectHideFlags: 0
