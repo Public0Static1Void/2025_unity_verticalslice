@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,6 +8,9 @@ public class SC_PickMark : SC_Interactable
     public ElementTypes elementType;
 
     public UnityEvent events_on_pick;
+
+    public SC_CodexManager codexManager;
+    public SO_CodexEntry entryToUnlock;
 
     private string text = "Open_Rune_Menu";
 
@@ -27,6 +31,7 @@ public class SC_PickMark : SC_Interactable
 
         events_on_pick?.Invoke();
 
+        codexManager.UnlockEntry(entryToUnlock);
         Destroy(gameObject);
     }
 }
