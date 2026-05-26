@@ -35,16 +35,16 @@ public class SC_ArrowCoordiner : MonoBehaviour
 
                 if (!sequential)
                 {
-                    list_arrow_spawners[_current_shots].SpawnObject();
+                    list_arrow_spawners[_current_shots].PrepareShoot();
                     _current_shots++;
                 }
                 else
                 {
-                    list_arrow_spawners[_current_shots].SpawnObject();
+                    list_arrow_spawners[_current_shots].PrepareShoot();
                     int next = _current_shots + 1;
                     if (next < _shoot_num)
                     {
-                        list_arrow_spawners[next].SpawnObject();
+                        list_arrow_spawners[next].PrepareShoot();
                         _current_shots = Mathf.Min(_current_shots + 2, _shoot_num);
                     }
                     else
@@ -65,4 +65,6 @@ public class SC_ArrowCoordiner : MonoBehaviour
             }
         }
     }
+
+    public void SetShootersState(bool v) => active = v;
 }

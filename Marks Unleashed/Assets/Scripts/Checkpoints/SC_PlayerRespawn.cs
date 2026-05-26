@@ -43,10 +43,8 @@ public class SC_PlayerRespawn : MonoBehaviour
         {
             _respawning = true;
         }
-        else
-        {
-            StartCoroutine(WaitForTeleport(startingPos, respawn_time * 0.5f));
-        }
+
+        StartCoroutine(WaitForTeleport(startingPos, respawn_time * 0.5f));
 
         _playerMovement.StopMovement(respawn_time);
         StartCoroutine(FadeInFadeOutRoutine(respawn_time));

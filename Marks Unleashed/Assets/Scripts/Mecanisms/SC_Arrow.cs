@@ -5,7 +5,7 @@ using static UnityEngine.ParticleSystem;
 [RequireComponent(typeof(SC_OrientToMovement))]
 public class SC_Arrow : MonoBehaviour
 {
-    SC_OrientToMovement _orient;
+    private SC_OrientToMovement _orient;
 
     private Transform _parent = null;
 
@@ -17,13 +17,20 @@ public class SC_Arrow : MonoBehaviour
 
     private List<string> _affected_names = new List<string>();
 
+    [Header("Sounds")]
+    public List<AudioClip> clips_hit_normal;
+    public List<AudioClip> clips_hit_flesh;
+
+    [Header("Particles")]
+    public ParticleSystem parts_hit;
+
     private void Start()
     {
         _orient = GetComponent<SC_OrientToMovement>();
 
         _layer_burnable = 1 << LayerMask.NameToLayer("Combustible");
 
-        Destroy(transform.parent != null ? transform.parent.gameObject : gameObject, 10);
+        Destroy(transform.parent != null ? transform.parent.gameObject : gameObject, 30);
     }
 
     private void Update()
@@ -61,17 +68,34 @@ public class SC_Arrow : MonoBehaviour
             _orient._rb.isKinematic = true;
             transform.SetParent(collision.transform, true);
 
-            GetComponent<Collider>().enabled = false;
+            Collider[] colls = GetComponents<Collider>();
+            foreach (Collider coll in colls)
+            {
+                if (!coll.isTrigger)
+                {
+                    coll.enabled = false;
+                    break;
+                }
+            }
+
+            parts_hit.Play();
+
+            Destroy(gameObject, 3);
         }
-        
     }
     private void OnTriggerEnter(Collider collision)
     {
+        if (transform.parent != null) return;
+
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<SC_PlayerLife>().Damage(4);
-            collision.gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * hit_force, ForceMode.Impulse);
-            SC_CameraRotation.instance.ShakeCamera(1, 0.25f);
+            collision.gameObject.GetComponent<SC_PlayerLife>().Damage(damage: 4, impulse: transform.forward * hit_force);
+
+            SC_SoundManager.instance.InstantiateSound(clips_hit_flesh[Random.Range(0, clips_hit_flesh.Count)], transform.position, pitch: Random.Range(0.8f, 1.2f));
+        }
+        else
+        {
+            SC_SoundManager.instance.InstantiateSound(clips_hit_normal[Random.Range(0, clips_hit_normal.Count)], transform.position, volume: 0.25f, pitch: Random.Range(1f, 1.25f));
         }
     }
 }

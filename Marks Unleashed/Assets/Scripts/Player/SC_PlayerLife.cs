@@ -20,6 +20,7 @@ public class SC_PlayerLife : SC_LifeSystem
     [Header("References")]
     public GameObject applied_elements_parent;
     private List<Image> applied_elements_images = new List<Image>();
+    private Rigidbody rb;
 
     public Volume camera_volume;
     private Vignette camera_vignette = null;
@@ -45,8 +46,11 @@ public class SC_PlayerLife : SC_LifeSystem
     private Coroutine routine_die;
     private bool camera_deattached = false;
 
+    private bool dying = false;
+
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
         // Load volume component
         camera_volume.profile.TryGet<Vignette>(out Vignette v);
         if (v != null)
@@ -136,6 +140,8 @@ public class SC_PlayerLife : SC_LifeSystem
 
     private IEnumerator Routine_damage_effect(float duration, Material damageMat)
     {
+        float start_duration = duration;
+
         if (damageMat == null)
         {
             Debug.LogError("Material pasado a la corutina es null");
@@ -144,7 +150,7 @@ public class SC_PlayerLife : SC_LifeSystem
         Debug.Log("Corutina Routine_damage_effect INICIADA (Fade In)");
         // Fade in
         float timer = 0;
-
+        duration = 0.1f;
         while (timer < duration)
         {
             float t = Mathf.SmoothStep(0f, 1f, timer / duration);
@@ -164,6 +170,7 @@ public class SC_PlayerLife : SC_LifeSystem
         Debug.Log("Fade In terminado, empezando Fade Out");
         //Fade Out
         timer = 0f;
+        duration = start_duration * 1.25f;
         while (timer < duration)
         {
             float t = Mathf.SmoothStep(0f, 1f, timer / duration);
@@ -201,14 +208,13 @@ public class SC_PlayerLife : SC_LifeSystem
             applied_elements_images[i].sprite = sprite;
         }
     }
-    public override void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL)
+    public override void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL, Vector3 impulse = default)
     {
         Debug.Log("Damage() llamado - Recibido daño: " + damage + " | Tipo: " + damage_type);
 
-        base.Damage(damage);
+        base.Damage(damage); // Apply the damage
 
         SC_CameraRotation.instance.ShakeCamera(0.25f, 0.25f);
-
 
         if (damage_type == Damage_type.NORMAL)
         {
@@ -247,6 +253,12 @@ public class SC_PlayerLife : SC_LifeSystem
 
         StartCoroutine(Routine_damage_effect(vignette_duration, instanceMat));
         RecoverHealth();
+
+        // Add the impulse if passed
+        if (impulse != default)
+        {
+            rb.AddForce(impulse, ForceMode.Impulse);
+        }
     }
 
 
@@ -295,9 +307,20 @@ public class SC_PlayerLife : SC_LifeSystem
 
     public override void Die()
     {
+        if (dying) return;
+        dying = true;
+
         SC_PlayerRespawn respawnScript = GetComponent<SC_PlayerRespawn>();
         respawnScript.Respawn();
         DeattachCamera();
+
+        StartCoroutine(DeathRecover());
+    }
+
+    private IEnumerator DeathRecover()
+    {
+        yield return new WaitForSeconds(1);
+        dying = false;
     }
 
     public void DeattachCamera()
@@ -316,8 +339,8 @@ public class SC_PlayerLife : SC_LifeSystem
         coll.enabled = true;
         Rigidbody rb = main_camera.GetComponent<Rigidbody>();
         rb.isKinematic = false;
-        rb.linearVelocity = SC_PlayerMovement.instance.rb.linearVelocity * 0.25f;
-        rb.AddForce((main_camera.transform.right + Vector3.up) * 0.5f, ForceMode.Impulse);
+        rb.linearVelocity = SC_PlayerMovement.instance.rb.linearVelocity * 0.1f;
+        rb.AddForce((main_camera.transform.right + Vector3.up) * 0.1f, ForceMode.Impulse);
         rb.AddTorque(-transform.right * 0.5f, ForceMode.Impulse);
 
         SC_Arrow[] arrows = transform.GetComponentsInChildren<SC_Arrow>();

@@ -26,7 +26,7 @@ public class SC_LifeSystem : MonoBehaviour
         if (update_life_on_start)
             life = max_life;
     }
-    public virtual void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL)
+    public virtual void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL, Vector3 impulse = default)
     {
         life -= damage;
         if (life <= 0)

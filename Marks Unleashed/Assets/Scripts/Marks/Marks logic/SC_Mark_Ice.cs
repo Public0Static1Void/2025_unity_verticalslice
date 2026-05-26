@@ -36,6 +36,8 @@ public class SC_Mark_Ice : SC_Mark
                 spawner.can_spawn = false;
                 spawner.Freeze();
             }
+            else if (coll.name.Contains("FreezableWater"))
+                coll.GetComponent<SC_FreezableWater>().SetFreeze();
 
             float freeze_time = range * 0.5f;
 
@@ -113,13 +115,14 @@ public class SC_Mark_Ice : SC_Mark
                 movingPlatform.Slow(0, 4);
             }
         }
-        if (ob != null && ob.name.Contains("Arrow spawner"))
+        else if (ob != null && ob.name.Contains("Arrow spawner"))
         {
             SC_ObjectSpawner spawner = ob.gameObject.GetComponent<SC_ObjectSpawner>();
             spawner.can_spawn = true;
             spawner.UnFreeze();
         }
-            
+        else if (ob != null && ob.name.Contains("FreezableWater"))
+            ob.GetComponent<SC_FreezableWater>().UnFreeze();
     }
 
     private void OnDrawGizmos()

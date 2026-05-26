@@ -115,7 +115,7 @@ public abstract class SC_Zone : MonoBehaviour
                 }
             }
 
-            for (int i = 0; i < remove_indexs.Count; i++)
+            for (int i = 0; i < remove_indexs.Count && i < affected_names.Count; i++)
             {
                 RemoveName(affected_names[i]);
             }

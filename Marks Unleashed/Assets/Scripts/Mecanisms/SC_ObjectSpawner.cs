@@ -1,7 +1,8 @@
-using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class SC_ObjectSpawner : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class SC_ObjectSpawner : MonoBehaviour
 
     private float timer = 0;
 
-    public float spawn_force = 5, recoil_force = 20;
+    public float spawn_force = 5, recoil_force = 20, force_variation = 10;
 
     [Header("Spawned cubes")]
     public int spawned_max = 5;
@@ -36,15 +37,21 @@ public class SC_ObjectSpawner : MonoBehaviour
     private MaterialPropertyBlock _mpb;
     private Material _mat_spawner;
     private Color _col_start;
+    private Vector3 _start_position;
+
+    private SC_Cube _cube;
 
     private void Start()
     {
         _spawned = new List<GameObject>();
         _rb = GetComponent<Rigidbody>();
+        _cube = GetComponent<SC_Cube>();
         _mat_spawner = spawn_mesh.material;
         _col_start = GetMaterialColor(spawn_mesh);
 
         _mpb = new MaterialPropertyBlock();
+
+        _start_position = transform.position;
     }
 
     private void Update()
@@ -60,7 +67,7 @@ public class SC_ObjectSpawner : MonoBehaviour
             }
             timer = 0;
 
-            SpawnObject();
+            PrepareShoot();
         }
     }
 
@@ -94,12 +101,11 @@ public class SC_ObjectSpawner : MonoBehaviour
         Rigidbody rb = instancied.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.AddForce(transform.forward * spawn_force, ForceMode.Impulse);
+            rb.AddForce(transform.forward * (spawn_force + Random.Range(-force_variation, force_variation)), ForceMode.Impulse);
         }
 
-        SC_Cube cube = instancied.GetComponent<SC_Cube>(); // Assign this parent spawner
-        if (cube != null)
-            cube.parent_spawner = this;
+        if (_cube != null) // Assign this parent spawner
+            _cube.parent_spawner = this;
 
         _spawned.Add(instancied);
 
@@ -107,7 +113,7 @@ public class SC_ObjectSpawner : MonoBehaviour
         if (_rb != null)
             _rb.AddForce(-transform.forward * recoil_force, ForceMode.Impulse);
         else if (_coroutine_shoot == null)
-            _coroutine_shoot = StartCoroutine(RecoilRoutine(0.5f, 0.5f));
+            _coroutine_shoot = StartCoroutine(RecoilRoutine(0.5f, transform.position + transform.forward * 0.75f));
         // Spawn the particles
         parts_spawn.Play();
         // Play a sound
@@ -116,14 +122,23 @@ public class SC_ObjectSpawner : MonoBehaviour
         spawned++;
     }
 
-    private IEnumerator RecoilRoutine(float distance, float duration)
+    public void PrepareShoot()
+    {
+        StartCoroutine(PrepareShootRoutine());
+    }
+    private IEnumerator PrepareShootRoutine()
+    {
+        StartCoroutine(RecoilRoutine(0.5f, transform.position - transform.forward * 0.5f, false));
+        yield return new WaitForSeconds(0.7f);
+        SpawnObject();
+    }
+    private IEnumerator RecoilRoutine(float duration, Vector3 pos_end, bool return_position = true)
     {
         Vector3 pos_start = transform.position;
-        Vector3 pos_end = pos_start - transform.forward * distance;
 
         float timer = 0;
-
-        duration *= 0.25f;
+        if (return_position)
+            duration *= 0.25f;
         while (timer < duration)
         {
             float t = timer / duration;
@@ -131,24 +146,34 @@ public class SC_ObjectSpawner : MonoBehaviour
 
             transform.position = Vector3.Lerp(pos_start, pos_end, t);
 
-            timer += Time.deltaTime;
+            if (can_spawn)
+                timer += Time.deltaTime;
             yield return null;
         }
         transform.position = pos_end;
 
-        duration *= 1.25f;
-        timer = 0;
-        while (timer < duration)
+        if (return_position)
         {
-            float t = timer / duration;
-            t = Mathf.SmoothStep(0, 1, t);
+            duration *= 1.25f;
+            timer = 0;
+            while (timer < duration)
+            {
+                float t = timer / duration;
+                t = Mathf.SmoothStep(0, 1, t);
 
-            transform.position = Vector3.Lerp(pos_end, pos_start, t);
+                transform.position = Vector3.Lerp(pos_end, _start_position, t);
 
-            timer += Time.deltaTime;
-            yield return null;
+                if (can_spawn)
+                    timer += Time.deltaTime;
+                yield return null;
+            }
+            transform.position = _start_position;
         }
-        transform.position = pos_start;
+        else
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+
 
         _coroutine_shoot = null;
     }
