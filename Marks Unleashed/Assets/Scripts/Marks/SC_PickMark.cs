@@ -31,7 +31,8 @@ public class SC_PickMark : SC_Interactable
 
         events_on_pick?.Invoke();
 
-        codexManager.UnlockEntry(entryToUnlock);
+        if (codexManager != null)
+            codexManager.UnlockEntry(entryToUnlock);
         Destroy(gameObject);
     }
 }

@@ -18,7 +18,7 @@ public class SC_Mark_Ice : SC_Mark
         // Spawn the ice zone
         GameObject iceZone = new GameObject("Ice zone");
         SC_ZoneIce zone = iceZone.AddComponent<SC_ZoneIce>();
-        zone.InitIceZone(range, layer_interactable);
+        zone.InitIceZone(range, layer_interactable, parts);
         iceZone.transform.position = transform.position;
 
         Destroy(iceZone, range);
@@ -38,8 +38,10 @@ public class SC_Mark_Ice : SC_Mark
             }
             else if (coll.name.Contains("FreezableWater"))
                 coll.GetComponent<SC_FreezableWater>().SetFreeze();
+            else if (coll.name.Contains("Button"))
+                coll.GetComponent<SC_Button_Hold>().active = false;
 
-            float freeze_time = range * 0.5f;
+                float freeze_time = range * 0.5f;
 
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
@@ -47,6 +49,7 @@ public class SC_Mark_Ice : SC_Mark
                 switch (coll.name)
                 {
                     case "Player":
+                        /*
                         // Don't affect the player if it's near
                         if (Vector3.Distance(transform.position, coll.transform.position) > range / 2) continue;
 
@@ -56,6 +59,7 @@ public class SC_Mark_Ice : SC_Mark
 
                         freeze_time = range * 0.25f;
                         coll.GetComponent<SC_PlayerLife>().Damage(0, SC_LifeSystem.Damage_type.ICE);
+                        */
                         break;
                 }
 
@@ -74,7 +78,10 @@ public class SC_Mark_Ice : SC_Mark
                 }
             }
             
-            SC_CoroutineRunner.instance.StartCoroutine(FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject, freeze_time));
+            SC_CoroutineRunner.instance.StartTrackedRoutine(
+                coll.gameObject.GetInstanceID(),
+                FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject, freeze_time)
+            );
         }
 
         DesactivateMark();
@@ -82,20 +89,18 @@ public class SC_Mark_Ice : SC_Mark
 
     private IEnumerator FreezeVelocity(Rigidbody rb, Vector3 start_vel, GameObject ob, float duration)
     {
-        if (rb != null)
+        if (rb != null && rb.name != "Player")
         {
             rb.linearVelocity = Vector3.zero;
-            rb.isKinematic = true;
         }
         yield return new WaitForSeconds(duration);
         if (rb != null)
         {
-            rb.isKinematic = false;
             switch (rb.name)
             {
                 case "Player":
-                    SC_PlayerMovement.instance.playerLife.SetVignetteValue(0, Color.blue);
-                    SC_PlayerMovement.instance.can_move = true;
+                    //SC_PlayerMovement.instance.playerLife.SetVignetteValue(0, Color.blue);
+                    //SC_PlayerMovement.instance.can_move = true;
                     break;
             }
             if (rb.name.Contains("StonePillarPivot"))
@@ -105,24 +110,30 @@ public class SC_Mark_Ice : SC_Mark
             }
             
         }
-        if (ob != null && ob.CompareTag("MovingPlatform"))
+        if (ob != null)
         {
-            SC_MovingPlatform movingPlatform = ob.GetComponent<SC_MovingPlatform>();
-            if (movingPlatform != null)
+            if (ob.CompareTag("MovingPlatform"))
             {
-                movingPlatform.can_move = true;
-                movingPlatform.RestoreMtColor();
-                movingPlatform.Slow(0, 4);
+                SC_MovingPlatform movingPlatform = ob.GetComponent<SC_MovingPlatform>();
+                if (movingPlatform != null)
+                {
+                    movingPlatform.can_move = true;
+                    movingPlatform.RestoreMtColor();
+                    movingPlatform.Slow(0, 4);
+                }
             }
+            else if (ob.name.Contains("Arrow spawner"))
+            {
+                SC_ObjectSpawner spawner = ob.gameObject.GetComponent<SC_ObjectSpawner>();
+                spawner.can_spawn = true;
+                spawner.UnFreeze();
+            }
+            else if (ob.name.Contains("FreezableWater"))
+                ob.GetComponent<SC_FreezableWater>().UnFreeze();
+            else if (ob.name.Contains("Button"))
+                ob.GetComponent<SC_Button_Hold>().active = true;
         }
-        else if (ob != null && ob.name.Contains("Arrow spawner"))
-        {
-            SC_ObjectSpawner spawner = ob.gameObject.GetComponent<SC_ObjectSpawner>();
-            spawner.can_spawn = true;
-            spawner.UnFreeze();
-        }
-        else if (ob != null && ob.name.Contains("FreezableWater"))
-            ob.GetComponent<SC_FreezableWater>().UnFreeze();
+        
     }
 
     private void OnDrawGizmos()

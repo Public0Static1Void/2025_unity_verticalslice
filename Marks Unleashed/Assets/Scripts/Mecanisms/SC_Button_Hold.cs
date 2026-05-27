@@ -20,8 +20,12 @@ public class SC_Button_Hold : SC_Button
     private bool _deactivate = false;
     private float _timer = 0;
 
+    public bool active = true;
+
     private void Update()
     {
+        if (!activated) return;
+
         if (!can_activate)
         {
             activate_timer += Time.deltaTime;
@@ -40,6 +44,8 @@ public class SC_Button_Hold : SC_Button
 
     private void FixedUpdate()
     {
+        if (!active) return;
+
         if (!_deactivate)
         {
             if (activated && activation_for == null)

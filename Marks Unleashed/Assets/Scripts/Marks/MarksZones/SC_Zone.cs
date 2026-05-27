@@ -154,13 +154,19 @@ public abstract class SC_Zone : MonoBehaviour
             if (particles != null)
             {
                 particles.transform.SetParent(null, true);
-                particles.GetComponent<ParticleSystem>().Stop();
+                ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+                if (ps != null) ps.Stop();
                 Transform tr = particles.transform.GetChild(0);
+                int destroy_time = 10;
                 if (tr != null)
                 {
-                    tr.GetComponent<ParticleSystem>().Stop();
+                    ParticleSystem ps2 = tr.GetComponent<ParticleSystem>();
+                    if (ps2 != null) ps2.Stop();
+                    else destroy_time = 0;
                 }
-                Destroy(particles, 10);
+                if (ps == null) destroy_time = 0;
+
+                Destroy(particles, destroy_time);
                 Debug.Log($"Destroyed: {name}");
                 Debug.Log($"Destroyed object: {name}", this);
                 Debug.Log(StackTraceUtility.ExtractStackTrace());

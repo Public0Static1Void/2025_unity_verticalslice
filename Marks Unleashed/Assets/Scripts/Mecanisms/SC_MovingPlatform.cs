@@ -113,7 +113,7 @@ public class SC_MovingPlatform : SC_Interactable
     {
         active = true;
 
-        Vector3 endPos = pos_start + transform.TransformDirection(pos_end);
+        Vector3 endPos = pos_start + pos_end;
 
         Quaternion endRot = Quaternion.Euler(rot_end);
 
@@ -275,6 +275,8 @@ public class SC_MovingPlatform : SC_Interactable
         MeshFilter mf = GetComponent<MeshFilter>();
         if (!mf) return;
 
+        if (pos_start == Vector3.zero)
+            pos_start = mesh.bounds.center;
         Vector3 size = mesh.bounds.size;
         Bounds b = mf.sharedMesh.bounds;
         Matrix4x4 oldMatrix = Gizmos.matrix;
@@ -290,7 +292,7 @@ public class SC_MovingPlatform : SC_Interactable
             if (!rotate)
             {
                 Gizmos.matrix = Matrix4x4.TRS(
-                mesh.bounds.center + pos_end,
+                pos_start + pos_end,
                 transform.rotation,
                 Vector3.one
                 );
@@ -301,7 +303,7 @@ public class SC_MovingPlatform : SC_Interactable
                 Gizmos.matrix = oldMatrix;
             }
             else
-                rot_start_pos = mesh.bounds.center + pos_end;
+                rot_start_pos = pos_start + pos_end;
         }
         if (rotate)
         {

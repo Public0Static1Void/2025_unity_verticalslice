@@ -17,11 +17,12 @@ public class SC_ZoneIce : SC_Zone
     private List<Vector3> start_speeds;
 
 
-    public void InitIceZone(float zone_range, LayerMask layermask)
+    public void InitIceZone(float zone_range, LayerMask layermask, GameObject parts)
     {
         range = zone_range;
         range_horizontal = range;
         layer_interactable = layermask;
+        particles = parts;
     }
     protected override void Start()
     {
