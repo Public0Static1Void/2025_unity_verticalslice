@@ -15,14 +15,16 @@ public class SC_ZoneIce : SC_Zone
     private AudioClip clip_snow_slide;
 
     private List<Vector3> start_speeds;
+    private List<GameObject> ob_affected;
 
 
-    public void InitIceZone(float zone_range, LayerMask layermask, GameObject parts)
+    public void InitIceZone(float zone_range, LayerMask layermask, GameObject parts, List<GameObject> affected)
     {
         range = zone_range;
         range_horizontal = range;
         layer_interactable = layermask;
         particles = parts;
+        ob_affected = affected;
     }
     protected override void Start()
     {
@@ -116,6 +118,13 @@ public class SC_ZoneIce : SC_Zone
                     pm.ground_friction = pm._ground_start_friction;
                     pm.sliding = false;
                 }
+            }
+
+            foreach (GameObject ob in ob_affected)
+            {
+                // Stop the current routine
+                SC_CoroutineRunner.instance.RemoveActiveRoutine(ob.GetInstanceID());
+                SC_Mark_Ice.EndFreeze(null, ob);
             }
         }
     }

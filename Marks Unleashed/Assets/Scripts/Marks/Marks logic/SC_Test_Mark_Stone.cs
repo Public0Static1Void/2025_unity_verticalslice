@@ -60,12 +60,20 @@ public class SC_Test_Mark_Stone : MonoBehaviour
 
             transform.position = transform.parent.position + transform.parent.up * (9 - (9 - dist));
             //transform.rotation = transform.parent.rotation;
+
+            SC_MarksPlacer.Instance.event_destroy_runes += DestroyPillar;
         }
     }
 
     private void OnEnable()
     {
         ActivatePillar();
+    }
+
+    private void DestroyPillar()
+    {
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
     #region Movement
@@ -107,6 +115,8 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             _targetRot = _startRot * Quaternion.Euler(rotAngle, 0f, 0f);
         }
 
+        
+
         float elapsed = 0f;
         while (elapsed < rotDuration) 
         {           
@@ -121,6 +131,8 @@ public class SC_Test_Mark_Stone : MonoBehaviour
 
             yield return new WaitForFixedUpdate();
         }
+        _playerRb = SC_PlayerMovement.instance.rb;
+        StartCoroutine(MovePlayerRoutine(_playerRb.transform, _playerRb, sc_Mark_Stone_Visualizer.trajectory_points, sc_Mark_Stone_Visualizer.list_positions));
         _rb.MoveRotation(_targetRot);
         
 
@@ -144,32 +156,51 @@ public class SC_Test_Mark_Stone : MonoBehaviour
         {
             coll.enabled = false;
         }
-        p_rb.useGravity = false;
 
-
-        float timer = 0;
-        float duration = 0.1f;
-
-        for (int i = 1; i < total_points; i++)
+        try
         {
-            Vector3 start_pos = tr.position;
-            while (timer < duration)
+            
+
+            p_rb.isKinematic = true;
+
+            float timer = 0;
+            float duration = 1;
+
+            SC_PlayerMovement.instance.StopMovement(duration * points.Count + 1);
+
+            for (int i = 1; i < points.Count; i++)
             {
-                float t = timer / duration;
-                tr.position = Vector3.Lerp(start_pos, points[i], t);
+                Vector3 start_pos = tr.position;
+                while (timer < duration)
+                {
+                    float t = timer / duration;
+                    p_rb.MovePosition(Vector3.Lerp(start_pos, points[i], t));
 
-                timer += Time.deltaTime;
-                yield return null;
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
+                timer = 0;
+                start_pos = tr.position;
             }
-            timer = 0;
-            start_pos = tr.position;
+
+            p_rb.isKinematic = !true;
+
+            foreach (Collider coll in colls)
+            {
+                coll.enabled = true;
+            }
+        }
+        catch
+        {
+            p_rb.isKinematic = false;
+
+            foreach (Collider coll in colls)
+            {
+                coll.enabled = true;
+            }
         }
 
-        foreach (Collider coll in colls)
-        {
-            coll.enabled = true;
-        }
-        p_rb.useGravity = true;
+        
     }
 
     private IEnumerator EsperarRomper()

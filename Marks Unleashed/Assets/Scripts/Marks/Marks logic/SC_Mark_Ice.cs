@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,16 +16,13 @@ public class SC_Mark_Ice : SC_Mark
         parts.transform.localScale = new Vector3(range * 2, 2, range * 2);
         parts.GetComponent<SC_FadeOutDecal>().maxTime = range;
 
-        // Spawn the ice zone
-        GameObject iceZone = new GameObject("Ice zone");
-        SC_ZoneIce zone = iceZone.AddComponent<SC_ZoneIce>();
-        zone.InitIceZone(range, layer_interactable, parts);
-        iceZone.transform.position = transform.position;
+        
 
-        Destroy(iceZone, range);
-        Destroy(parts, range);
+        // Store the affected gameobjects
+        List<GameObject> affected_ob = new List<GameObject>();
 
         // Stop the movement of all nearby rigidbody for range / 2 seconds
+
         Collider[] colls = Physics.OverlapSphere(transform.position, range);
         foreach (Collider coll in colls)
         {
@@ -40,6 +38,8 @@ public class SC_Mark_Ice : SC_Mark
                 coll.GetComponent<SC_FreezableWater>().SetFreeze();
             else if (coll.name.Contains("Button"))
                 coll.GetComponent<SC_Button_Hold>().active = false;
+            else if (coll.name.Contains("Air zone"))
+                coll.GetComponent<SC_ZoneAir>().Pause();
 
                 float freeze_time = range * 0.5f;
 
@@ -77,12 +77,23 @@ public class SC_Mark_Ice : SC_Mark
                     movingPlatform.can_move = false;
                 }
             }
+
+            affected_ob.Add(coll.gameObject);
             
             SC_CoroutineRunner.instance.StartTrackedRoutine(
                 coll.gameObject.GetInstanceID(),
                 FreezeVelocity(rb, rb != null ? rb.linearVelocity : Vector3.zero, coll.gameObject, freeze_time)
             );
         }
+
+        // Spawn the ice zone
+        GameObject iceZone = new GameObject("Ice zone");
+        SC_ZoneIce zone = iceZone.AddComponent<SC_ZoneIce>();
+        zone.InitIceZone(range, layer_interactable, parts, affected_ob);
+        iceZone.transform.position = transform.position;
+
+        Destroy(iceZone, range);
+        Destroy(parts, range);
 
         DesactivateMark();
     }
@@ -94,6 +105,11 @@ public class SC_Mark_Ice : SC_Mark
             rb.linearVelocity = Vector3.zero;
         }
         yield return new WaitForSeconds(duration);
+        EndFreeze(rb, ob);
+    }
+
+    public static void EndFreeze(Rigidbody rb, GameObject ob)
+    {
         if (rb != null)
         {
             switch (rb.name)
@@ -108,7 +124,7 @@ public class SC_Mark_Ice : SC_Mark
                 rb.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = true;
                 rb.isKinematic = true;
             }
-            
+
         }
         if (ob != null)
         {
@@ -132,8 +148,9 @@ public class SC_Mark_Ice : SC_Mark
                 ob.GetComponent<SC_FreezableWater>().UnFreeze();
             else if (ob.name.Contains("Button"))
                 ob.GetComponent<SC_Button_Hold>().active = true;
+            else if (ob.name.Contains("Air zone"))
+                ob.GetComponent<SC_ZoneAir>().Resume();
         }
-        
     }
 
     private void OnDrawGizmos()

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class SC_ObjectSpawner : MonoBehaviour
+public class SC_ObjectSpawner : SC_Interactable
 {
     public bool can_spawn = true;
     public bool loop = false;
@@ -75,28 +75,6 @@ public class SC_ObjectSpawner : MonoBehaviour
     {
         if (!can_spawn) return;
 
-        List<int> to_remove = new List<int>();
-        for (int i = 0; i < _spawned.Count; i++)
-        {
-            if (_spawned[i] == null)
-            {
-                to_remove.Add(i);
-            }
-        }
-        for (int i = 0; i < to_remove.Count; i++)
-        {
-            if (i > _spawned.Count - 1) break;
-            try
-            {
-                _spawned.RemoveAt(to_remove[i]);
-            }
-            catch { }
-            spawned--;
-        }
-        if (spawned < 0) spawned = 0;
-
-        if (spawned >= spawned_max) return;
-
         GameObject instancied = Instantiate(spawn_object, spawn_point.position, transform.rotation);
         Rigidbody rb = instancied.GetComponent<Rigidbody>();
         if (rb != null)
@@ -117,13 +95,49 @@ public class SC_ObjectSpawner : MonoBehaviour
         // Spawn the particles
         parts_spawn.Play();
         // Play a sound
-        SC_SoundManager.instance.InstantiateSound(clips_spawn[Random.Range(0, clips_spawn.Count)], transform.position);
+        if (clips_spawn.Count > 0)
+            SC_SoundManager.instance.InstantiateSound(clips_spawn[Random.Range(0, clips_spawn.Count)], transform.position);
 
         spawned++;
     }
 
+    public override void Activate()
+    {
+        foreach (GameObject ob in _spawned)
+        {
+            Destroy(ob);
+        }
+        _spawned.Clear();
+        spawned = 0;
+        PrepareShoot();
+    }
+
     public void PrepareShoot()
     {
+        if (spawned >= spawned_max)
+        {
+            List<int> to_remove = new List<int>();
+            for (int i = 0; i < _spawned.Count; i++)
+            {
+                if (_spawned[i] == null)
+                {
+                    to_remove.Add(i);
+                }
+            }
+            for (int i = 0; i < to_remove.Count; i++)
+            {
+                if (i > _spawned.Count - 1) break;
+                try
+                {
+                    _spawned.RemoveAt(to_remove[i]);
+                }
+                catch { }
+                spawned--;
+            }
+            if (spawned < 0) spawned = 0;
+
+            if (spawned >= spawned_max) return;
+        }
         StartCoroutine(PrepareShootRoutine());
     }
     private IEnumerator PrepareShootRoutine()
