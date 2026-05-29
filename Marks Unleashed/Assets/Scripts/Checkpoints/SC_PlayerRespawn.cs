@@ -21,28 +21,13 @@ public class SC_PlayerRespawn : MonoBehaviour
         _playerMovement = GetComponent<SC_PlayerMovement>();
     }
 
-    private void Update()
-    {
-        // Make a countdown to teleport the player
-        if (_respawning)
-        {
-            _respawn_timer += Time.deltaTime;
-            if (_respawn_timer > 1)
-            {
-                transform.position = SC_CheckpointManager.Instance.currentCheckpointPos;
-                _playerMovement.rb.useGravity = true;
-                _respawning = false;
-                _respawn_timer = 0;
-            }
-        }
-    }
-
     public void Respawn()
     {
         if (SC_CheckpointManager.Instance.hasCheckpoint)
         {
             _respawning = true;
         }
+        startingPos = SC_CheckpointManager.Instance.currentCheckpointPos;
 
         StartCoroutine(WaitForTeleport(startingPos, respawn_time * 0.5f));
 
@@ -59,6 +44,7 @@ public class SC_PlayerRespawn : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
         transform.position = pos;
+        _playerMovement.rb.useGravity = true;
         playerLife.AttachCamera();
     }
 

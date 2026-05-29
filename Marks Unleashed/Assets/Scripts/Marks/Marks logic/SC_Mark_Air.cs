@@ -37,8 +37,8 @@ public class SC_Mark_Air : SC_Mark
         {
             ob_airZone.transform.SetParent(transform.parent.parent, true);
         }
-        
-        Destroy(ob_airZone, 5);
+        if (!regenerate)
+            Destroy(ob_airZone, 5);
 
         SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
         zone_air.InitAirZone(range, range / 2, layer_interactable, GetElementStrength() * strength, particles, destroyable);

@@ -14,6 +14,7 @@ public class SC_Button_Hold : SC_Button
 
     private bool can_activate = true;
 
+    public LayerMask layer_interact;
     public float detection_range = 1;
     public float pull_force = 0.65f;
     public float deactivate_delay = 0;
@@ -55,13 +56,13 @@ public class SC_Button_Hold : SC_Button
                 return;
             }
 
-            Collider[] colls = Physics.OverlapSphere(transform.position, detection_range);
+            Collider[] colls = Physics.OverlapSphere(transform.position, detection_range, layer_interact);
 
             if (colls.Length == 0)
             {
                 if (activation_for != null)
                 {
-                    
+                    _deactivate = true;
                     activation_for = null;
                     activated = false;
                 }

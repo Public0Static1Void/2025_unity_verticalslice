@@ -28,16 +28,21 @@ public class SC_CoroutineRunner : MonoBehaviour
     /// </summary>
     public Coroutine StartTrackedRoutine(int id, IEnumerator routine)
     {
+        RemoveActiveRoutine(id);
+
+        Coroutine c = StartCoroutine(RemoveRoutineOnEnd(id, routine));
+        active_coroutines[id] = c;
+        return c;
+    }
+
+    public void RemoveActiveRoutine(int id)
+    {
         // Remove the active routine
         if (active_coroutines.TryGetValue(id, out Coroutine existing))
         {
             StopCoroutine(existing);
             active_coroutines.Remove(id);
         }
-
-        Coroutine c = StartCoroutine(RemoveRoutineOnEnd(id, routine));
-        active_coroutines[id] = c;
-        return c;
     }
 
     private IEnumerator RemoveRoutineOnEnd(int id, IEnumerator routine)
