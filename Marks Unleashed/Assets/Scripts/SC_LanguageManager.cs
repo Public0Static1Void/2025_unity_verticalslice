@@ -4,6 +4,7 @@ using UnityEngine;
 public class SC_LanguageManager : MonoBehaviour
 {
     public static SC_LanguageManager instance { get; private set; }
+    public SC_HighlightUsedLanguageButton highlightedUsedLanguageButton;
     public enum Language { SPANISH, ENGLISH, CATALAN }
 
     public Language _currentLanguage = Language.ENGLISH;
@@ -91,5 +92,7 @@ public class SC_LanguageManager : MonoBehaviour
         }
         
         SC_GameManager.instance.LoadTexts();
+        
+        highlightedUsedLanguageButton.RefreshHighlightedButton();
     }
 }
