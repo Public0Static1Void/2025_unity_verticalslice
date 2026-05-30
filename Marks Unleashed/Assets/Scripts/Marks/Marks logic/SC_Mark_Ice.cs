@@ -92,7 +92,7 @@ public class SC_Mark_Ice : SC_Mark
         GameObject iceZone = new GameObject("Ice zone");
         SC_ZoneIce zone = iceZone.AddComponent<SC_ZoneIce>();
         zone.InitIceZone(range, layer_interactable, parts, affected_ob);
-        iceZone.transform.position = transform.position;
+        iceZone.transform.position = transform.position + transform.forward;
 
         Destroy(iceZone, range);
         Destroy(parts, range);

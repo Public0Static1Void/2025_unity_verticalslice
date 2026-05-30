@@ -1,11 +1,15 @@
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class SC_Mark_Stone : SC_Mark
 {
     public float range = 3;
-    
+
+    private bool _activated = false;
     public override void ActivateMark()
     {
+        _activated = true;
+
         base.ActivateMark();
         //Instancia partículas y las destruye desués de X segundos
         int layer = ~LayerMask.GetMask("Player", "Physic Object");
@@ -20,5 +24,31 @@ public class SC_Mark_Stone : SC_Mark
         Destroy(stone_wall, 5);
 
         DesactivateMark();
+    }
+
+    private void Update()
+    {
+        if (_activated) return;
+
+        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
+        if (colls.Length > 0)
+        {
+            Vector3 origin = transform.position;
+
+            foreach (Collider coll in colls)
+            {
+                if (coll.name == name) continue;
+                Rigidbody rb = coll.GetComponent<Rigidbody>();
+                if (rb != null && rb.linearVelocity.magnitude < 1)
+                {
+                    Vector3 pos = new Vector3(rb.position.x, transform.position.y, rb.position.z);
+                    Vector3 diff = origin - pos;
+                    if (diff.magnitude < 0.05f) continue;
+
+                    Vector3 dir = diff.normalized;
+                    rb.linearVelocity =  dir;
+                }
+            }
+        }
     }
 }

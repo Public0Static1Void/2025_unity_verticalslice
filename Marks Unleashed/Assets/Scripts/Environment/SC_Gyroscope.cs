@@ -77,7 +77,7 @@ public class SC_Gyroscope : SC_Interactable
         
 
         // Make all the rigidbodies kinematic to avoid unwanted movements
-        SetRbsState(true);
+        //SetRbsState(true);
 
         float timer = 0;
         while (timer < duration)
@@ -106,7 +106,7 @@ public class SC_Gyroscope : SC_Interactable
         _routine_rotate = null;
 
         // Teleports the player inside if it has clipped through the walls
-        if (!Physics.Raycast(sc_playerMovement.transform.position, -sc_playerMovement.transform.up))
+        if (!Physics.Raycast(sc_playerMovement.transform.position, -sc_playerMovement.transform.up, 30))
         {
             Vector3 dir = (transform.position - sc_playerMovement.transform.position).normalized;
             if (Physics.Raycast(sc_playerMovement.transform.position, dir, out RaycastHit hit))

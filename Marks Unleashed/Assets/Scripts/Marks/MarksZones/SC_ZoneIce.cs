@@ -25,6 +25,11 @@ public class SC_ZoneIce : SC_Zone
         layer_interactable = layermask;
         particles = parts;
         ob_affected = affected;
+
+        if (Physics.Raycast(transform.position + transform.forward, -transform.forward, out RaycastHit hit, 5))
+        {
+            transform.position = hit.point + hit.normal * 100;
+        }
     }
     protected override void Start()
     {
