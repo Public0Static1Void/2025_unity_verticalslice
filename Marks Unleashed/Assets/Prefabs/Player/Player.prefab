@@ -9892,6 +9892,8 @@ GameObject:
   - component: {fileID: 3227960905588419948}
   - component: {fileID: 5469162942262911932}
   - component: {fileID: 6081543257605256690}
+  - component: {fileID: 6846618917804859621}
+  - component: {fileID: 4737564431480063414}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -10053,6 +10055,54 @@ MonoBehaviour:
   ui_elements_speed: 10
   ui_elements_to_move:
   - {fileID: 0}
+--- !u!54 &6846618917804859621
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3205841446253009519}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &4737564431480063414
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3205841446253009519}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 0.25, y: 0.25, z: 0.25}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3211878514787334470
 GameObject:
   m_ObjectHideFlags: 0
@@ -16553,6 +16603,7 @@ MonoBehaviour:
   camera_volume: {fileID: 8198841637628476776}
   image_vignette: {fileID: 0}
   target_color: {r: 1, g: 1, b: 1, a: 1}
+  main_camera: {fileID: 0}
   fire_damage_material: {fileID: 2100000, guid: 5be88f1005651fd43b6a17b228023075, type: 2}
   ice_damage_material: {fileID: 2100000, guid: c5d3fdf99f3552241a2acb73301c164e, type: 2}
 --- !u!114 &4883419843801603469

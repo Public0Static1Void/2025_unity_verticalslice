@@ -15,7 +15,8 @@ public class SC_MovingPlatform : SC_Interactable
 
     private bool active = false;
 
-    private MeshRenderer mesh = null;
+    public MeshRenderer mesh = null;
+    public MeshFilter meshFilter = null;
     private MaterialPropertyBlock _mpb;
     private Color _col_start, _col_start_2;
 
@@ -40,7 +41,8 @@ public class SC_MovingPlatform : SC_Interactable
         pos_start = transform.position;
         rot_start = transform.rotation;
 
-        mesh = GetComponent<MeshRenderer>();
+        if (!mesh)
+            mesh = GetComponentInChildren<MeshRenderer>();
 
         if (mesh != null)
         {
@@ -269,11 +271,14 @@ public class SC_MovingPlatform : SC_Interactable
     {
         if (mesh == null)
         {
-            mesh = GetComponent<MeshRenderer>();
+            mesh = GetComponentInChildren<MeshRenderer>();
             if (!mesh) return;
         }
-        MeshFilter mf = GetComponent<MeshFilter>();
+        MeshFilter mf = meshFilter;
+        if (meshFilter == null)
+            mf = GetComponentInChildren<MeshFilter>();
         if (!mf) return;
+        
 
         if (pos_start == Vector3.zero)
             pos_start = mesh.bounds.center;

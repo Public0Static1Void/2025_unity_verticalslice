@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEngine.ParticleSystem;
 
 public class SC_Test_Mark_Stone : MonoBehaviour
@@ -24,6 +25,7 @@ public class SC_Test_Mark_Stone : MonoBehaviour
     public GameObject ob_BrokenRock;
     public AudioClip clip_break;
     public SC_Mark_Stone_Visualizer sc_Mark_Stone_Visualizer;
+    private BoxCollider _coll;
 
     [Header("Break Explosion")]
     public float force_explosion = 10000;
@@ -45,6 +47,8 @@ public class SC_Test_Mark_Stone : MonoBehaviour
         }
         
         _mat_hologram = GetComponentInChildren<MeshRenderer>().material;
+
+        _coll = GetComponent<BoxCollider>();
     }
     private void Start()
     {
@@ -115,26 +119,59 @@ public class SC_Test_Mark_Stone : MonoBehaviour
             _targetRot = _startRot * Quaternion.Euler(rotAngle, 0f, 0f);
         }
 
-        
+
 
         float elapsed = 0f;
-        while (elapsed < rotDuration) 
-        {           
+        Quaternion previousRot = _startRot;
+
+        // Then in the loop:
+        HashSet<Rigidbody> affectedRbs = new HashSet<Rigidbody>();
+
+        while (elapsed < rotDuration)
+        {
             if (can_move)
             {
                 elapsed += Time.fixedDeltaTime;
                 float t = elapsed / rotDuration;
 
                 Quaternion newRot = Quaternion.Slerp(_startRot, _targetRot, t);
+
+                // Delta between last frame and this frame
+                Quaternion deltaRot = newRot * Quaternion.Inverse(previousRot);
+
+
+                if (!only_demostration)
+                {
+                    // Match the box collider exactly
+                    Vector3 worldCenter = transform.TransformPoint(_coll.center);
+                    Vector3 halfExtents = Vector3.Scale(_coll.size * 0.5f, transform.lossyScale);
+
+                    Collider[] hits = Physics.OverlapBox(worldCenter, halfExtents, transform.rotation);
+                    foreach (Collider hit in hits)
+                    {
+                        Rigidbody rb = hit.attachedRigidbody;
+                        if (rb == null || rb == _rb || rb.isKinematic) continue;
+                        affectedRbs.Add(rb); // HashSet avoids duplicates
+                    }
+                }
+
                 _rb.MoveRotation(newRot);
+                previousRot = newRot;
             }
 
             yield return new WaitForFixedUpdate();
         }
-        _playerRb = SC_PlayerMovement.instance.rb;
-        StartCoroutine(MovePlayerRoutine(_playerRb.transform, _playerRb, sc_Mark_Stone_Visualizer.trajectory_points, sc_Mark_Stone_Visualizer.list_positions));
-        _rb.MoveRotation(_targetRot);
+
+        if (!only_demostration)
+        {
+            foreach (Rigidbody rb in affectedRbs)
+                rb.isKinematic = false;
+        }
         
+
+        _rb.MoveRotation(_targetRot);
+        _rb.linearVelocity = Vector3.zero;
+
 
         _rb.linearVelocity = Vector3.zero;
 
@@ -156,51 +193,35 @@ public class SC_Test_Mark_Stone : MonoBehaviour
         {
             coll.enabled = false;
         }
-
-        try
-        {
             
+        p_rb.isKinematic = true;
 
-            p_rb.isKinematic = true;
+        float timer = 0;
+        float duration = 1;
 
-            float timer = 0;
-            float duration = 1;
+        SC_PlayerMovement.instance.StopMovement(duration * points.Count + 1);
 
-            SC_PlayerMovement.instance.StopMovement(duration * points.Count + 1);
-
-            for (int i = 1; i < points.Count; i++)
-            {
-                Vector3 start_pos = tr.position;
-                while (timer < duration)
-                {
-                    float t = timer / duration;
-                    p_rb.MovePosition(Vector3.Lerp(start_pos, points[i], t));
-
-                    timer += Time.deltaTime;
-                    yield return null;
-                }
-                timer = 0;
-                start_pos = tr.position;
-            }
-
-            p_rb.isKinematic = !true;
-
-            foreach (Collider coll in colls)
-            {
-                coll.enabled = true;
-            }
-        }
-        catch
+        for (int i = 1; i < points.Count; i++)
         {
-            p_rb.isKinematic = false;
-
-            foreach (Collider coll in colls)
+            Vector3 start_pos = tr.position;
+            while (timer < duration)
             {
-                coll.enabled = true;
+                float t = timer / duration;
+                p_rb.MovePosition(Vector3.Lerp(start_pos, points[i], t));
+
+                timer += Time.deltaTime;
+                yield return null;
             }
+            timer = 0;
+            start_pos = tr.position;
         }
 
-        
+        p_rb.isKinematic = !true;
+
+        foreach (Collider coll in colls)
+        {
+            coll.enabled = true;
+        }
     }
 
     private IEnumerator EsperarRomper()

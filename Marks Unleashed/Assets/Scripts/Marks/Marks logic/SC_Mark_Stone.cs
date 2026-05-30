@@ -8,7 +8,7 @@ public class SC_Mark_Stone : SC_Mark
     {
         base.ActivateMark();
         //Instancia partículas y las destruye desués de X segundos
-        int layer = ~LayerMask.GetMask("Player");
+        int layer = ~LayerMask.GetMask("Player", "Physic Object");
         float dist = 9;
         if (Physics.Raycast(transform.position + transform.forward, transform.up, out RaycastHit hit, 9, layer))
         {

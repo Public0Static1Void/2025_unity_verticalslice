@@ -59,7 +59,8 @@ public class SC_Button : MonoBehaviour
 
     public virtual void ActivateMecanisms()
     {
-        anim_button.SetBool("active", true);
+        if (anim_button != null)
+            anim_button.SetBool("active", true);
 
         for (int i = 0; i <  attached_mecanisms.Count; i++)
         {
@@ -78,7 +79,8 @@ public class SC_Button : MonoBehaviour
     }
     public virtual void DeactivateMecanisms()
     {
-        anim_button.SetBool("active", false);
+        if (anim_button != null)
+            anim_button.SetBool("active", false);
 
         for (int i = 0; i < attached_mecanisms.Count; i++)
         {

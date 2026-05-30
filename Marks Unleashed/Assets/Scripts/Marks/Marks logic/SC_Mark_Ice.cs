@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SC_Mark_Ice : SC_Mark
 {
-    public float range = 8;
+    public float range = 12;
     
     public override void ActivateMark()
     {
@@ -22,6 +22,7 @@ public class SC_Mark_Ice : SC_Mark
         List<GameObject> affected_ob = new List<GameObject>();
 
         // Stop the movement of all nearby rigidbody for range / 2 seconds
+        float freeze_time = range * 0.5f;
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range);
         foreach (Collider coll in colls)
@@ -40,8 +41,9 @@ public class SC_Mark_Ice : SC_Mark
                 coll.GetComponent<SC_Button_Hold>().active = false;
             else if (coll.name.Contains("Air zone"))
                 coll.GetComponent<SC_ZoneAir>().Pause();
-
-                float freeze_time = range * 0.5f;
+            else if (coll.name.Contains("Gyroscope"))
+                coll.GetComponent<SC_Gyroscope>().StopRotation(freeze_time);
+    
 
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
