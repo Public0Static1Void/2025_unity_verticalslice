@@ -8257,6 +8257,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1035531315}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1041626677 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6028109348579666484, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+  m_PrefabInstance: {fileID: 1655201892}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1043723097
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15406,6 +15417,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1571740814233186737, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3779185378613348763, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: m_LocalPosition.x
       value: -59.143845
@@ -15542,6 +15557,10 @@ PrefabInstance:
       propertyPath: ground_offset
       value: 0.4
       objectReference: {fileID: 0}
+    - target: {fileID: 6049574637821873514, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7790285595089778973, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -15554,11 +15573,24 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainObjects
       objectReference: {fileID: 0}
+    - target: {fileID: 8797834007490669043, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+      propertyPath: im_crosshair
+      value: 
+      objectReference: {fileID: 1041626677}
+    - target: {fileID: 8797834007490669043, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+      propertyPath: ui_order_parent
+      value: 
+      objectReference: {fileID: 1655201893}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+--- !u!224 &1655201893 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2893307058407646583, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
+  m_PrefabInstance: {fileID: 1655201892}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1663787102
 GameObject:
   m_ObjectHideFlags: 0
@@ -19877,6 +19909,6 @@ MeshFilter:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1655201892}
   - {fileID: 1592707464}
   - {fileID: 1015538986}
+  - {fileID: 1655201892}

@@ -51,7 +51,7 @@ public class SC_ObjectSpawner : SC_Interactable
 
         _mpb = new MaterialPropertyBlock();
 
-        _start_position = transform.localPosition;
+        _start_position = transform.position;
     }
 
     private void Update()
@@ -91,7 +91,7 @@ public class SC_ObjectSpawner : SC_Interactable
         if (_rb != null)
             _rb.AddForce(-transform.forward * recoil_force, ForceMode.Impulse);
         else if (_coroutine_shoot == null)
-            _coroutine_shoot = StartCoroutine(RecoilRoutine(0.5f, transform.localPosition + transform.InverseTransformDirection(transform.forward) * 0.75f));
+            _coroutine_shoot = StartCoroutine(RecoilRoutine(0.5f, transform.position + transform.InverseTransformDirection(transform.forward) * 0.75f));
         // Spawn the particles
         parts_spawn.Play();
         // Play a sound
@@ -142,13 +142,13 @@ public class SC_ObjectSpawner : SC_Interactable
     }
     private IEnumerator PrepareShootRoutine()
     {
-        StartCoroutine(RecoilRoutine(0.5f, transform.localPosition - transform.InverseTransformDirection(transform.forward) * 0.5f, false));
+        StartCoroutine(RecoilRoutine(0.5f, transform.position - transform.InverseTransformDirection(transform.forward) * 0.5f, false));
         yield return new WaitForSeconds(0.7f);
         SpawnObject();
     }
     private IEnumerator RecoilRoutine(float duration, Vector3 pos_end, bool return_position = true)
     {
-        Vector3 pos_start = transform.localPosition;
+        Vector3 pos_start = transform.position;
 
         float timer = 0;
         if (return_position)
@@ -158,13 +158,13 @@ public class SC_ObjectSpawner : SC_Interactable
             float t = timer / duration;
             t = Mathf.SmoothStep(0, 1, t);
 
-            transform.localPosition = Vector3.Lerp(pos_start, pos_end, t);
+            transform.position = Vector3.Lerp(pos_start, pos_end, t);
 
             if (can_spawn)
                 timer += Time.deltaTime;
             yield return null;
         }
-        transform.localPosition = pos_end;
+        transform.position = pos_end;
 
         if (return_position)
         {
@@ -175,13 +175,13 @@ public class SC_ObjectSpawner : SC_Interactable
                 float t = timer / duration;
                 t = Mathf.SmoothStep(0, 1, t);
 
-                transform.localPosition = Vector3.Lerp(pos_end, _start_position, t);
+                transform.position = Vector3.Lerp(pos_end, _start_position, t);
 
                 if (can_spawn)
                     timer += Time.deltaTime;
                 yield return null;
             }
-            transform.localPosition = _start_position;
+            transform.position = _start_position;
         }
         else
         {

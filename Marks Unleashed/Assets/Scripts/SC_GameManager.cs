@@ -66,6 +66,7 @@ public class SC_GameManager : MonoBehaviour
 
         foreach (TMP_Text txt in texts_to_translate)
         {
+            if (txt == null) continue;
             texts_keys.Add(txt.text);
         }
     }

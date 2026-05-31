@@ -66,7 +66,7 @@ public class SC_DrawDiskTrajectory : MonoBehaviour
                 {
                     _pos_preview = hit.point;
                     ob_launch_preview.transform.rotation = Quaternion.LookRotation(hit.normal);
-                    Debug.Log(hit.collider.name);
+                    //Debug.Log(hit.collider.name);
                 }
             }
         }

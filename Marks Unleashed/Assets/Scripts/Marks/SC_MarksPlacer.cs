@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.UI;
 
 public class SC_MarksPlacer : MonoBehaviour
 {
@@ -25,6 +25,10 @@ public class SC_MarksPlacer : MonoBehaviour
     private SC_CameraRotation cameraRotation;
 
     private SC_Grab script_grab = null;
+
+    // Crosshair
+    public Image im_crosshair;
+    private Image[] im_child_crosshair;
 
     // Marks activation order UI
     public Transform ui_order_parent;
@@ -127,6 +131,8 @@ public class SC_MarksPlacer : MonoBehaviour
         _mpb = new MaterialPropertyBlock();
 
         _anim_arm = tr_left_arm.GetComponentInParent<Animator>();
+
+        im_child_crosshair = SC_GameManager.GetChildsComponents<Image>(im_crosshair.transform, true);
     }
 
     private IEnumerator InitMarksUI()
@@ -763,6 +769,72 @@ public class SC_MarksPlacer : MonoBehaviour
         SC_SoundManager.instance.InstantiateSound(clip_charge_rune_end, transform.position);
     }
 
+    private IEnumerator AnimateCrosshair(Image[] ims, float duration, float max_distance)
+    {
+        Image im_1 = ims[0];
+        Image im_2 = ims[1];
+
+        float target_alpha = 0.5f;
+        Color col = im_1.color;
+
+        float start_distance = 0;
+
+        Vector2 pos = new Vector2(start_distance, im_1.rectTransform.anchoredPosition.y);
+        Vector2 pos2 = pos * (Vector2.left + Vector2.up);
+
+        float timer = 0;
+        while (launching_disk)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            float current_distance = Mathf.Lerp(start_distance, max_distance, t);
+            Debug.Log($"Max distance: {current_distance}");
+            pos = new Vector2(current_distance, im_1.rectTransform.anchoredPosition.y);
+            pos2 = new Vector2(-current_distance, im_2.rectTransform.anchoredPosition.y);
+
+            im_1.rectTransform.anchoredPosition = pos;
+            im_2.rectTransform.anchoredPosition = pos2;
+
+            im_1.color = new Color(col.r, col.g, col.b, t * target_alpha);
+            im_2.color = new Color(col.r, col.g, col.b, t * target_alpha);
+
+            if (timer < duration)
+                timer += Time.deltaTime;
+            yield return null;
+        }
+
+        timer = 0;
+        duration *= 1.5f;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+
+            float current_distance = Mathf.Lerp(max_marks, start_distance, t);
+            pos = new Vector2(current_distance, im_1.rectTransform.anchoredPosition.y);
+            pos2 = new Vector2(-current_distance, im_2.rectTransform.anchoredPosition.y);
+
+            im_1.rectTransform.anchoredPosition = pos;
+            im_2.rectTransform.anchoredPosition = pos2;
+
+            im_1.color = new Color(col.r, col.g, col.b, target_alpha - (t * target_alpha));
+            im_2.color = new Color(col.r, col.g, col.b, target_alpha - (t * target_alpha));
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        im_1.color = new Color(col.r, col.g, col.b, 0);
+        im_2.color = new Color(col.r, col.g, col.b, 0);
+
+        pos = new Vector2(start_distance, im_1.rectTransform.anchoredPosition.y);
+        pos2 = new Vector2(-start_distance, im_2.rectTransform.anchoredPosition.y);
+
+        im_1.rectTransform.anchoredPosition = pos;
+        im_2.rectTransform.anchoredPosition = pos2;
+    }
+
     #endregion
 
     #region Inputs
@@ -788,35 +860,33 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         if (con.performed && unlocked_marks.Count > 0 && placed_marks.Count < max_marks)
         {
+            launching_disk = true;
+            cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1, true);
+            cameraRotation.ShakeCameraProgressive(0.05f, 0.2f, 1.5f);
+            cameraRotation.ShakeUIElements(10, 1.5f);
+            StartCoroutine(PlayChargeSoundRoutine(0.95f));
+
+            StartCoroutine(AnimateCrosshair(im_child_crosshair, 1, 10));
+
+            if (!open_menu)
+                OpenMarkSelectionMenu();
+
+            placing_mark = true;
+        }
+        if (con.canceled && (launch_timer > 0 || launch_mode))
+        {
+            cameraRotation.OffsetCameraAndReturn(Camera.main.transform.forward, -0.5f, Quaternion.identity, 0.5f, true, true);
+
+            launching_disk = false;
+
             if (!launch_mode)
             {
-                launching_disk = true;
-                cameraRotation.OffsetCamera(-Camera.main.transform.forward, 0.5f, 1, true);
-                cameraRotation.ShakeCameraProgressive(0.05f, 0.2f, 1.5f);
-                cameraRotation.ShakeUIElements(10, 1.5f);
-                StartCoroutine(PlayChargeSoundRoutine(0.95f));
-
-                if (!open_menu)
-                    OpenMarkSelectionMenu();
-
-                placing_mark = true;
+                PlaceMarkOnSurface(launch_timer);
+                launch_timer = 0;
             }
             else
             {
                 PlaceMarkOnSurface(1);
-            }
-        }
-        if (con.canceled && launch_timer > 0)
-        {
-            if (!launch_mode)
-            {
-                cameraRotation.OffsetCameraAndReturn(Camera.main.transform.forward, -0.5f, Quaternion.identity, 0.5f, true, true);
-                
-
-                launching_disk = false;
-
-                PlaceMarkOnSurface(launch_timer);
-                launch_timer = 0;
             }
         }
     }

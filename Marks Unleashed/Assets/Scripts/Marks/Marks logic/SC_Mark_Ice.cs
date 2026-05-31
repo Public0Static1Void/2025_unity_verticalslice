@@ -69,7 +69,7 @@ public class SC_Mark_Ice : SC_Mark
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
             }
 
-            Debug.Log($"{coll.name}: {coll.CompareTag("MovingPlatform")}");
+            //Debug.Log($"{coll.name}: {coll.CompareTag("MovingPlatform")}");
             if (coll.CompareTag("MovingPlatform"))
             {
                 SC_MovingPlatform movingPlatform = coll.gameObject.GetComponent<SC_MovingPlatform>();

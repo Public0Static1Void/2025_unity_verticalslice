@@ -44,11 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ac00af8131c5ae48ab70cabbc4a7694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCodexOpen: 0
   buttonContainer: {fileID: 0}
   entryButtonPrefab: {fileID: 0}
   entryTitleText: {fileID: 0}
   entryDescriptionText: {fileID: 0}
   entryImage: {fileID: 0}
+  codexPanel: {fileID: 0}
+  pauseManager: {fileID: 0}
   unlockedEntries: []
 --- !u!1 &856442399150375739
 GameObject:
@@ -194,12 +197,13 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: a10dcd4c0b0a7aa4f834e7e55d2c2dd7, type: 2}
   playerAnimations: {fileID: 0}
   cam: {fileID: 0}
+  codexManager: {fileID: 0}
   arm_animator: {fileID: 0}
   blurVolume: {fileID: 6263271291115054501}
   _masterSlider: {fileID: 0}
   _musicSlider: {fileID: 0}
   _sfxSlider: {fileID: 0}
-  opened: 0
+  isPauseMenuOpen: 0
 --- !u!1 &5015424903217181605
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3834fc691f10a4b89c66e2115d428c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightedUsedLanguageButton: {fileID: 0}
   _currentLanguage: 1
 --- !u!1 &5079009730827837190
 GameObject:
@@ -550,9 +555,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   load_scene1: Level_Tierra
-  load_scene2: Level_Ice_Tutorial
+  load_scene2: Level_Ice_Test
   load_scene3: Level_Air
   load_scene4: Level_57_FlechasEnLlamas
+  load_scene5: 
 --- !u!1 &8839595943932268646
 GameObject:
   m_ObjectHideFlags: 0
