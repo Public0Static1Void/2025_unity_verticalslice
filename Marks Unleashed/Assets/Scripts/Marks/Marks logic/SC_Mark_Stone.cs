@@ -33,11 +33,11 @@ public class SC_Mark_Stone : SC_Mark
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         if (colls.Length > 0)
         {
-            Vector3 origin = transform.position;
-
             foreach (Collider coll in colls)
             {
                 if (coll.name == name) continue;
+
+                Vector3 origin = transform.position + transform.up * (coll.transform.localScale.magnitude / 2 < 1 ? 1 : coll.transform.localScale.magnitude / 2);
                 Rigidbody rb = coll.GetComponent<Rigidbody>();
                 if (rb != null && rb.linearVelocity.magnitude < 1)
                 {
