@@ -32,7 +32,7 @@ public class SC_CameraRotation : MonoBehaviour
     private SC_PlayerMovement playerMovement;
 
     public Slider slider_sensivity;
-    public TMP_Text txt_value_sensivity;
+    public TMP_Text sensitivity_value_text;
 
     private float max_turn_speed = 0;
 
@@ -75,7 +75,7 @@ public class SC_CameraRotation : MonoBehaviour
 
         rb = GetComponentInParent<Rigidbody>();
 
-        txt_value_sensivity.text = slider_sensivity.value.ToString();
+        sensitivity_value_text.text = slider_sensivity.value.ToString();
 
 
         pos_start_local = transform.localPosition;
@@ -486,6 +486,6 @@ public class SC_CameraRotation : MonoBehaviour
         turn_speed = new_sens;
         parent_turn_speed = Mathf.Max(new_sens - (new_sens * 0.5f), 10);
 
-        txt_value_sensivity.text = new_sens.ToString();
+        sensitivity_value_text.text = new_sens.ToString();
     }
 }
