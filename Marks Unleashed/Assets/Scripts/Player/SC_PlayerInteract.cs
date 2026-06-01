@@ -44,6 +44,8 @@ public class SC_PlayerInteract : MonoBehaviour
         {
             Color col = ui_text.color;
             ui_text.color = Color.Lerp(ui_text.color, new Color(col.r, col.g, col.b, 0), Time.deltaTime * text_show_speed);
+
+            nearest_coll = null; // Stop interacting with the object if it isn't in range
         }
     }
     private void Interact()

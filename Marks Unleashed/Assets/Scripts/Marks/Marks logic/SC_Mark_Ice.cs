@@ -48,23 +48,6 @@ public class SC_Mark_Ice : SC_Mark
             Rigidbody rb = coll.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                switch (coll.name)
-                {
-                    case "Player":
-                        /*
-                        // Don't affect the player if it's near
-                        if (Vector3.Distance(transform.position, coll.transform.position) > range / 2) continue;
-
-                        //SC_PlayerMovement.instance.playerLife.SetVignetteValue(0.5f, Color.blue);
-                        SC_PlayerMovement.instance.can_move = false;
-                        SC_CameraRotation.instance.ShakeCamera(0.5f, 0.5f);
-
-                        freeze_time = range * 0.25f;
-                        coll.GetComponent<SC_PlayerLife>().Damage(0, SC_LifeSystem.Damage_type.ICE);
-                        */
-                        break;
-                }
-
                 if (coll.name.Contains("StonePillarPivot"))
                     coll.gameObject.GetComponent<SC_Test_Mark_Stone>().can_move = false;
             }

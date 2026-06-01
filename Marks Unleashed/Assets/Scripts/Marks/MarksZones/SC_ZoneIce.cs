@@ -7,7 +7,6 @@ public class SC_ZoneIce : SC_Zone
 
     public PhysicsMaterial noFriction_material;
 
-    private List<GameObject> attached_audio;
 
     private SC_PlayerMovement playerMovement;
     private float player_start_friction = 0.9f;
@@ -16,6 +15,7 @@ public class SC_ZoneIce : SC_Zone
 
     private List<Vector3> start_speeds;
     private List<GameObject> ob_affected;
+    private AudioSource as_player;
 
 
     public void InitIceZone(float zone_range, LayerMask layermask, GameObject parts, List<GameObject> affected)
@@ -35,8 +35,12 @@ public class SC_ZoneIce : SC_Zone
     {
         base.Start();
 
-        attached_audio = new List<GameObject>();
         start_speeds = new List<Vector3>();
+        
+        clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
+
+        as_player = SC_SoundManager.instance.InstantiateSoundAlone(clip_snow_slide, transform.position, true, volume: 0.5f);
+        as_player.Stop();
 
         layer_movable = (1 << LayerMask.NameToLayer("Grababble")) | (1 << LayerMask.NameToLayer("Physic Object"));
 
@@ -48,7 +52,7 @@ public class SC_ZoneIce : SC_Zone
         playerMovement = SC_PlayerMovement.instance;
         player_start_friction = playerMovement.ground_friction;
 
-        clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
+        
 
         range_horizontal = range;
     }
@@ -73,6 +77,7 @@ public class SC_ZoneIce : SC_Zone
             SC_PlayerMovement pm = ob.GetComponent<SC_PlayerMovement>();
             pm.ground_friction = pm._ground_start_friction;
             pm.sliding = false;
+            as_player.Pause();
         }
     }
 
@@ -83,7 +88,7 @@ public class SC_ZoneIce : SC_Zone
         for (int i = 0; i < affected_rb.Count; i++)
         {
             Rigidbody rb = affected_rb[i];
-            if (rb == null) continue;
+            if (rb == null) continue;                
 
             Collider coll = rb.GetComponent<Collider>();
             coll.material = noFriction_material;
@@ -93,6 +98,13 @@ public class SC_ZoneIce : SC_Zone
                 SC_PlayerMovement pm = rb.GetComponent<SC_PlayerMovement>();
                 pm.ground_friction = 1;
                 pm.sliding = true;
+
+                if (!as_player.isPlaying)
+                {
+                    as_player.Play();
+                }
+                    
+                as_player.transform.position = rb.position;
             }
 
             if (start_speeds[i] == Vector3.zero)
@@ -114,8 +126,6 @@ public class SC_ZoneIce : SC_Zone
                 Rigidbody rb = affected_rb[i];
                 if (rb == null) continue;
                 rb.gameObject.GetComponent<Collider>().material = null;
-                if (i < attached_audio.Count && attached_audio[i] != null)
-                    Destroy(attached_audio[i]);
 
                 if (rb.CompareTag("Player"))
                 {
@@ -131,6 +141,7 @@ public class SC_ZoneIce : SC_Zone
                 SC_CoroutineRunner.instance.RemoveActiveRoutine(ob.GetInstanceID());
                 SC_Mark_Ice.EndFreeze(null, ob);
             }
+            Destroy(as_player.gameObject);
         }
     }
 }

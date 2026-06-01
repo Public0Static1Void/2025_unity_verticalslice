@@ -5,6 +5,7 @@ public class SC_ExpandReveal : MonoBehaviour
 {
     public float max_progress;
     public float duration = 5;
+    public float start_progress = 0;
     private float _progress;
 
     private MeshRenderer _meshRenderer;
@@ -18,6 +19,7 @@ public class SC_ExpandReveal : MonoBehaviour
         if (_meshRenderer != null)
         {
             _mat = _meshRenderer.sharedMaterial;
+            _mat.SetFloat("_Progress", start_progress);
 
             if (start_active)
             {

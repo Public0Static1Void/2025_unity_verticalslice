@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 public class SC_ObjectSpawner : SC_Interactable
 {
@@ -103,17 +104,13 @@ public class SC_ObjectSpawner : SC_Interactable
 
     public override void Activate()
     {
-        foreach (GameObject ob in _spawned)
-        {
-            Destroy(ob);
-        }
-        _spawned.Clear();
-        spawned = 0;
         PrepareShoot();
     }
 
     public void PrepareShoot()
     {
+        if (!can_spawn) return;
+
         if (spawned >= spawned_max)
         {
             List<int> to_remove = new List<int>();
@@ -142,7 +139,7 @@ public class SC_ObjectSpawner : SC_Interactable
     }
     private IEnumerator PrepareShootRoutine()
     {
-        StartCoroutine(RecoilRoutine(0.5f, transform.position - transform.InverseTransformDirection(transform.forward) * 0.5f, false));
+        StartCoroutine(RecoilRoutine(0.5f, transform.position - transform.forward * 0.5f, false));
         yield return new WaitForSeconds(0.7f);
         SpawnObject();
     }
@@ -205,6 +202,11 @@ public class SC_ObjectSpawner : SC_Interactable
         _mpb.SetColor("_BaseColor", Color.white);
         _mpb.SetColor("_1st_ShadeColor", Color.gray);
         spawn_mesh.SetPropertyBlock(_mpb);
+    }
+
+    public void SetActive(bool v)
+    {
+        can_spawn = v;
     }
 
     private Color GetMaterialColor(Renderer renderer)

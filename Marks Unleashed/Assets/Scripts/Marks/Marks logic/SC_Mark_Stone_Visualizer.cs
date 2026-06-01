@@ -62,7 +62,7 @@ public class SC_Mark_Stone_Visualizer : MonoBehaviour
             _active = false;
         }
 
-
+        CalculateTrajectory();
     }
 
     #region Trajectory calculation

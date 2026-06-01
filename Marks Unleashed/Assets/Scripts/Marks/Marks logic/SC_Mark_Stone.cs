@@ -6,14 +6,23 @@ public class SC_Mark_Stone : SC_Mark
     public float range = 3;
 
     private bool _activated = false;
+
+    private LayerMask launch_layer;
+
+    public override void Start()
+    {
+        base.Start();
+        launch_layer = LayerMask.GetMask("Player", "Physic Object", "Grababble");
+    }
     public override void ActivateMark()
     {
         _activated = true;
 
         base.ActivateMark();
         //Instancia partículas y las destruye desués de X segundos
-        int layer = ~LayerMask.GetMask("Player", "Physic Object");
+        
         float dist = 9;
+        int layer = ~LayerMask.GetMask("Player", "Physic Object", "Grababble"); /// Get all the layers except
         if (Physics.Raycast(transform.position + transform.forward, transform.up, out RaycastHit hit, 9, layer))
         {
             Debug.Log($"Hit {hit.distance}");
@@ -30,7 +39,7 @@ public class SC_Mark_Stone : SC_Mark
     {
         if (_activated) return;
 
-        Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
+        Collider[] colls = Physics.OverlapSphere(transform.position, range, launch_layer);
         if (colls.Length > 0)
         {
             foreach (Collider coll in colls)
@@ -41,6 +50,8 @@ public class SC_Mark_Stone : SC_Mark
                 Rigidbody rb = coll.GetComponent<Rigidbody>();
                 if (rb != null && rb.linearVelocity.magnitude < 1)
                 {
+                    Debug.Log(coll.name);
+
                     Vector3 pos = new Vector3(rb.position.x, transform.position.y, rb.position.z);
                     Vector3 diff = origin - pos;
                     if (diff.magnitude < 0.05f) continue;

@@ -411,7 +411,7 @@ public class SC_MarksPlacer : MonoBehaviour
             yield return null;
         }
 
-        StartCoroutine(FlotateRoutine(tr, duration, distance, start_pos));
+        routines_float.Add(StartCoroutine(FlotateRoutine(tr, duration, distance, start_pos)));
     }
     private IEnumerator RotateRoutine(Transform tr, Quaternion target_rot, float duration)
     {
@@ -570,7 +570,7 @@ public class SC_MarksPlacer : MonoBehaviour
         {
             int indx = (int)unlocked_marks[i];
             
-            StartCoroutine(DissolveDiskAnimation(marks_list_images[indx].gameObject, open_menu ? 1 : 0, open_menu ? 0 : 1, 0.5f));
+            StartCoroutine(DissolveDiskAnimation(marks_list_images[indx].gameObject, open_menu ? 1 : 0, 0.5f));
         }
 
         int index = (int)unlocked_marks[current_mark];
@@ -596,13 +596,15 @@ public class SC_MarksPlacer : MonoBehaviour
             RefreshMarksList();
     }
 
-    private IEnumerator DissolveDiskAnimation(GameObject ob, float dissolve_amount, float start_amount, float duration)
+    private IEnumerator DissolveDiskAnimation(GameObject ob, float dissolve_amount, float duration)
     {
         if (dissolve_amount > 1) dissolve_amount = 1;
         else if (dissolve_amount < 0) dissolve_amount = 0;
             ob.SetActive(true);
 
         Material mat = ob.GetComponentInChildren<MeshRenderer>().material;
+
+        float start_amount = mat.GetFloat("_DissolveAmount");
 
         float timer = 0;
         while (timer < duration)
@@ -666,58 +668,49 @@ public class SC_MarksPlacer : MonoBehaviour
         int rune_count = unlocked_marks.Count;
         if (rune_count == 0) return;
 
-        foreach (Coroutine c in routines_float)
-            if (c != null) StopCoroutine(c);
-        routines_float.Clear();
+        
 
-        // Handle single mark edge case
-        float step = rune_count > 1 ? Mathf.PI / (rune_count - 1) : 0f;
+        // Full circle, equal spacing
+        float step = rune_count > 1 ? (2f * Mathf.PI) / rune_count : 0f;
 
         for (int i = 0; i < rune_count; i++)
         {
             int indx = (int)unlocked_marks[i];
-
-            // Validate indexs
             if (i >= marks_list_images.Count || indx >= marks_list_images.Count) break;
             if (current_mark >= rune_count) break;
 
-            float angle = (i - current_mark) * step + Mathf.PI / 2f;
+            // Offset so selected rune sits at bottom (-π/2 = 270°)
+            float angle = i * step - Mathf.PI / 2f;
             float x = Mathf.Cos(angle) * marks_radius;
             float y = Mathf.Sin(angle) * marks_radius;
 
-            // Makes the selected rune look at the camera
             Quaternion target_rot;
             Vector3 new_scale = Vector3.one * 0.75f;
+
             if (i == current_mark)
             {
-                x = 0;
-                y = 0;
-
-                Vector3 dir_to_camera = ((marks_canvas.transform.position - marks_canvas.transform.forward * 2)
-                    - marks_list_images[i].position).normalized;
-                target_rot = Quaternion.LookRotation(dir_to_camera);
-
-                new_scale = Vector3.one * 3;
-
-                // Use indx instead of i to get the correct remapped mark
+                // Keep position on circle bottom, don't zero out x/y
                 MeshRenderer meshr_disk = marks_list_images[indx].gameObject.GetComponentInChildren<MeshRenderer>();
-
-                // Use the material instance, not shared
                 Color col = GetOutlineColor(meshr_disk);
                 SetOutlineColor(col);
 
-                
+                new_scale = Vector3.one * 3;
+
+                x = 0;
+                y = 0;
             }
-            else
+            int next = (current_mark + 1) % rune_count;
+            int prev = (current_mark - 1 + rune_count) % rune_count;
+
+            if ((i == next || i == prev) && unlocked_marks.Count > 1)
             {
-                Vector3 local_dir = (marks_list_images[current_mark].transform.localPosition
-                    - marks_list_images[i].transform.localPosition).normalized;
-                target_rot = local_dir != Vector3.zero
-                    ? Quaternion.LookRotation(local_dir)
-                    : Quaternion.identity;
+                new_scale = Vector3.one * 1.5f;
             }
 
-            // Set the rune position
+            Vector3 dir_to_camera = ((marks_canvas.transform.position - marks_canvas.transform.forward * 2)
+                - marks_list_images[i].position).normalized;
+            target_rot = Quaternion.LookRotation(dir_to_camera);
+
             StartCoroutine(UpdateMarkUIPosition(
                 marks_list_images[indx].transform,
                 marks_list_images[indx].transform.localPosition,
@@ -730,6 +723,16 @@ public class SC_MarksPlacer : MonoBehaviour
         }
 
         int index = (int)unlocked_marks[current_mark];
+
+        foreach (Coroutine c in routines_float)
+            if (c != null) StopCoroutine(c);
+        routines_float.Clear();
+
+        for (int i = 0; i < marks_list_images.Count; i++)
+        {
+            StopCoroutine("FlotateRoutine");
+            StopCoroutine("RotateRoutine");
+        }
 
         routines_float.Add(StartCoroutine(FlotateRoutine(marks_list_images[index].transform, 1, 0.05f, 0)));
         routines_float.Add(StartCoroutine(RotateRoutine(tr_left_arm, Quaternion.Euler(0, (225 / unlocked_marks.Count) * current_mark, 0), 0.25f)));
@@ -789,7 +792,6 @@ public class SC_MarksPlacer : MonoBehaviour
             t = Mathf.SmoothStep(0, 1, t);
 
             float current_distance = Mathf.Lerp(start_distance, max_distance, t);
-            Debug.Log($"Max distance: {current_distance}");
             pos = new Vector2(current_distance, im_1.rectTransform.anchoredPosition.y);
             pos2 = new Vector2(-current_distance, im_2.rectTransform.anchoredPosition.y);
 

@@ -72,6 +72,24 @@ public class SC_SoundManager : MonoBehaviour
 
         return audio_as.gameObject;
     }
+    public AudioSource InstantiateSoundAlone(AudioClip clip, Vector3 position, bool loop = false, float volume = 1, float pitch = 1)
+    {
+        if (clip == null) return null;
+
+        GameObject ob_audio = new GameObject($"AudioSource");
+
+        // Configure the audio source
+        AudioSource audio_as = ob_audio.AddComponent<AudioSource>();
+        audio_as.playOnAwake = false;
+        audio_as.clip = clip;
+        audio_as.rolloffMode = AudioRolloffMode.Linear;
+        audio_as.maxDistance = 50;
+        audio_as.spatialBlend = 5;
+        audio_as.outputAudioMixerGroup = main_mixer;
+        
+
+        return audio_as;
+    }
 
     public void AttachAudioToObject(GameObject audio_object, GameObject other_object)
     {

@@ -20,9 +20,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
     private float _speed_current;
     // Stamina
     public bool sprinting = false;
-    public const float max_stamina = 5;
-    private float _current_stamina = max_stamina;
-    private float _timer_stamina = 0;
 
     private Vector3 vel_ground;
 
@@ -75,8 +72,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
     public ParticleSystem parts_smoke_walk;
 
     [Header("UI")]
-    public Image im_stamina_bar;
-    private Image _im_stamina_bar_parent;
     public Color col_stamina_full;
     public Color col_stamina_empty;
 
@@ -103,8 +98,6 @@ public class SC_PlayerMovement : SC_ObjectMovement
         rb = GetComponent<Rigidbody>();
         playerLife = GetComponent<SC_PlayerLife>();
         _cameraRotation = SC_CameraRotation.instance;
-
-        _im_stamina_bar_parent = im_stamina_bar.transform.parent.GetComponent<Image>();
 
         camera_volume.profile.TryGet<MotionBlur>(out camera_blur);
         if (camera_blur != null)
@@ -181,28 +174,11 @@ public class SC_PlayerMovement : SC_ObjectMovement
         else            _timer_air_global = 0;
 
         
-
-
         // STAMINA SYSTEM
-        /// Make the stamina bar slowly visible
-        Color col = im_stamina_bar.color;
         if (sprinting)
         {
             _speed_current += Time.deltaTime * acceleration * 20;
             if (_speed_current > speed_sprint) _speed_current = speed_sprint;
-
-            _current_stamina -= Time.deltaTime;
-            if (_current_stamina <= 0) sprinting = false;
-
-            
-            if (col.a < 1)
-            {
-                col = new Color(col.r, col.g, col.b, col.a + Time.deltaTime);
-                _im_stamina_bar_parent.color = new Color(_im_stamina_bar_parent.color.r, _im_stamina_bar_parent.color.g, _im_stamina_bar_parent.color.b, col.a);
-                im_stamina_bar.color = col;
-            }
-
-            _timer_stamina = 0;
         }
         else if (grounded)
         {
@@ -211,31 +187,7 @@ public class SC_PlayerMovement : SC_ObjectMovement
                 _speed_current -= Time.deltaTime * acceleration * 10;
                 if (_speed_current < speed) _speed_current = speed;
             }
-
-            if (_timer_stamina >= 0.5f)
-            {
-                _current_stamina += Time.deltaTime * 2;
-                if (_current_stamina > max_stamina) _current_stamina = max_stamina;
-            }
-            else
-                _timer_stamina += Time.deltaTime;
-
-            if (col.a > 0 && _current_stamina > max_stamina * 0.8f)
-            {
-                col = new Color(col.r, col.g, col.b, col.a - Time.deltaTime);
-                _im_stamina_bar_parent.color = new Color(_im_stamina_bar_parent.color.r, _im_stamina_bar_parent.color.g, _im_stamina_bar_parent.color.b, col.a);
-                im_stamina_bar.color = col;
-            }
         }
-
-        // Lerp the color
-        im_stamina_bar.color = Color.Lerp(
-            new Color(col_stamina_empty.r, col_stamina_empty.g, col_stamina_empty.b, col.a),
-            new Color(col_stamina_full.r, col_stamina_full.g, col_stamina_full.b, col.a),
-            _current_stamina / max_stamina
-        );
-
-        im_stamina_bar.transform.localScale = new Vector3(_current_stamina / max_stamina, im_stamina_bar.transform.localScale.y, im_stamina_bar.transform.localScale.z);
     }
 
     private void FixedUpdate()

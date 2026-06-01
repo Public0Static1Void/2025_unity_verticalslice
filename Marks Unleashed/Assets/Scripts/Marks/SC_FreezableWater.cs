@@ -9,6 +9,10 @@ public class SC_FreezableWater : SC_DeathZone
     public float emission_amount = 1;
     public Color freeze_color = Color.white;
     public Vector2 speed;
+
+    [Header("References")]
+    public GameObject ob_parts_splash;
+    public AudioClip clip_splash;
     
     void Start()
     {
@@ -35,5 +39,15 @@ public class SC_FreezableWater : SC_DeathZone
 
         _coll.isTrigger = true;
         can_kill = true;
+    }
+
+    public override void OnTriggerEnter(Collider other)
+    {
+        // Spawn the splash particles
+        if (ob_parts_splash != null)
+            Destroy(Instantiate(ob_parts_splash, other.transform.position + transform.up, ob_parts_splash.transform.rotation), 5);
+        if (clip_splash != null)
+            SC_SoundManager.instance.InstantiateSound(clip_splash, other.transform.position, pitch: Random.Range(0.9f, 1.1f));
+        base.OnTriggerEnter(other);
     }
 }

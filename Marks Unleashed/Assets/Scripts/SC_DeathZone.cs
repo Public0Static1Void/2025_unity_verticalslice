@@ -3,7 +3,7 @@ using UnityEngine;
 public class SC_DeathZone : MonoBehaviour
 {
     protected bool can_kill = true;
-    private void OnTriggerEnter(Collider other)
+    public virtual void OnTriggerEnter(Collider other)
     {
         if (!can_kill || other.CompareTag("MainCamera")) return;
 
