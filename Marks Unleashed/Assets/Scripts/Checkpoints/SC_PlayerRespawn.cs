@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SC_PlayerRespawn : MonoBehaviour
@@ -26,6 +27,10 @@ public class SC_PlayerRespawn : MonoBehaviour
         if (SC_CheckpointManager.Instance.hasCheckpoint)
         {
             _respawning = true;
+        }
+        else 
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         startingPos = SC_CheckpointManager.Instance.currentCheckpointPos;
 
