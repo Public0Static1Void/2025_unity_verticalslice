@@ -13872,7 +13872,19 @@ PrefabInstance:
     m_TransformParent: {fileID: 937245400}
     m_Modifications:
     - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: layer_interact.m_Bits
+      value: 33024
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: attached_mecanisms.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
       propertyPath: 'attached_mecanisms.Array.data[0]'
+      value: 
+      objectReference: {fileID: 842394527}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: 'attached_mecanisms.Array.data[1]'
       value: 
       objectReference: {fileID: 842394527}
     - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
@@ -13883,6 +13895,34 @@ PrefabInstance:
       propertyPath: 'attached_mecanisms_inverse.Array.data[0]'
       value: 
       objectReference: {fileID: 272179014}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 842394527}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Activate
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SC_Door, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: event_normal.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8742503988390522655, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8
@@ -16433,15 +16473,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8367850029215827026, guid: 7e0310354eaaf314c8ae295968856fbd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6
+      value: 3.35
       objectReference: {fileID: 0}
     - target: {fileID: 8367850029215827026, guid: 7e0310354eaaf314c8ae295968856fbd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -2.53
       objectReference: {fileID: 0}
     - target: {fileID: 8367850029215827026, guid: 7e0310354eaaf314c8ae295968856fbd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3
+      value: -1.26
       objectReference: {fileID: 0}
     - target: {fileID: 8367850029215827026, guid: 7e0310354eaaf314c8ae295968856fbd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -19316,6 +19356,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 937245400}
     m_Modifications:
+    - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
+      propertyPath: layer_interact.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 1448321678795622315, guid: 36991072fe1c91d44af858c5a0e893bc, type: 3}
       propertyPath: 'attached_mecanisms.Array.data[0]'
       value: 
