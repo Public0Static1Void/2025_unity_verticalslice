@@ -67,7 +67,7 @@ public class SC_Mark_Ice : SC_Mark
 
         // Init the ice floor decal
         GameObject parts = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
-        SC_CoroutineRunner.instance.StartCoroutine(GrowIceZone(parts.transform, new Vector3(range * 2, 2, range * 2), 0.3f));
+        SC_CoroutineRunner.instance.StartCoroutine(GrowIceZone(parts.transform, new Vector3(range * 2, 2, range * 2), 0.1f));
         //parts.transform.localScale = new Vector3(range * 2, 2, range * 2);
         parts.GetComponent<SC_FadeOutDecal>().maxTime = range * 1.5f;
 
