@@ -9,13 +9,13 @@ public class SC_LobbyPathActivator : MonoBehaviour
     public GameObject path_stone;
     public GameObject path_ice;
     public GameObject path_air;
-    public GameObject path_fire;
+    public GameObject path_final;
 
     [Header("Doors")]
     public GameObject door_stone;
     public GameObject door_ice;
     public GameObject door_air;
-    public GameObject door_fire;
+    public GameObject door_final;
 
     public Transform spawn_pos;
 
@@ -45,11 +45,11 @@ public class SC_LobbyPathActivator : MonoBehaviour
             default:
                 path_stone.SetActive(true);
                 path_air.SetActive(true);
-                path_fire.SetActive(true);
+                path_final.SetActive(true);
                 path_ice.SetActive(true);
                 door_stone.SetActive(false);
                 door_air.SetActive(false);
-                door_fire.SetActive(false);
+                door_final.SetActive(false);
                 door_ice.SetActive(false);
                 break;
             case 0:
@@ -65,8 +65,8 @@ public class SC_LobbyPathActivator : MonoBehaviour
                 door_ice.SetActive(false);
                 break;
             case 3:
-                path_fire.SetActive(true);
-                door_fire.SetActive(false);
+                path_final.SetActive(true);
+                door_final.SetActive(false);
                 break;
         }
 
