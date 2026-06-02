@@ -250,6 +250,7 @@ public class SC_MarksPlacer : MonoBehaviour
     {
         foreach(SC_Mark mark in placed_marks)
         {
+            if (mark == null) continue;
             Destroy(mark.gameObject);
         }
         placed_marks.Clear();

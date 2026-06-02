@@ -76,8 +76,11 @@ public class SC_Test_Mark_Stone : MonoBehaviour
 
     private void DestroyPillar()
     {
-        if (gameObject != null)
-            Destroy(gameObject);
+        try
+        {
+            if (gameObject != null)
+                Destroy(gameObject);
+        } catch { }
     }
 
     #region Movement

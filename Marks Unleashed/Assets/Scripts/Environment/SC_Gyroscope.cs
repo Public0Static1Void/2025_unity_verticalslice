@@ -114,7 +114,7 @@ public class SC_Gyroscope : SC_Interactable
         _routine_rotate = null;
 
         // Teleports the player inside if it has clipped through the walls
-        if (!Physics.Raycast(sc_playerMovement.transform.position, -sc_playerMovement.transform.up, 30))
+        if (!Physics.Raycast(sc_playerMovement.transform.position, -sc_playerMovement.transform.up))
         {
             Vector3 dir = (transform.position - sc_playerMovement.transform.position).normalized;
             if (Physics.Raycast(sc_playerMovement.transform.position, dir, out RaycastHit hit))
