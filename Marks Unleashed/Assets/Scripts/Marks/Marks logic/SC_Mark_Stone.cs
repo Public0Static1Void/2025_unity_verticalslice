@@ -12,7 +12,7 @@ public class SC_Mark_Stone : SC_Mark
     public override void Start()
     {
         base.Start();
-        launch_layer = LayerMask.GetMask("Player", "Physic Object", "Grababble");
+        launch_layer = LayerMask.GetMask("Physic Object", "Grababble");
     }
     public override void ActivateMark()
     {
