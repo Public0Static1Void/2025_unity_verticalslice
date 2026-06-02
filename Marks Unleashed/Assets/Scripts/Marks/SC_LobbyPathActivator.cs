@@ -56,11 +56,11 @@ public class SC_LobbyPathActivator : MonoBehaviour
                 path_stone.SetActive(true);
                 door_stone.SetActive(false);
                 break;
-            case 1:
+            case 2:
                 path_air.SetActive(true);
                 door_air.SetActive(false);
                 break;
-            case 2:
+            case 1:
                 path_ice.SetActive(true);
                 door_ice.SetActive(false);
                 break;
