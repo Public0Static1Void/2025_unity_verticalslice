@@ -94,7 +94,8 @@ public class SC_ObjectSpawner : SC_Interactable
         else if (_coroutine_shoot == null)
             _coroutine_shoot = StartCoroutine(RecoilRoutine(0.5f, transform.position + transform.InverseTransformDirection(transform.forward) * 0.75f));
         // Spawn the particles
-        parts_spawn.Play();
+        if (parts_spawn != null)
+            parts_spawn.Play();
         // Play a sound
         if (clips_spawn.Count > 0)
             SC_SoundManager.instance.InstantiateSound(clips_spawn[Random.Range(0, clips_spawn.Count)], transform.position);

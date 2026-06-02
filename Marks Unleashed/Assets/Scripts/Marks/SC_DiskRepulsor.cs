@@ -21,6 +21,8 @@ public class SC_DiskRepulsor : SC_Interactable
 
     public GameObject parts_collision;
 
+    public Material mat_destroy;
+
     [Header("Type")]
     public bool spheric = true;
 
@@ -168,11 +170,33 @@ public class SC_DiskRepulsor : SC_Interactable
         // Check if the object has the rune disk layer
         if ((_layer_disk.value & (1 << other.gameObject.layer)) != 0)
         {
-            Destroy(other.gameObject);
+            StartCoroutine(Decompose(other.gameObject, 3));
         }
 
         if (_changeColorRoutine == null)
             _changeColorRoutine = StartCoroutine(ChangeColorRoutine());
+    }
+
+    private IEnumerator Decompose(GameObject ob, float duration)
+    {
+        MeshRenderer mr = ob.GetComponent<MeshRenderer>();
+        if (mr != null)
+        {
+            mr.material = mat_destroy;
+            Material mat = mr.material;
+            float timer = 0;
+            while (timer < duration)
+            {
+                float t = timer / duration;
+
+                mat.SetFloat("_DecomposeAmount", t * 2);
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        Destroy(ob);
     }
 
     private void OnDrawGizmos()
