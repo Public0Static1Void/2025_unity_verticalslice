@@ -269,7 +269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: texts_to_translate.Array.size
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[0]'
@@ -282,47 +282,47 @@ PrefabInstance:
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[2]'
       value: 
-      objectReference: {fileID: 1772126224}
+      objectReference: {fileID: 866701860}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[3]'
       value: 
-      objectReference: {fileID: 1755923242}
+      objectReference: {fileID: 1772126224}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[4]'
       value: 
-      objectReference: {fileID: 1476634379}
+      objectReference: {fileID: 1755923242}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[5]'
       value: 
-      objectReference: {fileID: 1520851523}
+      objectReference: {fileID: 1476634379}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[6]'
       value: 
-      objectReference: {fileID: 54958646}
+      objectReference: {fileID: 1520851523}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[7]'
       value: 
-      objectReference: {fileID: 2016610924}
+      objectReference: {fileID: 54958646}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[8]'
       value: 
-      objectReference: {fileID: 433391876}
+      objectReference: {fileID: 2016610924}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[9]'
       value: 
-      objectReference: {fileID: 229809214}
+      objectReference: {fileID: 433391876}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[10]'
       value: 
-      objectReference: {fileID: 422863194}
+      objectReference: {fileID: 229809214}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[11]'
       value: 
-      objectReference: {fileID: 290030184}
+      objectReference: {fileID: 422863194}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[12]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 290030184}
     - target: {fileID: 1854641244592054678, guid: c4e689138c29f7d4f8f80cb78fdddf49, type: 3}
       propertyPath: 'texts_to_translate.Array.data[13]'
       value: 
@@ -21392,7 +21392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &866701857
 RectTransform:
   m_ObjectHideFlags: 0
@@ -21428,7 +21428,19 @@ MonoBehaviour:
   tag: 
   event_entry:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1135159}
+        m_TargetAssemblyTypeName: SC_GameManager, Assembly-CSharp
+        m_MethodName: ShowText
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 866701860}
+          m_ObjectArgumentAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   event_exit:
     m_PersistentCalls:
       m_Calls:
