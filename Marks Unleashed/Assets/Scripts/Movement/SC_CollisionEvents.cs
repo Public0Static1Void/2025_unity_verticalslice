@@ -18,6 +18,7 @@ public class SC_CollisionEvents : MonoBehaviour
     }
     public void SpawnParticles(ParticleSystem parts)
     {
+        if (parts == null) return;
         if (pos_collided != Vector3.zero)
             parts.transform.position = pos_collided;
         parts.Play();
