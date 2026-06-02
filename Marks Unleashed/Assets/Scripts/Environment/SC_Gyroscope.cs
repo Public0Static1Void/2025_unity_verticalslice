@@ -12,6 +12,8 @@ public class SC_Gyroscope : SC_Interactable
     public float duration = 3;
     public float delay = 0;
 
+    public AudioClip clip_slide;
+
     private Quaternion _rot_current;
     private Quaternion _rot_target;
 
@@ -69,6 +71,8 @@ public class SC_Gyroscope : SC_Interactable
 
         SC_CameraRotation.instance.ShakeCamera(0.5f, duration);
         _routine_rotate = StartCoroutine(RotateRoutine(duration));
+
+        SC_SoundManager.instance.InstantiateSound(clip_slide, transform.position);
     }
     private IEnumerator RotateRoutine(float duration)
     {

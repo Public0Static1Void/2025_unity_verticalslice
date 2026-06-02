@@ -53,6 +53,12 @@ public class SC_PlayerRespawn : MonoBehaviour
         playerLife.AttachCamera();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+            Respawn();
+    }
+
     private IEnumerator FadeInFadeOutRoutine(float duration)
     {
         float timer = 0;
