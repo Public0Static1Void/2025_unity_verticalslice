@@ -25,5 +25,7 @@ public class SC_PlayCurrentElementParticles : MonoBehaviour
                 parts_ice.Play();
                 break;
         }
+
+        SC_CameraRotation.instance.ShakeCamera(0.25f, 0.1f);
     }
 }

@@ -32,6 +32,7 @@ public class SC_MarksPlacer : MonoBehaviour
 
     // Marks activation order UI
     public Transform ui_order_parent;
+    public Image im_order_highliter;
     public Sprite spr_circle_void;
     private UnityEngine.UI.Image[] im_activation_order;
 
@@ -257,8 +258,6 @@ public class SC_MarksPlacer : MonoBehaviour
 
         event_destroy_runes?.Invoke();
 
-        current_mark = 0;
-
         RefreshMarksList();
     }
     public void UnlockMark(ElementTypes type)
@@ -329,7 +328,11 @@ public class SC_MarksPlacer : MonoBehaviour
 
             if (im_activation_order[i] != null)
                 im_activation_order[i].sprite = spr;
-        }  
+        }
+
+        Color col2 = im_order_highliter.color;
+        float target_alpha = placed_marks.Count > 0 ? 0.1f : 0;
+        im_order_highliter.color = new Color(col2.r, col2.g, col2.b, target_alpha);
     }
 
     private IEnumerator GrowUIElementRoutine(Transform tr, Vector3 target_size, float duration)
