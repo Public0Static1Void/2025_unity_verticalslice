@@ -29,6 +29,9 @@ public class SC_MenuManager : MonoBehaviour
     [SerializeField] private Slider _musicSlider;
     [SerializeField] private Slider _sfxSlider;
 
+    [Header("References")]
+    [SerializeField] private Transform main_camera;
+
     private void Start()
     {
         //CloseAllMenus();
@@ -180,5 +183,33 @@ public class SC_MenuManager : MonoBehaviour
                 txt.color = new Color(txt.color.r, txt.color.g, txt.color.b, a);
             }
         }
+    }
+
+
+    public void PlayButton(string scene)
+    {
+        StartCoroutine(PlayRoutine(scene));
+    }
+    private IEnumerator PlayRoutine(string scene)
+    {
+        float timer = 0;
+        float duration = 5;
+
+        Vector3 start_pos = main_camera.transform.position;
+        Vector3 end_pos = main_camera.transform.position + main_camera.transform.forward * 10;
+
+        Color col = Color.white;
+
+        while (timer < duration)
+        {
+            float t = Mathf.SmoothStep(0, 1, timer / duration);
+
+            main_camera.transform.position = Vector3.Lerp(start_pos, end_pos, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        LoadSceneAsync(scene);
     }
 }
