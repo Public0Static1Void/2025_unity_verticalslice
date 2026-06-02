@@ -39,7 +39,7 @@ public class SC_ZoneIce : SC_Zone
         
         clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
 
-        as_player = SC_SoundManager.instance.InstantiateSoundAlone(clip_snow_slide, transform.position, true, volume: 0.5f);
+        as_player = SC_SoundManager.instance.InstantiateSoundAlone(clip_snow_slide, transform.position, true, volume: 0.25f);
         as_player.Stop();
 
         layer_movable = (1 << LayerMask.NameToLayer("Grababble")) | (1 << LayerMask.NameToLayer("Physic Object"));
@@ -95,11 +95,11 @@ public class SC_ZoneIce : SC_Zone
 
             if (rb.CompareTag("Player"))
             {
-                SC_PlayerMovement pm = rb.GetComponent<SC_PlayerMovement>();
+                SC_PlayerMovement pm = SC_PlayerMovement.instance;
                 pm.ground_friction = 1;
                 pm.sliding = true;
 
-                if (!as_player.isPlaying)
+                if (!as_player.isPlaying && pm.rb.linearVelocity.magnitude > 0.1f)
                 {
                     as_player.Play();
                 }

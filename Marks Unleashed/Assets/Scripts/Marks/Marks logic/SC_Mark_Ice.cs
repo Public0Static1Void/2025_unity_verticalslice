@@ -11,13 +11,6 @@ public class SC_Mark_Ice : SC_Mark
     {
         base.ActivateMark();
 
-        // Init the ice floor decal
-        GameObject parts = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
-        parts.transform.localScale = new Vector3(range * 2, 2, range * 2);
-        parts.GetComponent<SC_FadeOutDecal>().maxTime = range;
-
-        
-
         // Store the affected gameobjects
         List<GameObject> affected_ob = new List<GameObject>();
 
@@ -71,6 +64,13 @@ public class SC_Mark_Ice : SC_Mark
             );
         }
 
+
+        // Init the ice floor decal
+        GameObject parts = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
+        SC_CoroutineRunner.instance.StartCoroutine(GrowIceZone(parts.transform, new Vector3(range * 2, 2, range * 2), 0.3f));
+        //parts.transform.localScale = new Vector3(range * 2, 2, range * 2);
+        parts.GetComponent<SC_FadeOutDecal>().maxTime = range * 1.5f;
+
         // Spawn the ice zone
         GameObject iceZone = new GameObject("Ice zone");
         SC_ZoneIce zone = iceZone.AddComponent<SC_ZoneIce>();
@@ -78,7 +78,7 @@ public class SC_Mark_Ice : SC_Mark
         iceZone.transform.position = transform.position + transform.forward;
 
         Destroy(iceZone, range);
-        Destroy(parts, range);
+        Destroy(parts, range * 1.5f);
 
         DesactivateMark();
     }
@@ -91,6 +91,21 @@ public class SC_Mark_Ice : SC_Mark
         }
         yield return new WaitForSeconds(duration);
         EndFreeze(rb, ob);
+    }
+    private IEnumerator GrowIceZone(Transform tr, Vector3 target_size, float duration)
+    {
+        Vector3 start_size = target_size / 2;
+
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = Mathf.SmoothStep(0, 1, (timer / duration));
+
+            tr.localScale = Vector3.Lerp(start_size, target_size, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
     }
 
     public static void EndFreeze(Rigidbody rb, GameObject ob)

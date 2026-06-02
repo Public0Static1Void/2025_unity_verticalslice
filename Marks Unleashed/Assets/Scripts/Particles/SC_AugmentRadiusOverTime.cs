@@ -6,6 +6,7 @@ public class SC_AugmentRadiusOverTime : MonoBehaviour
     public float duration = 1;
     public float max_radius = 1;
     public float time_between_waves = 0.25f;
+    public Vector2 size;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -60,7 +61,7 @@ public class SC_AugmentRadiusOverTime : MonoBehaviour
                     var emitParams = new ParticleSystem.EmitParams();
                     emitParams.position = parentTransform.TransformPoint(new Vector3(offset.x / parentScale.x, 0, offset.y / parentScale.z));
                     emitParams.velocity = Vector3.zero;
-                    emitParams.startSize = Random.Range(250, 500);
+                    emitParams.startSize = Random.Range(size.x, size.y);
 
                     ps.Emit(emitParams, 1);
 

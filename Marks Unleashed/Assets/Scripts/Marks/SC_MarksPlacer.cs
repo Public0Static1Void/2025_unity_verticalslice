@@ -259,6 +259,7 @@ public class SC_MarksPlacer : MonoBehaviour
         event_destroy_runes?.Invoke();
 
         RefreshMarksList();
+        SetArrowPos();
     }
     public void UnlockMark(ElementTypes type)
     {
@@ -860,6 +861,9 @@ public class SC_MarksPlacer : MonoBehaviour
             else if (y_scroll > 0) y_scroll = 1;
 
             ScrollMarksList((int)y_scroll);
+
+            if (!open_menu)
+                OpenMarkSelectionMenu();
         }
     }
     public void SelectMarkOnMenu(InputAction.CallbackContext con)
