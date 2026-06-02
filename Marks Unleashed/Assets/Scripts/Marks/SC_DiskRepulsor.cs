@@ -25,7 +25,7 @@ public class SC_DiskRepulsor : SC_Interactable
     public bool spheric = true;
 
     
-
+    private Color start_col;
 
     private void Start()
     {
@@ -38,6 +38,8 @@ public class SC_DiskRepulsor : SC_Interactable
         _mat = _meshRenderer.material;
 
         _colls = new Collider[10]; // Prepare to recieve a max of 10 colliders at a time
+
+        start_col = _mat.GetColor("_MainColor");
     }
 
     private void FixedUpdate()
@@ -129,7 +131,7 @@ public class SC_DiskRepulsor : SC_Interactable
         float duration = 1;
         float timer = 0;
 
-        Color start_col = Color.white;
+        
         Color end_col = Color.red;
 
         while (timer < duration * 0.25f)

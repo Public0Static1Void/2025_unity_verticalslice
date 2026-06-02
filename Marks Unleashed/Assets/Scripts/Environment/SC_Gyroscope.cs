@@ -94,6 +94,14 @@ public class SC_Gyroscope : SC_Interactable
                     sc_playerMovement.rb.isKinematic = true;
             }
 
+            if (Physics.Raycast(sc_playerMovement.rb.position, sc_playerMovement.transform.up, out RaycastHit hit, transform.localScale.y + 1))
+            {
+                if (hit.distance < transform.localScale.y)
+                {
+                    sc_playerMovement.transform.position = new Vector3(sc_playerMovement.transform.position.x, sc_playerMovement.transform.position.y + Time.deltaTime, sc_playerMovement.transform.position.z);
+                }
+            }
+
             yield return new WaitForFixedUpdate();
         }
 
