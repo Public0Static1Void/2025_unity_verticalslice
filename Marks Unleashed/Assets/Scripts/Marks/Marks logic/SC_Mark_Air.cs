@@ -3,12 +3,14 @@ using UnityEngine;
 public class SC_Mark_Air : SC_Mark
 {
     public float range = 15;
-    public float initial_strength = 100, strength = 100;
+    public float initial_strength = 800, strength = 100;
 
     public override void ActivateMark()
     {
         base.ActivateMark();
-        particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up, transform.forward));
+        particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.forward, transform.up));
+        if (!regenerate && !destroyable)
+            Destroy(particles, 10);
 
         Collider[] colls = Physics.OverlapSphere(transform.position, range, layer_interactable);
         foreach (Collider coll in colls)
@@ -35,8 +37,8 @@ public class SC_Mark_Air : SC_Mark
         {
             ob_airZone.transform.SetParent(transform.parent.parent, true);
         }
-
-        Destroy(ob_airZone, 3);
+        if (!regenerate)
+            Destroy(ob_airZone, 5);
 
         SC_ZoneAir zone_air = ob_airZone.AddComponent<SC_ZoneAir>();
         zone_air.InitAirZone(range, range / 2, layer_interactable, GetElementStrength() * strength, particles, destroyable);

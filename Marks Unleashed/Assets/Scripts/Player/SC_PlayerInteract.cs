@@ -12,9 +12,14 @@ public class SC_PlayerInteract : MonoBehaviour
 
     public float text_show_speed = 3;
 
-    private string text = "Press E to interact";
+    private string text = "Interact_Text";
 
     private Collider nearest_coll = null;
+
+    private void Start()
+    {
+        text = SC_LanguageManager.instance.GetText(text);
+    }
 
     private void Update()
     {
@@ -39,6 +44,8 @@ public class SC_PlayerInteract : MonoBehaviour
         {
             Color col = ui_text.color;
             ui_text.color = Color.Lerp(ui_text.color, new Color(col.r, col.g, col.b, 0), Time.deltaTime * text_show_speed);
+
+            nearest_coll = null; // Stop interacting with the object if it isn't in range
         }
     }
     private void Interact()

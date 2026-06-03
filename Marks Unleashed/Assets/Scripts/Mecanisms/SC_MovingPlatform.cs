@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class SC_MovingPlatform : SC_Interactable
 {
     public bool start_active = false, return_to_position = false, can_move = true;
@@ -14,7 +15,8 @@ public class SC_MovingPlatform : SC_Interactable
 
     private bool active = false;
 
-    private MeshRenderer mesh = null;
+    public MeshRenderer mesh = null;
+    public MeshFilter meshFilter = null;
     private MaterialPropertyBlock _mpb;
     private Color _col_start, _col_start_2;
 
@@ -26,12 +28,21 @@ public class SC_MovingPlatform : SC_Interactable
 
     public UnityEngine.UI.Image im_timer;
 
-    private void Start()
+    private AudioSource _audioSource;
+    private SC_SoundManager soundManager;
+
+    protected float speed = 1;
+
+    protected virtual void Start()
     {
+        soundManager = SC_SoundManager.instance;
+        _audioSource = GetComponent<AudioSource>();
+
         pos_start = transform.position;
         rot_start = transform.rotation;
 
-        mesh = GetComponent<MeshRenderer>();
+        if (!mesh)
+            mesh = GetComponentInChildren<MeshRenderer>();
 
         if (mesh != null)
         {
@@ -76,6 +87,10 @@ public class SC_MovingPlatform : SC_Interactable
     {
         StartCoroutine(TimerRoutine(act ? delay : delay * 2));
         yield return new WaitForSeconds(act ? delay : delay * 2);
+
+        if (_audioSource != null)
+            _audioSource.Play();
+
         if (act)
         {
             if (active)
@@ -100,7 +115,7 @@ public class SC_MovingPlatform : SC_Interactable
     {
         active = true;
 
-        Vector3 endPos = pos_start + transform.TransformDirection(pos_end);
+        Vector3 endPos = pos_start + pos_end;
 
         Quaternion endRot = Quaternion.Euler(rot_end);
 
@@ -110,7 +125,7 @@ public class SC_MovingPlatform : SC_Interactable
         {
             if (can_move)
             {
-                time += Time.deltaTime;
+                time += Time.fixedDeltaTime * speed;
 
                 float t = time / duration;
                 t = Mathf.SmoothStep(0f, 1f, t);
@@ -121,7 +136,7 @@ public class SC_MovingPlatform : SC_Interactable
                     transform.rotation = Quaternion.Lerp(rot_start, endRot, t);
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         if (move)
@@ -150,7 +165,7 @@ public class SC_MovingPlatform : SC_Interactable
         {
             if (can_move)
             {
-                time += Time.deltaTime;
+                time += Time.fixedDeltaTime * speed;
 
                 float t = time / duration;
                 t = Mathf.SmoothStep(0f, 1f, t);
@@ -161,7 +176,7 @@ public class SC_MovingPlatform : SC_Interactable
                     transform.rotation = Quaternion.Lerp(startRot, rot_start, t);
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         if (move)
@@ -174,6 +189,31 @@ public class SC_MovingPlatform : SC_Interactable
         if (return_to_position)
             Activate();
     }
+
+    public void SetCanMove(bool v)
+    {
+        can_move = v;
+    }
+    public void Slow(float slow, float duration)
+    {
+        StartCoroutine(SlowRoutine(slow, duration));
+    }
+    private IEnumerator SlowRoutine(float slow, float duration)
+    {
+        speed = slow;
+
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            speed = Mathf.Lerp(slow, 1, t);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        speed = 1;
+    }
+
 
     #region MatColor
     // Change material color
@@ -231,12 +271,17 @@ public class SC_MovingPlatform : SC_Interactable
     {
         if (mesh == null)
         {
-            mesh = GetComponent<MeshRenderer>();
+            mesh = GetComponentInChildren<MeshRenderer>();
             if (!mesh) return;
         }
-        MeshFilter mf = GetComponent<MeshFilter>();
+        MeshFilter mf = meshFilter;
+        if (meshFilter == null)
+            mf = GetComponentInChildren<MeshFilter>();
         if (!mf) return;
+        
 
+        if (pos_start == Vector3.zero)
+            pos_start = mesh.bounds.center;
         Vector3 size = mesh.bounds.size;
         Bounds b = mf.sharedMesh.bounds;
         Matrix4x4 oldMatrix = Gizmos.matrix;
@@ -252,7 +297,7 @@ public class SC_MovingPlatform : SC_Interactable
             if (!rotate)
             {
                 Gizmos.matrix = Matrix4x4.TRS(
-                mesh.bounds.center + pos_end,
+                pos_start + pos_end,
                 transform.rotation,
                 Vector3.one
                 );
@@ -263,7 +308,7 @@ public class SC_MovingPlatform : SC_Interactable
                 Gizmos.matrix = oldMatrix;
             }
             else
-                rot_start_pos = mesh.bounds.center + pos_end;
+                rot_start_pos = pos_start + pos_end;
         }
         if (rotate)
         {

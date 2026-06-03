@@ -21,7 +21,7 @@ public class SC_Mark : MonoBehaviour
     private Rigidbody rb;
     private Image mark_image;
 
-    private void Start()
+    public virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
         mark_image = GetComponentInChildren<Image>();
@@ -101,7 +101,7 @@ public class SC_Mark : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             StartCoroutine(ReapearMark());
         }
-        else
+        else if (destroyable)
         {
             Destroy(gameObject);
         }

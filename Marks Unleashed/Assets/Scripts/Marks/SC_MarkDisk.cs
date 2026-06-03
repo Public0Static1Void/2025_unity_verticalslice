@@ -102,7 +102,7 @@ public class SC_MarkDisk : SC_OrientToMovement
             SC_Mark mark = inst.GetComponent(stored_mark.GetType()) as SC_Mark;
             mark.particles = stored_mark.particles;
             mark.element = stored_mark.element;
-            mark.enable_collision_activation = true;
+            mark.enable_collision_activation = false;               /// Enable or disable collision activation
             mark.clip_activation = stored_mark.clip_activation;
 
             BoxCollider coll = mark.gameObject.AddComponent<BoxCollider>();
@@ -134,7 +134,8 @@ public class SC_MarkDisk : SC_OrientToMovement
 
         if (collision.gameObject.name == "Player")
         {
-            collision.gameObject.GetComponent<SC_PlayerLife>().Damage(1);
+            //collision.gameObject.GetComponent<SC_PlayerLife>().Damage(1);
+            return;
         }
 
         Vector3 dir_to_surface = collision.GetContact(0).normal;

@@ -1,12 +1,13 @@
 using System;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using TMPro;
-using System.Collections;
+using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Unity.Mathematics;
 using UnityEngine.Video;
 
 
@@ -16,6 +17,9 @@ public class SC_GameManager : MonoBehaviour
     public static SC_GameManager instance {  get; private set; }
 
     public bool mark_unlocked = false;
+
+    [Header("Stats")]
+    public bool destroy_on_load = false;
 
     [Header("References")]
     public Image ob_loading_screen = null;
@@ -28,9 +32,15 @@ public class SC_GameManager : MonoBehaviour
     public VideoPlayer video_air;
     public VideoPlayer video_ice;
 
-    private List<ElementTypes> unlocked_elements = new List<ElementTypes>();
+    [HideInInspector] public List<ElementTypes> unlocked_elements = new List<ElementTypes>();
 
     public bool first_play = true;
+
+    [Space(15)]
+    [Header("Translation")]
+    public List<TMP_Text> texts_to_translate = new List<TMP_Text>();
+    private List<string> texts_keys = new List<string>();
+    private SC_LanguageManager _idiomManager;
 
     void Awake()
     {
@@ -46,28 +56,45 @@ public class SC_GameManager : MonoBehaviour
         }
 
         transform.parent = null;
-        //DontDestroyOnLoad(gameObject);
+        if (!destroy_on_load)
+            DontDestroyOnLoad(gameObject);
 
         Application.targetFrameRate = 60;
 
-        Time.timeScale = 0;
+        if (!destroy_on_load)
+            StartCoroutine(FadeOut());
 
-
-        StartCoroutine(FadeOut());
+        foreach (TMP_Text txt in texts_to_translate)
+        {
+            if (txt == null) continue;
+            texts_keys.Add(txt.text);
+        }
     }
 
     private void Start()
     {
+        _idiomManager = SC_LanguageManager.instance;
+        LoadTexts();
         // Get your unlocked marks
-        for (int i = 0; i <  unlocked_elements.Count; i++)
+        for (int i = 0; i < unlocked_elements.Count; i++)
         {
             SC_MarksPlacer.Instance.UnlockMark(unlocked_elements[i]);
+        }
+    }
+    public void LoadTexts()
+    {
+        // Translate the scene texts
+        for (int i = 0; i <  texts_keys.Count; i++)
+        {
+            if (i < texts_keys.Count && texts_to_translate[i] != null)
+                texts_to_translate[i].text = _idiomManager.GetText(texts_keys[i]);
         }
     }
 
     private IEnumerator FadeOut()
     {
         SetLoadingAlpha(1);
+        yield return new WaitForSeconds(0.5f);
         ob_loading_screen.gameObject.SetActive(true);
 
         float alpha = 1;
@@ -105,8 +132,9 @@ public class SC_GameManager : MonoBehaviour
     /// <summary>
     /// Returns all the components of type T attached on the parent children
     /// </summary>
-    public static T[] GetChildsComponents<T>(Transform parent) where T : Component
+    public static T[] GetChildsComponents<T>(Transform parent, bool ignore_parent = false) where T : Component
     {
+        /*
         T[] children = new T[parent.childCount];
 
         for (int i = 0; i < parent.childCount; i++)
@@ -115,6 +143,16 @@ public class SC_GameManager : MonoBehaviour
         }
 
         return children;
+        */
+        if (ignore_parent)
+        {
+            return parent
+                    .GetComponentsInChildren<T>(includeInactive: true)
+                    .Where(component => component.transform != parent)
+                    .ToArray();
+        }
+        else
+            return parent.GetComponentsInChildren<T>(includeInactive: true);
     }
 
     public static Vector3 LimitVector(Vector3 vector, float max_x, float min_x, float max_y, float min_y, float max_z, float min_z)
@@ -136,7 +174,7 @@ public class SC_GameManager : MonoBehaviour
 
     public void ShowText(string text)
     {
-        txt_announce.text = text;
+        txt_announce.text = SC_LanguageManager.instance.GetText(text);
         StartCoroutine(ShowTextCoroutine(2));
     }
     private IEnumerator ShowTextCoroutine(float show_speed = 1)
@@ -167,6 +205,8 @@ public class SC_GameManager : MonoBehaviour
 
     public void ShowTutorial(string tutorial, float duration)
     {
+        if (tutorial == "") return;
+
         GameObject im_tut = null;
         VideoClip clip = null;
         switch (tutorial)
@@ -194,56 +234,122 @@ public class SC_GameManager : MonoBehaviour
         Destroy(im_tut, (float)clip.length);
     }
 
+    public void IncreaseLights(GameObject ob)
+    {
+        Light[] lights = GetChildsComponents<Light>(ob.transform, true);
+        IncreaseLights(lights, 2);
+    }
+    public void IncreaseLights(Light[] lights, float duration)
+    {
+        StartCoroutine(IncreaseLightsRoutine(lights, duration));
+    }
+    private IEnumerator IncreaseLightsRoutine(Light[] lights, float duration)
+    {
+        List<float> intensities = new List<float>();
+        foreach (Light l in lights)
+        {
+            if (l == null) continue;
+            intensities.Add(l.intensity);
+            l.intensity = 0;
+        }
 
+        float timer = 0;
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            for (int i = 0; i < intensities.Count && i < lights.Length; i++)
+            {
+                lights[i].intensity = intensities[i] * t;
+            }
 
-    private IEnumerator ShowImageRoutine(Image im, float duration)
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void HideImage(Image im) => StartCoroutine(FadeRoutine(im, 1, false));
+    public void ShowImage(Image im) => StartCoroutine(FadeRoutine(im, 1, true));
+    public void HideText(TMP_Text text) => StartCoroutine(FadeTMPRoutine(text, 1, false));
+    public void ShowText(TMP_Text text) => StartCoroutine(FadeTMPRoutine(text, 1, true));
+
+    private IEnumerator FadeRoutine(Graphic graphic, float duration, bool fadeIn)
     {
         float timer = 0;
+        Color col = graphic.color;
+        col.a = fadeIn ? 0f : 1f;
+        graphic.color = col;
 
-        Color col = im.color;
-        col.a = 0;
-        im.color = col;
         while (timer < duration)
         {
             timer += Time.deltaTime;
-
-            col.a = 255 * timer;
-            im.color = col;
-
+            float t = Mathf.Clamp01(timer / duration);
+            col.a = fadeIn ? t : 1f - t;
+            graphic.color = col;
             yield return null;
         }
 
-        col.a = 255;
-        im.color = col;
-
-        yield return new WaitForSeconds(30);
-        HideImageRoutine(im, duration * 2);
+        col.a = fadeIn ? 1f : 0f;
+        graphic.color = col;
     }
-    private IEnumerator HideImageRoutine(Image im, float duration)
+    private IEnumerator FadeTMPRoutine(TMP_Text text, float duration, bool fadeIn)
     {
+        text.ForceMeshUpdate();
+        var info = text.textInfo;
         float timer = 0;
 
-        Color col = im.color;
-        col.a = 255;
-        im.color = col;
         while (timer < duration)
         {
             timer += Time.deltaTime;
+            float alpha = Mathf.Clamp01(fadeIn ? timer / duration : 1f - timer / duration);
+            byte a = (byte)(alpha * 255);
 
-            col.a = 255 * (1 - (timer / duration));
-            im.color = col;
-
+            for (int i = 0; i < info.characterCount; i++)
+            {
+                if (!info.characterInfo[i].isVisible) continue;
+                var charInfo = info.characterInfo[i];
+                int matIdx = charInfo.materialReferenceIndex;
+                int vertIdx = charInfo.vertexIndex;
+                var colors = info.meshInfo[matIdx].colors32;
+                for (int v = 0; v < 4; v++)
+                {
+                    colors[vertIdx + v].a = a;
+                }
+            }
+            text.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32); // colors only
             yield return null;
         }
-
-        col.a = 0;
-        im.color = col;
     }
 
+    public void WaveTextEffect(TMP_Text text) => StartCoroutine(WaveTextRoutine(text: text, speed: 3, amplitude:8));
+    private IEnumerator WaveTextRoutine(TMP_Text text, float speed = 2f, float amplitude = 8f)
+    {
+        text.ForceMeshUpdate();
+        var info = text.textInfo;
+        var origins = new Vector3[info.meshInfo.Length][];
+        for (int m = 0; m < info.meshInfo.Length; m++)
+            origins[m] = (Vector3[])info.meshInfo[m].vertices.Clone();
+
+        while (true)
+        {
+            for (int i = 0; i < info.characterCount; i++)
+            {
+                if (!info.characterInfo[i].isVisible) continue;
+                var charInfo = info.characterInfo[i];
+                int matIdx = charInfo.materialReferenceIndex;
+                int vertIdx = charInfo.vertexIndex;
+                float offset = Mathf.Sin(Time.time * speed + i * 0.5f) * amplitude;
+                var verts = info.meshInfo[matIdx].vertices;
+                for (int v = 0; v < 4; v++)
+                    verts[vertIdx + v] = origins[matIdx][vertIdx + v] + Vector3.up * offset;
+            }
+            text.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices); // vertices only
+            yield return null;
+        }
+    }
 
     public void LoadSceneAsync(string sceneName)
     {
-        //unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
+        unlocked_elements = new List<ElementTypes>(SC_MarksPlacer.Instance.GetUnlockedMarks());
         StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
     }
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
@@ -253,11 +359,12 @@ public class SC_GameManager : MonoBehaviour
         ob_loading_screen.gameObject.SetActive(true);
 
         float alpha = 0;
-
+        float duration = 3, timer = 0;
         // Fade in
-        while (alpha < 1)
+        while (timer < duration)
         {
-            alpha += Time.unscaledDeltaTime;
+            timer += Time.unscaledDeltaTime;
+            alpha = timer / duration;
             SetLoadingAlpha(alpha);
 
             im_loading_bar.fillAmount = alpha;

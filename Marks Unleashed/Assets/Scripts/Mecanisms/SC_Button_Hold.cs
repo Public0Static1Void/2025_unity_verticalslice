@@ -14,11 +14,19 @@ public class SC_Button_Hold : SC_Button
 
     private bool can_activate = true;
 
+    public LayerMask layer_interact;
     public float detection_range = 1;
     public float pull_force = 0.65f;
+    public float deactivate_delay = 0;
+    private bool _deactivate = false;
+    private float _timer = 0;
+
+    public bool active = true;
 
     private void Update()
     {
+        if (!activated) return;
+
         if (!can_activate)
         {
             activate_timer += Time.deltaTime;
@@ -37,68 +45,83 @@ public class SC_Button_Hold : SC_Button
 
     private void FixedUpdate()
     {
-        if (activated && activation_for == null)
-        {
-            DeactivateMecanisms();
-            activated = false;
-            return;
-        }
+        if (!active) return;
 
-        Collider[] colls = Physics.OverlapSphere(transform.position, detection_range);
-
-        if (colls.Length == 0)
+        if (!_deactivate)
         {
+            if (activated && activation_for == null)
+            {
+                _deactivate = true;
+                activated = false;
+                return;
+            }
+
+            Collider[] colls = Physics.OverlapSphere(transform.position, detection_range, layer_interact);
+
+            if (colls.Length == 0)
+            {
+                if (activation_for != null)
+                {
+                    _deactivate = true;
+                    activation_for = null;
+                    activated = false;
+                }
+                return;
+            }
+
             if (activation_for != null)
             {
-                DeactivateMecanisms();
+                // Check if the same gameObject is still inside
+                foreach (Collider coll in colls)
+                {
+                    if (coll.gameObject == activation_for)
+                        return;
+                }
+
+                // The object left the range
+                _deactivate = true;
                 activation_for = null;
                 activated = false;
+                return;
             }
-            return;
-        }
 
-        if (activation_for != null)
-        {
-            // Check if the same gameObject is still inside
+            // Find nearest valid object
+            Collider nearest = null;
+            float nearestDist = float.MaxValue;
+
             foreach (Collider coll in colls)
             {
-                if (coll.gameObject == activation_for)
-                    return;
+                if (coll.name == name) continue;
+
+                // mass check
+                Rigidbody rb = coll.attachedRigidbody;
+                if (rb == null || rb.mass < activation_mass) continue;
+
+                float dist = Vector3.Distance(transform.position, coll.transform.position);
+                if (dist < nearestDist)
+                {
+                    nearest = coll;
+                    nearestDist = dist;
+                }
             }
 
-            // The object left the range
-            DeactivateMecanisms();
-            activation_for = null;
-            activated = false;
-            return;
-        }
-
-        // Find nearest valid object
-        Collider nearest = null;
-        float nearestDist = float.MaxValue;
-
-        foreach (Collider coll in colls)
-        {
-            if (coll.name == name) continue;
-
-            // mass check
-            Rigidbody rb = coll.attachedRigidbody;
-            if (rb == null || rb.mass < activation_mass) continue;
-
-            float dist = Vector3.Distance(transform.position, coll.transform.position);
-            if (dist < nearestDist)
+            // Activate once
+            if (nearest != null)
             {
-                nearest = coll;
-                nearestDist = dist;
+                ActivateMecanisms();
+                activation_for = nearest.gameObject;
+                activated = true;
             }
         }
-
-        // Activate once
-        if (nearest != null)
+        else
         {
-            ActivateMecanisms();
-            activation_for = nearest.gameObject;
-            activated = true;
+            _timer += Time.deltaTime;
+            if (_timer > deactivate_delay)
+            {
+                _timer = 0;
+                _deactivate = false;
+                DeactivateMecanisms();
+            }
         }
     }
 

@@ -10,6 +10,26 @@ public class SC_ZoneAir : SC_Zone
         base.InitZone(new_range, new_horizontal_range, new_particles, can_destroy);
         layer_interactable = layerMask;
         force = new_force;
+
+        if (range > 15)
+        {
+            ParticleSystem[] pss = GetComponentsInChildren<ParticleSystem>();
+            foreach (ParticleSystem ps in pss)
+            {
+                if (ps.name.Contains("Cloud")) continue;
+
+                ParticleSystem.MainModule main = ps.main;
+                main.startLifetime = range / 4;
+                ParticleSystem.ShapeModule shape = ps.shape;
+                shape.radius = range / 2;
+                ParticleSystem.VelocityOverLifetimeModule vel = ps.velocityOverLifetime;
+                vel.orbitalZ = Mathf.Min(1, range / 5);
+            }
+        }
+
+        SphereCollider coll = gameObject.AddComponent<SphereCollider>();
+        coll.radius = range;
+        coll.isTrigger = true;
     }
 
     private void Update()
@@ -44,6 +64,23 @@ public class SC_ZoneAir : SC_Zone
             }
 
             affected_rb[i].AddForce(transform.forward * (floatForce + damping), forceMode);
+        }
+    }
+
+    public void Pause()
+    {
+        ParticleSystem[] pss = GetComponentsInChildren<ParticleSystem>();
+        foreach (ParticleSystem ps in pss)
+        {
+            ps.Pause();
+        }
+    }
+    public void Resume()
+    {
+        ParticleSystem[] pss = GetComponentsInChildren<ParticleSystem>();
+        foreach (ParticleSystem ps in pss)
+        {
+            ps.Play();
         }
     }
 }

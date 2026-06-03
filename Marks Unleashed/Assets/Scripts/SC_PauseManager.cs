@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -11,22 +13,36 @@ public class SC_PauseManager : MonoBehaviour
     Resolution[] screenResolutions;
 
     public GameObject pause_menu;
+    public GameObject options_menu;
 
     public TMP_Dropdown resolutionDropdown;
     public Toggle fullscreenToggle;
 
     public AudioSource audioSource;
     public AudioMixer audioMixer;
+    public SC_PlayerAnimations playerAnimations;
+    public SC_CameraRotation cam;
+    public SC_CodexManager codexManager;
+    public Animator arm_animator;
+
+    [SerializeField] private Volume blurVolume;
+    private DepthOfField dof;
 
     [Header("Audio Sliders")]
     [SerializeField] private Slider _masterSlider;
     [SerializeField] private Slider _musicSlider;
     [SerializeField] private Slider _sfxSlider;
     
-    private bool opened = false;
+    public bool isPauseMenuOpen = false;
 
     private void Start()
     {
+        //Blur empieza false
+        if(blurVolume.profile.TryGet(out dof))
+        {
+            dof.active = false;
+        }
+
         screenResolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
@@ -65,15 +81,35 @@ public class SC_PauseManager : MonoBehaviour
         SetSFXVolume(_sfxSlider.value);
 
     }
+
+    public void SetBlur(bool state)
+    {
+        if (dof != null)
+        {
+            dof.active = state;
+        }
+    }
+
     public void TogglePause()
     {
-        opened = !opened;
-        pause_menu.SetActive(opened);
+        isPauseMenuOpen = !isPauseMenuOpen;
+        pause_menu.SetActive(isPauseMenuOpen);
 
-        if (opened)
+        if (isPauseMenuOpen)
+        {
+            arm_animator.SetBool("pause", true);
+            cam.canMoveCamera = false;
+            codexManager.CloseCodex();
+            SetBlur(true);
             OpenPause();
+        }
         else
+        {
+            arm_animator.SetBool("pause", false);
+            cam.canMoveCamera = true;
+            SetBlur(false);
             ClosePause();
+        }
     }
     public void OpenPauseMenuOnKeyPressed(InputAction.CallbackContext con)
     {
@@ -84,15 +120,17 @@ public class SC_PauseManager : MonoBehaviour
 
     private void OpenPause()
     {
-        Time.timeScale = 0;
+        codexManager.CloseCodex();
+        arm_animator.Play("anim_toon_arm_pause");
+        //Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
     private void ClosePause()
     {
         Time.timeScale = 1;
-        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void SetResolution(int resolutionIndex)
@@ -110,6 +148,7 @@ public class SC_PauseManager : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
     }
 
+    // --- AUDIO ---
     public void SetMasterVolume(float _value)
     {
         audioMixer.SetFloat("MasterVolume", _value);
@@ -125,7 +164,6 @@ public class SC_PauseManager : MonoBehaviour
         audioMixer.SetFloat("SFXVolume", _value);
         PlayerPrefs.SetFloat("SFXVolume", _value);
     }
-
     public void PlaySound(AudioClip clip)
     {
         audioSource.clip = clip;

@@ -69,11 +69,12 @@ Material:
     - _Cull: 2
     - _Dissolve: 0
     - _DstBlend: 10
+    - _EmissionStrength: 0
     - _NormalStrength: 0.1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.5
+    - _Smoothness: 0
     - _SrcBlend: 1
     - _Surface: 1
     - _VertexDisplacement: 0.03
@@ -82,8 +83,9 @@ Material:
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:
+    - _EmissionColor: {r: 0, g: 0.85353756, b: 1, a: 1}
     - _NormalTiling: {r: 1, g: 1, b: 0, a: 0}
     - _ScrollDirection: {r: 0.1, g: 0, b: 0, a: 0}
-    - _SpecularColorr: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecularColorr: {r: 0.38679248, g: 0.08197003, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -13,6 +13,9 @@ public class SC_ZoneBurn : SC_Zone
 
     private LayerMask balloon_mask, combustible_mask;
 
+    private Collider[] _colls;
+
+    public Vector3 pos_particles = Vector3.zero;
 
 
     protected override void Start()
@@ -26,8 +29,18 @@ public class SC_ZoneBurn : SC_Zone
 
         // Create the particles
         particles = Instantiate(particles, transform.position, Quaternion.LookRotation(transform.up));
-        ParticleSystem.MainModule main = particles.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+        ParticleSystem.MainModule main;
+
+        if (transform.childCount > 0)
+            main = particles.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+        else
+            main = particles.GetComponent<ParticleSystem>().main;
+
         main.loop = true;
+
+        particles.transform.position = pos_particles;
+
+        _colls = new Collider[20];
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -46,16 +59,27 @@ public class SC_ZoneBurn : SC_Zone
     private void CheckForBalloons()
     {
         // Check for balloons
-        Collider[] colls = Physics.OverlapSphere(transform.position, range, balloon_mask);
-        if (colls.Length > 0)
+        int count = Physics.OverlapSphereNonAlloc(transform.position, range, _colls);
+        if (count > 0)
         {
-            foreach (Collider coll in colls)
+            foreach (Collider coll in _colls)
             {
-                SC_Interactable interactable = coll.GetComponent<SC_Interactable>();
-                if (interactable != null && !affected_objects.Contains(interactable))
+                if (coll == null) break;
+
+                if (coll.gameObject.layer == LayerMask.NameToLayer("Burnable"))
                 {
-                    affected_objects.Add(interactable);
-                    interactable.Activate();
+                    SC_Interactable interactable = coll.GetComponent<SC_Interactable>();
+                    if (interactable != null && !affected_objects.Contains(interactable))
+                    {
+                        affected_objects.Add(interactable);
+                        interactable.Activate();
+                    }
+                }
+                else if (coll.CompareTag("Arrow"))
+                {
+                    SC_Arrow arrow = coll.GetComponent<SC_Arrow>();
+                    if (arrow != null)
+                        arrow.SetElement(ElementTypes.FIRE);
                 }
             }
         }
@@ -66,7 +90,7 @@ public class SC_ZoneBurn : SC_Zone
         current_life -= Time.deltaTime;
 
         // Check if there is combustible nearby
-        if (current_life < max_life && Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, 1.25f, balloon_mask))
+        if (current_life < max_life && Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, 3, combustible_mask))
         {
             current_life += Time.deltaTime * 2;
             Debug.DrawLine(transform.position, transform.position + -transform.up * 1.25f, Color.green);
@@ -81,7 +105,6 @@ public class SC_ZoneBurn : SC_Zone
             Destroy(gameObject);
         }
     }
-
 
     protected override void OnDestroy()
     {
@@ -107,8 +130,8 @@ public class SC_ZoneBurn : SC_Zone
                 SC_LifeSystem lf = coll.GetComponent<SC_LifeSystem>();
                 if (lf != null)
                 {
-                    lf.Damage(damage_per_second);
-                    lf.ApplyElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
+                    lf.Damage(damage_per_second, SC_LifeSystem.Damage_type.FIRE);
+                    //lf.ApplyElement(SC_ElementManager.instance.GetElement(ElementTypes.FIRE));
                 }
             }
             yield return new WaitForSeconds(1);

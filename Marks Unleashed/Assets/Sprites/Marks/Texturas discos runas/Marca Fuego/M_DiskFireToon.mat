@@ -12,7 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _EMISSIVE_SIMPLE
+  - _EMISSIVE_ANIMATION
   - _IS_CLIPPING_OFF
   - _IS_OUTLINE_CLIPPING_NO
   - _OUTLINE_POS
@@ -268,7 +268,7 @@ Material:
     - _BaseColorVisible: 1
     - _BaseColor_Step: 0.496
     - _BaseShade_Feather: 0.054
-    - _Base_Speed: 1
+    - _Base_Speed: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BlurLevelMatcap: 0
@@ -282,7 +282,7 @@ Material:
     - _ClippingMode: 0
     - _Clipping_Level: 0
     - _CoatMask: 0
-    - _ColorShift_Speed: 0
+    - _ColorShift_Speed: 2
     - _ComposerMaskMode: 0
     - _Cull: 2
     - _CullMode: 2
@@ -308,7 +308,7 @@ Material:
     - _DoubleSidedEnable: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EMISSIVE: 0
+    - _EMISSIVE: 1
     - _EmissiveExposureWeight: 1
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
@@ -340,7 +340,7 @@ Material:
     - _Is_BlendAddToHiColor: 0
     - _Is_BlendAddToMatCap: 1
     - _Is_BlendBaseColor: 0
-    - _Is_ColorShift: 0
+    - _Is_ColorShift: 1
     - _Is_Filter_HiCutPointLightColor: 1
     - _Is_Filter_LightColor: 1
     - _Is_LightColor_1st_Shade: 1
@@ -483,11 +483,11 @@ Material:
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColorMaskColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
-    - _ColorShift: {r: 0, g: 0, b: 0, a: 1}
+    - _ColorShift: {r: 12.830189, g: 0.30259874, b: 0.30259874, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Emissive_Color: {r: 2.4150925, g: 0, b: 0, a: 1}
+    - _Emissive_Color: {r: 0.74901956, g: 0, b: 0, a: 1}
     - _FirstShadeMaskColor: {r: 0, g: 1, b: 1, a: 1}
     - _HighColor: {r: 0, g: 0, b: 0, a: 1}
     - _HighlightMaskColor: {r: 1, g: 1, b: 0, a: 1}

@@ -115,9 +115,10 @@ public abstract class SC_Zone : MonoBehaviour
                 }
             }
 
-            for (int i = 0; i < remove_indexs.Count; i++)
+            for (int i = 0; i < remove_indexs.Count && i < affected_names.Count; i++)
             {
-                RemoveName(affected_names[i]);
+                if (remove_indexs[i] < affected_names.Count)
+                    RemoveName(affected_names[remove_indexs[i]]);
             }
         }
     }
@@ -151,25 +152,35 @@ public abstract class SC_Zone : MonoBehaviour
     {
         try
         {
-            Debug.Log("Destroying zone");
+            if (particles != null)
+            {
+                particles.transform.SetParent(null, true);
+                ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+                if (ps != null) ps.Stop();
+                Transform tr = particles.transform.GetChild(0);
+                int destroy_time = 10;
+                if (tr != null)
+                {
+                    ParticleSystem ps2 = tr.GetComponent<ParticleSystem>();
+                    if (ps2 != null) ps2.Stop();
+                    else destroy_time = 0;
+                }
+                if (ps == null) destroy_time = 0;
+
+                Destroy(particles, destroy_time);
+                Debug.Log($"Destroyed: {name}");
+                Debug.Log($"Destroyed object: {name}", this);
+                Debug.Log(StackTraceUtility.ExtractStackTrace());
+
+                Debug.Log("Destroying zone");
+            }
             if (gameObject != null)
                 Destroy(gameObject);
         } catch { }
     }
     protected virtual void OnDestroy()
     {
-        if (particles == null) return;
-        particles.transform.SetParent(null, true);
-        particles.GetComponent<ParticleSystem>().Stop();
-        Transform tr = particles.transform.GetChild(0);
-        if (tr != null)
-        {
-            tr.GetComponent<ParticleSystem>().Stop();
-        }
-        Destroy(particles, 10);
-        Debug.Log($"Destroyed: {name}");
-        Debug.Log($"Destroyed object: {name}", this);
-        Debug.Log(StackTraceUtility.ExtractStackTrace());
+        
     }
 
     public void HighlightZone()

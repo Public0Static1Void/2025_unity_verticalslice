@@ -1,20 +1,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(AudioSource))]
 public class SC_Button : MonoBehaviour
 {
-
+    [Header("Normal")]
     public List<SC_Interactable> attached_mecanisms = new List<SC_Interactable>();
+    public UnityEvent event_normal = new UnityEvent();
+    [Header("Inverse")]
     public List<SC_Interactable> attached_mecanisms_inverse = new List<SC_Interactable>();
+    public UnityEvent event_inverse = new UnityEvent();
+
+    [Header("References")]
+    public Animator anim_button;
+    [Space(10)]
 
     private List<Material> light_emitter = new List<Material>();
     public List<MeshRenderer> light_meshes = new List<MeshRenderer>();
 
     protected AudioSource audioSource;
     public AudioClip clip_connected;
+
+    
 
     private void Start()
     {
@@ -49,11 +59,18 @@ public class SC_Button : MonoBehaviour
 
     public virtual void ActivateMecanisms()
     {
+        if (anim_button != null)
+            anim_button.SetBool("active", true);
+
         for (int i = 0; i <  attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Activate();
-            if (i < attached_mecanisms_inverse.Count)
-                attached_mecanisms_inverse[i].Deactivate();
+            event_normal?.Invoke();
+        }
+        for (int i = 0; i < attached_mecanisms_inverse.Count; i++)
+        {
+            attached_mecanisms_inverse[i].Deactivate();
+            event_inverse?.Invoke();
         }
 
         SetMatsLight(Color.white, 5);
@@ -62,11 +79,18 @@ public class SC_Button : MonoBehaviour
     }
     public virtual void DeactivateMecanisms()
     {
+        if (anim_button != null)
+            anim_button.SetBool("active", false);
+
         for (int i = 0; i < attached_mecanisms.Count; i++)
         {
             attached_mecanisms[i].Deactivate();
-            if (i < attached_mecanisms_inverse.Count)
-                attached_mecanisms_inverse[i].Activate();
+            event_inverse?.Invoke();
+        }
+        for (int i = 0; i < attached_mecanisms_inverse.Count; i++)
+        {
+            attached_mecanisms_inverse[i].Activate();
+            event_normal?.Invoke();
         }
 
         SetMatsLight(Color.white, 0);

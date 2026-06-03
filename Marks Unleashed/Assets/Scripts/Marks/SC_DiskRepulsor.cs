@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SC_DiskRepulsor : MonoBehaviour
+public class SC_DiskRepulsor : SC_Interactable
 {
     public float force, radius;
     public LayerMask _layer_disk;
@@ -13,12 +13,21 @@ public class SC_DiskRepulsor : MonoBehaviour
     private List<SC_MarkDisk> _disks_in;
 
     private Material _mat;
+    private MeshRenderer _meshRenderer;
 
     private Coroutine _changeColorRoutine;
 
     Collider[] _colls;
 
     public GameObject parts_collision;
+
+    public Material mat_destroy;
+
+    [Header("Type")]
+    public bool spheric = true;
+
+    
+    private Color start_col;
 
     private void Start()
     {
@@ -27,13 +36,18 @@ public class SC_DiskRepulsor : MonoBehaviour
         _names_in = new List<string>();
         _disks_in = new List<SC_MarkDisk>();
 
-        _mat = GetComponent<MeshRenderer>().material;
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _mat = _meshRenderer.material;
 
         _colls = new Collider[10]; // Prepare to recieve a max of 10 colliders at a time
+
+        start_col = _mat.GetColor("_MainColor");
     }
 
     private void FixedUpdate()
     {
+        if (!spheric) return;
+
         int count = Physics.OverlapSphereNonAlloc(transform.position, radius, _colls, _layer_disk);
         if (count > 0)
         {
@@ -119,7 +133,7 @@ public class SC_DiskRepulsor : MonoBehaviour
         float duration = 1;
         float timer = 0;
 
-        Color start_col = Color.white;
+        
         Color end_col = Color.red;
 
         while (timer < duration * 0.25f)
@@ -149,6 +163,41 @@ public class SC_DiskRepulsor : MonoBehaviour
         _changeColorRoutine = null;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (spheric) return;
+
+        // Check if the object has the rune disk layer
+        if ((_layer_disk.value & (1 << other.gameObject.layer)) != 0)
+        {
+            StartCoroutine(Decompose(other.gameObject, 3));
+        }
+
+        if (_changeColorRoutine == null)
+            _changeColorRoutine = StartCoroutine(ChangeColorRoutine());
+    }
+
+    private IEnumerator Decompose(GameObject ob, float duration)
+    {
+        MeshRenderer mr = ob.GetComponent<MeshRenderer>();
+        if (mr != null)
+        {
+            mr.material = mat_destroy;
+            Material mat = mr.material;
+            float timer = 0;
+            while (timer < duration)
+            {
+                float t = timer / duration;
+
+                mat.SetFloat("_DecomposeAmount", t * 2);
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        Destroy(ob);
+    }
 
     private void OnDrawGizmos()
     {

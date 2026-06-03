@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows.Speech;
 
 public class SC_LifeSystem : MonoBehaviour
 {
+    public enum Damage_type { NORMAL, ICE, FIRE }
+
     [Header("Stats")]
     public int max_life = 1;
     public float life = 1;
@@ -25,7 +26,7 @@ public class SC_LifeSystem : MonoBehaviour
         if (update_life_on_start)
             life = max_life;
     }
-    public virtual void Damage(float damage)
+    public virtual void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL, Vector3 impulse = default)
     {
         life -= damage;
         if (life <= 0)
@@ -37,6 +38,12 @@ public class SC_LifeSystem : MonoBehaviour
     public void BurnDamage(float damage_per_second, float seconds_applied)
     {
         StartCoroutine(BurnDamageCoroutine(damage_per_second, seconds_applied));
+        
+        SC_PlayerLife player = GetComponent<SC_PlayerLife>();
+        if (player != null) 
+        {
+            player.StartBurnEffect(seconds_applied);
+        }
     }
 
     public virtual void UpdateAppliedElementsUI()
@@ -144,9 +151,9 @@ public class SC_LifeSystem : MonoBehaviour
         int loop_count = 0;
         while (loop_count < seconds_applied)
         {
-            yield return new WaitForSeconds(1);
             loop_count++;
-            Damage(damage_per_second);
+            Damage(damage_per_second, Damage_type.FIRE);
+            yield return new WaitForSeconds(1);
         }
     }
 

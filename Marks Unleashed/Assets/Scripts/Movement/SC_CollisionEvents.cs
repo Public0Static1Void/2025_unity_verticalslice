@@ -8,15 +8,20 @@ public class SC_CollisionEvents : MonoBehaviour
     public UnityEvent collision_event = new UnityEvent();
 
     public Vector3 pos_collided;
+    public ParticleSystem collision_parts;
 
-    public void SpawnParticles(GameObject parts)
+    private Rigidbody rb;
+
+    private void Start()
     {
-        GameObject ob = Instantiate(parts, transform.position, parts.transform.rotation);
-
+        rb = GetComponent<Rigidbody>();
+    }
+    public void SpawnParticles(ParticleSystem parts)
+    {
+        if (parts == null) return;
         if (pos_collided != Vector3.zero)
-            ob.transform.position = pos_collided;
-
-        Destroy(ob, 5);
+            parts.transform.position = pos_collided;
+        parts.Play();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -30,11 +35,12 @@ public class SC_CollisionEvents : MonoBehaviour
 
     private void CheckCollision(GameObject other)
     {
-        if (other.tag != "Player")
+        if (other.tag != "Player" && rb.linearVelocity.magnitude > 0.25f)
         {
             collision_event?.Invoke();
             Vector3 dir = other.transform.position - transform.position;
-            pos_collided = transform.position + dir.normalized * 2;
+            pos_collided = transform.position - dir.normalized * 2;
+            SpawnParticles(collision_parts);
         }
 
     }

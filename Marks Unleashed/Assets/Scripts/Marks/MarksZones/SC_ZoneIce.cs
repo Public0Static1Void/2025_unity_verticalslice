@@ -7,7 +7,6 @@ public class SC_ZoneIce : SC_Zone
 
     public PhysicsMaterial noFriction_material;
 
-    private List<GameObject> attached_audio;
 
     private SC_PlayerMovement playerMovement;
     private float player_start_friction = 0.9f;
@@ -15,20 +14,33 @@ public class SC_ZoneIce : SC_Zone
     private AudioClip clip_snow_slide;
 
     private List<Vector3> start_speeds;
+    private List<GameObject> ob_affected;
+    private AudioSource as_player;
 
 
-    public void InitIceZone(float zone_range, LayerMask layermask)
+    public void InitIceZone(float zone_range, LayerMask layermask, GameObject parts, List<GameObject> affected)
     {
         range = zone_range;
         range_horizontal = range;
         layer_interactable = layermask;
+        particles = parts;
+        ob_affected = affected;
+
+        if (Physics.Raycast(transform.position + transform.forward, -transform.forward, out RaycastHit hit, 5))
+        {
+            transform.position = hit.point + hit.normal * 100;
+        }
     }
     protected override void Start()
     {
         base.Start();
 
-        attached_audio = new List<GameObject>();
         start_speeds = new List<Vector3>();
+        
+        clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
+
+        as_player = SC_SoundManager.instance.InstantiateSoundAlone(clip_snow_slide, transform.position, true, volume: 0.25f);
+        as_player.Stop();
 
         layer_movable = (1 << LayerMask.NameToLayer("Grababble")) | (1 << LayerMask.NameToLayer("Physic Object"));
 
@@ -40,9 +52,8 @@ public class SC_ZoneIce : SC_Zone
         playerMovement = SC_PlayerMovement.instance;
         player_start_friction = playerMovement.ground_friction;
 
-        clip_snow_slide = SC_ElementManager.instance.clip_snow_slide;
+        
 
-        range = 6;
         range_horizontal = range;
     }
     private void Update()
@@ -65,6 +76,8 @@ public class SC_ZoneIce : SC_Zone
         {
             SC_PlayerMovement pm = ob.GetComponent<SC_PlayerMovement>();
             pm.ground_friction = pm._ground_start_friction;
+            pm.sliding = false;
+            as_player.Pause();
         }
     }
 
@@ -75,14 +88,23 @@ public class SC_ZoneIce : SC_Zone
         for (int i = 0; i < affected_rb.Count; i++)
         {
             Rigidbody rb = affected_rb[i];
-            if (rb == null) continue;
+            if (rb == null) continue;                
 
             Collider coll = rb.GetComponent<Collider>();
             coll.material = noFriction_material;
 
             if (rb.CompareTag("Player"))
             {
-                rb.GetComponent<SC_PlayerMovement>().ground_friction = 1;
+                SC_PlayerMovement pm = SC_PlayerMovement.instance;
+                pm.ground_friction = 1;
+                pm.sliding = true;
+
+                if (!as_player.isPlaying && pm.rb.linearVelocity.magnitude > 0.1f)
+                {
+                    as_player.Play();
+                }
+                    
+                as_player.transform.position = rb.position;
             }
 
             if (start_speeds[i] == Vector3.zero)
@@ -101,11 +123,25 @@ public class SC_ZoneIce : SC_Zone
         {
             for (int i = 0; i < affected_rb.Count; i++)
             {
-                if (affected_rb[i] == null) continue;
-                affected_rb[i].gameObject.GetComponent<Collider>().material = null;
-                if (i < attached_audio.Count && attached_audio[i] != null)
-                    Destroy(attached_audio[i]);
+                Rigidbody rb = affected_rb[i];
+                if (rb == null) continue;
+                rb.gameObject.GetComponent<Collider>().material = null;
+
+                if (rb.CompareTag("Player"))
+                {
+                    SC_PlayerMovement pm = rb.GetComponent<SC_PlayerMovement>();
+                    pm.ground_friction = pm._ground_start_friction;
+                    pm.sliding = false;
+                }
             }
+
+            foreach (GameObject ob in ob_affected)
+            {
+                // Stop the current routine
+                SC_CoroutineRunner.instance.RemoveActiveRoutine(ob.GetInstanceID());
+                SC_Mark_Ice.EndFreeze(null, ob);
+            }
+            Destroy(as_player.gameObject);
         }
     }
 }

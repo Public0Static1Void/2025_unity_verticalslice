@@ -5001,11 +5001,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 590348674488202513, guid: 9f93bc22e28f77849afbc216b3b0719f, type: 3}
       propertyPath: ShapeModule.radius.value
-      value: 1.2
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 590348674488202513, guid: 9f93bc22e28f77849afbc216b3b0719f, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 590348674488202513, guid: 9f93bc22e28f77849afbc216b3b0719f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1640855533488089664, guid: 9f93bc22e28f77849afbc216b3b0719f, type: 3}
       propertyPath: m_Name

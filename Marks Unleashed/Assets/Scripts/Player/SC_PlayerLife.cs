@@ -1,6 +1,6 @@
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -11,6 +11,7 @@ public class SC_PlayerLife : SC_LifeSystem
 {
     [Header("Stats")]
     public float recover_time = 5;
+    public float vignette_duration;
     public Color vignette_color;
 
     [Header("Scene")]
@@ -19,21 +20,37 @@ public class SC_PlayerLife : SC_LifeSystem
     [Header("References")]
     public GameObject applied_elements_parent;
     private List<Image> applied_elements_images = new List<Image>();
+    private Rigidbody rb;
 
     public Volume camera_volume;
     private Vignette camera_vignette = null;
 
+    public Image image_vignette;
 
     private bool recovering_health = false;
 
-    private Coroutine routine_color = null;
+    private Coroutine routine_damage_effect = null;
+
+    private bool isBurning = false;
+    private Coroutine burnEffectCoroutine = null;
 
     private float target_intensity = 0;
     public Color target_color = Color.white;
 
+    public Transform main_camera;
+
+    [Header("Materials")]
+    [SerializeField] private Material fire_damage_material;
+    [SerializeField] private Material ice_damage_material;
+
+    private Coroutine routine_die;
+    private bool camera_deattached = false;
+
+    private bool dying = false;
 
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
         // Load volume component
         camera_volume.profile.TryGet<Vignette>(out Vignette v);
         if (v != null)
@@ -59,9 +76,117 @@ public class SC_PlayerLife : SC_LifeSystem
         else
         {
             target_color = Color.white;
-            Debug.Log("Color restored");
+            //Debug.Log("Color restored");
         }
             
+    }
+
+    private IEnumerator BurnEffectCoroutine(float duration, Material damageMat)
+    {
+        isBurning = true;
+        float timer = 0;
+
+        //Fade IN
+        float fadeInTime = 0.3f;
+        float t = 0;
+        while (t < fadeInTime)
+        {
+            float lerp = t / fadeInTime;
+            float softnessValue = Mathf.Lerp(4, 0.7f, lerp);
+            damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        damageMat.SetFloat("_Softness", 0.7f);
+
+        //Mantener efecto mientras dura burn
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        //Fade OUT
+        t = 0;
+        while(t < fadeInTime)
+        {
+            float lerp = t / fadeInTime;
+            float softnessValue = Mathf.Lerp(0.7f, 4f, lerp);
+            damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        damageMat.SetFloat("_Softness", 4f);
+
+        isBurning = false;
+    }
+
+    public void StartBurnEffect(float duration)
+    {
+        if (isBurning)
+            return;
+
+        Material instanceMat = new Material(fire_damage_material);
+        image_vignette.material = instanceMat;
+
+        burnEffectCoroutine = StartCoroutine(BurnEffectCoroutine(duration, instanceMat));
+    }
+
+    private IEnumerator Routine_damage_effect(float duration, Material damageMat)
+    {
+        float start_duration = duration;
+
+        if (damageMat == null)
+        {
+            Debug.LogError("Material pasado a la corutina es null");
+            yield break;
+        }
+        Debug.Log("Corutina Routine_damage_effect INICIADA (Fade In)");
+        // Fade in
+        float timer = 0;
+        duration = 0.1f;
+        while (timer < duration)
+        {
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+            //t = Mathf.SmoothStep(0, 1, t);
+            float softnessValue = Mathf.Lerp(4f, 0.7f, t);
+
+            damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+            
+            Debug.Log($"Timer: {timer:F2} | t: {t:F2} | Softness set to: {softnessValue:F2} | GetFloat: {damageMat.GetFloat("_Softness"):F2}");
+            
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        damageMat.SetFloat("_Softness", 0.7f);
+
+        Debug.Log("Fade In terminado, empezando Fade Out");
+        //Fade Out
+        timer = 0f;
+        duration = start_duration * 1.25f;
+        while (timer < duration)
+        {
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+            float softnessValue = Mathf.Lerp(0.7f, 4f, t);
+
+            damageMat.SetFloat("_Softness", softnessValue);
+            image_vignette.SetMaterialDirty();
+
+            Debug.Log($"FADE OUT Timer: {timer:F2} | t: {t:F2} | Softness > {softnessValue:F2} | Get: {damageMat.GetFloat("_Softness"):F2}");
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        damageMat.SetFloat("_Softness", 4f);
+
+        Debug.Log("Corutina Routine_damage_effect TERMINADA");
     }
 
     public override void UpdateAppliedElementsUI()
@@ -83,17 +208,57 @@ public class SC_PlayerLife : SC_LifeSystem
             applied_elements_images[i].sprite = sprite;
         }
     }
-    public override void Damage(float damage)
+    public override void Damage(float damage, Damage_type damage_type = Damage_type.NORMAL, Vector3 impulse = default)
     {
-        base.Damage(damage);
+        Debug.Log("Damage() llamado - Recibido daño: " + damage + " | Tipo: " + damage_type);
+
+        base.Damage(damage); // Apply the damage
 
         SC_CameraRotation.instance.ShakeCamera(0.25f, 0.25f);
 
-        float vignette_value = 1 - ((float)life / (float)max_life);
-        target_intensity = vignette_value * 0.75f;
-        target_color = vignette_color;
+        if (damage_type == Damage_type.NORMAL)
+        {
+            float vignette_value = 1 - ((float)life / (float)max_life);
+            target_intensity = vignette_value * 0.75f;
+            target_color = vignette_color;
+            return;
+        }
 
+        Material originalMat = null;
+        switch(damage_type)
+        {
+            //Si ya se está quemando no spammear vignette
+            case Damage_type.FIRE:
+                if (isBurning)
+                    return;
+
+                originalMat = fire_damage_material; 
+                break;
+
+            case Damage_type.ICE:
+                originalMat = ice_damage_material;
+                break;
+        }
+
+        if (originalMat == null)
+        {
+            Debug.LogError($"El material para el tipo {damage_type} no está asignado en el Inspector");
+            return;
+        }
+
+        Material instanceMat = new Material(originalMat);
+        image_vignette.material = instanceMat;
+        
+        Debug.Log($" Material instancia creado y asignado: {instanceMat.name}");
+
+        StartCoroutine(Routine_damage_effect(vignette_duration, instanceMat));
         RecoverHealth();
+
+        // Add the impulse if passed
+        if (impulse != default)
+        {
+            rb.AddForce(impulse, ForceMode.Impulse);
+        }
     }
 
 
@@ -134,6 +299,7 @@ public class SC_PlayerLife : SC_LifeSystem
 
     public void SetVignetteValue(float newValue, Color newColor, bool priority = false)
     {
+        return;
         target_intensity = newValue;
         target_color = newColor;
     }
@@ -141,7 +307,59 @@ public class SC_PlayerLife : SC_LifeSystem
 
     public override void Die()
     {
-        Debug.Log("Dead x)");
-        SceneManager.LoadScene(reload_scene);
+        if (dying) return;
+        dying = true;
+
+        SC_PlayerRespawn respawnScript = GetComponent<SC_PlayerRespawn>();
+        respawnScript.Respawn();
+        DeattachCamera();
+
+        StartCoroutine(DeathRecover());
+    }
+
+    private IEnumerator DeathRecover()
+    {
+        yield return new WaitForSeconds(1);
+        dying = false;
+    }
+
+    public void DeattachCamera()
+    {
+        if (camera_deattached) return;
+        camera_deattached = true;
+
+        SC_CameraRotation.instance.canMoveCamera = false;
+
+        Vector3 pos_start_local = main_camera.localPosition;
+        Vector3 pos_start = main_camera.position;
+        main_camera.parent = null;
+        main_camera.position = pos_start;
+
+        BoxCollider coll = main_camera.GetComponent<BoxCollider>();
+        coll.enabled = true;
+        Rigidbody rb = main_camera.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.linearVelocity = SC_PlayerMovement.instance.rb.linearVelocity * 0.1f;
+        rb.AddForce((main_camera.transform.right + Vector3.up) * 0.1f, ForceMode.Impulse);
+        rb.AddTorque(-transform.right * 0.5f, ForceMode.Impulse);
+
+        SC_Arrow[] arrows = transform.GetComponentsInChildren<SC_Arrow>();
+        foreach (SC_Arrow arrow in arrows)
+            Destroy(arrow.gameObject);
+    }
+    public void AttachCamera()
+    {
+        if (!camera_deattached) return;
+
+        BoxCollider coll = main_camera.GetComponent<BoxCollider>();
+        Rigidbody rb = main_camera.GetComponent<Rigidbody>();
+
+        coll.enabled = false;
+        rb.isKinematic = true;
+
+        main_camera.SetParent(SC_PlayerMovement.instance.transform, true);
+        SC_CameraRotation.instance.canMoveCamera = true;
+
+        camera_deattached = false;
     }
 }

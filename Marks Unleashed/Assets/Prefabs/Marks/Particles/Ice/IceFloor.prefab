@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshRenderer: {fileID: 5076481466780305213}
-  maxTime: 6
+  maxTime: 14
   timer: 0
 --- !u!65 &671465588795726557
 BoxCollider:
@@ -134,16 +134,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 424684650285951373}
     m_Modifications:
     - target: {fileID: 3191836267317560431, guid: 412ad9da01ba4fe41b9c501ff32efc7b, type: 3}
+      propertyPath: size.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 3191836267317560431, guid: 412ad9da01ba4fe41b9c501ff32efc7b, type: 3}
+      propertyPath: size.y
+      value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 3191836267317560431, guid: 412ad9da01ba4fe41b9c501ff32efc7b, type: 3}
       propertyPath: duration
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3191836267317560431, guid: 412ad9da01ba4fe41b9c501ff32efc7b, type: 3}
       propertyPath: max_radius
-      value: 6
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3191836267317560431, guid: 412ad9da01ba4fe41b9c501ff32efc7b, type: 3}
       propertyPath: time_between_waves
-      value: 0.1
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3841559397522687877, guid: 412ad9da01ba4fe41b9c501ff32efc7b, type: 3}
       propertyPath: m_Name

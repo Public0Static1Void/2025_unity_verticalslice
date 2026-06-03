@@ -47,7 +47,7 @@ public class SC_Rope : MonoBehaviour
     public LineRenderer ropeRenderer;
     public GameObject anchor, bottom_anchor;
     public SC_PlayerMovement playerMovement;
-    public AudioClip clip_slide;
+    public AudioClip clip_slide, clip_grab;
 
     [Header("Functions")]
     public bool scalable = false;
@@ -70,6 +70,8 @@ public class SC_Rope : MonoBehaviour
     public RopeEvent event_stretched;
 
     private GameObject _collider;
+
+    private float last_input = 0;
 
     private void Start()
     {
@@ -131,6 +133,8 @@ public class SC_Rope : MonoBehaviour
         }
 
         _collider.transform.position = points[points.Length - 1].position;
+
+        last_input = playerMovement.input.y;
     }
     private void LateUpdate()
     {
@@ -204,7 +208,7 @@ public class SC_Rope : MonoBehaviour
         {
             RopePoint point = points[i];
             // Get the nearby colliders
-            Collider[] colls = Physics.OverlapSphere(point.position, collision_radius, layer_collision);
+            Collider[] colls = Physics.OverlapSphere(point.position, collision_radius * 5, layer_collision);
 
             foreach (Collider coll in colls)
             {
@@ -215,6 +219,9 @@ public class SC_Rope : MonoBehaviour
                     continue;
                 }
                 if (coll.name == "Player" && playerMovement.grabbing || coll.name == "Collider Rope" || coll.name == "Ice zone")
+                    continue;
+                // Don't check physical collisions if they are outside the radius
+                if (Vector3.Distance(coll.transform.position, point.position) > collision_radius)
                     continue;
                 if (!can_move) continue; /// Don't check when the rope is fixed
 
@@ -242,9 +249,8 @@ public class SC_Rope : MonoBehaviour
     }
     public void OnUngrab()
     {
-        UnityEngine.Color c = ropeRenderer.material.color;
-        c.a = 1;
-        ropeRenderer.material.color = c;
+        // Set the rope opaque
+        ropeRenderer.material.SetFloat("_Tweak_transparency", 0);
     }
 
     private void HandlePlayerGrab(int i, RopePoint point)
@@ -259,14 +265,15 @@ public class SC_Rope : MonoBehaviour
         
         playerMovement.grabbing = true;
 
-        UnityEngine.Color c = ropeRenderer.material.color;
-        c.a = 0.5f;
-        ropeRenderer.material.color = c;
+        // Set the rope transparent
+        ropeRenderer.material.SetFloat("_Tweak_transparency", -0.5f);
         
         playerMovement.grabbedRope = this;
         playerMovement.grabPoint = points[grabbed_index];
 
         points[grabbed_index].position += playerMovement.rb.linearVelocity * 0.1f;
+
+        SC_SoundManager.instance.InstantiateSound(clip_grab, points[grabbed_index].position);
     }
 
     private void DrawRope()
@@ -306,6 +313,10 @@ public class SC_Rope : MonoBehaviour
         // Build up inertia
         p.previousPosition -= impulse;
         playerMovement.vel += impulse;
+
+        // Play a sound if the direction is different from the last registered
+        if (dir != last_input)
+            SC_SoundManager.instance.InstantiateSound(clip_grab, playerMovement.transform.position, false, Random.Range(0.75f, 1.25f), Random.Range(0.5f, 0.75f));
     }
 
     private void ClimbRope(float dir)
@@ -493,6 +504,11 @@ public class SC_Rope : MonoBehaviour
         can_move = true;
     }
 
+    public void DeatachAnchor()
+    {
+        bottom_anchor = null;
+    }
+
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying)
@@ -527,7 +543,10 @@ public class SC_Rope : MonoBehaviour
                         2 * (1 - t) * t * control +
                         Mathf.Pow(t, 2) * end;
 
+                    Gizmos.color = UnityEngine.Color.white;
                     Gizmos.DrawWireSphere(pos, collision_radius);
+                    Gizmos.color = UnityEngine.Color.gray;
+                    Gizmos.DrawWireSphere(pos, collision_radius * 5);
                 }
             }
         }
@@ -536,6 +555,12 @@ public class SC_Rope : MonoBehaviour
         Gizmos.color = UnityEngine.Color.red;
 
         foreach (var p in points)
+        {
+            Gizmos.color = UnityEngine.Color.white;
             Gizmos.DrawWireSphere(p.position, collision_radius);
+            Gizmos.color = UnityEngine.Color.gray;
+            Gizmos.DrawWireSphere(p.position, collision_radius * 5);
+        }
+            
     }
 }

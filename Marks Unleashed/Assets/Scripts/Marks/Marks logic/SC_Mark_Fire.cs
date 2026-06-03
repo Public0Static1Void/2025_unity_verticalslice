@@ -39,13 +39,13 @@ public class SC_Mark_Fire : SC_Mark
             }
         }
 
-        LayerMask burnable_layer = 1 << LayerMask.NameToLayer("Burnable");
+        LayerMask burnable_layer = 1 << LayerMask.NameToLayer("Combustible");
         colls = Physics.OverlapSphere(transform.position, range, burnable_layer);
         foreach (Collider coll in colls)
         {
             SC_ZoneBurnable zb = coll.GetComponent<SC_ZoneBurnable>();
             if (zb != null && element != null)
-                zb.Ignite(coll.transform.position + coll.transform.up, range, element.strength, particles);
+                zb.Ignite(coll.transform.position + coll.transform.up, range, element.strength);
         }
 
         DesactivateMark();
